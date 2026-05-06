@@ -3,6 +3,7 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import favicon from '$lib/assets/favicon.svg';
+	import { page } from '$app/stores';
 
 	let { children } = $props();
 </script>
@@ -13,11 +14,15 @@
 </svelte:head>
 
 <div class="flex flex-col min-h-screen bg-white">
-	<Navbar />
+	{#if !$page.url.pathname.startsWith('/admin')}
+		<Navbar />
+	{/if}
 	
-	<main class="flex-grow pt-[120px]">
+	<main class="flex-grow {$page.url.pathname.startsWith('/admin') ? '' : 'pt-[105px]'}">
 		{@render children()}
 	</main>
 
-	<Footer />
+	{#if !$page.url.pathname.startsWith('/admin')}
+		<Footer />
+	{/if}
 </div>

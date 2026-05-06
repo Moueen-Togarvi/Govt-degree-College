@@ -1,12 +1,9 @@
 <script lang="ts">
 	import { BellRing } from 'lucide-svelte';
+	import { fallbackTickerAnnouncements } from '$lib/content/fallback';
+	import type { TickerAnnouncement } from '$lib/types/content';
 
-	const announcements = [
-		"Admissions for BS Programs (Affiliated with KFUEIT) are now open for Fall 2026.",
-		"Annual Sports Day scheduled for next Monday. All students are invited.",
-		"Library membership drive starts from June 1st. Get your cards ready.",
-		"Mid-term examination results for Inter classes have been uploaded to the portal."
-	];
+	let { announcements = fallbackTickerAnnouncements }: { announcements?: TickerAnnouncement[] } = $props();
 </script>
 
 <div class="bg-secondary/10 border-y border-secondary/20 py-2 overflow-hidden flex items-center">
@@ -19,17 +16,17 @@
 		<div class="flex-1 overflow-hidden ml-4 relative">
 			<div class="flex animate-marquee whitespace-nowrap gap-12">
 				{#each announcements as news}
-					<span class="text-sm font-bold text-primary flex items-center gap-2">
+					<a href={news.href} class="text-sm font-bold text-primary flex items-center gap-2 hover:text-secondary transition-colors">
 						<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-						{news}
-					</span>
+						{news.title}
+					</a>
 				{/each}
 				<!-- Duplicate for seamless scroll -->
 				{#each announcements as news}
-					<span class="text-sm font-bold text-primary flex items-center gap-2">
+					<a href={news.href} class="text-sm font-bold text-primary flex items-center gap-2 hover:text-secondary transition-colors">
 						<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-						{news}
-					</span>
+						{news.title}
+					</a>
 				{/each}
 			</div>
 		</div>

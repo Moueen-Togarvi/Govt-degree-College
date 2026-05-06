@@ -4,6 +4,8 @@
 	import QuickLinks from '$lib/components/home/QuickLinks.svelte';
 	import PrincipalMessage from '$lib/components/home/PrincipalMessage.svelte';
 	import Stats from '$lib/components/home/Stats.svelte';
+
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -11,11 +13,11 @@
 	<meta name="description" content="Welcome to the official portal of Govt Post Graduate College Bahawalnagar. Explore our BS programs affiliated with KFUEIT." />
 </svelte:head>
 
-<NewsTicker />
+<NewsTicker announcements={data.tickerAnnouncements} />
 <Hero />
-<QuickLinks />
-<PrincipalMessage />
 <Stats />
+<QuickLinks links={data.quickLinks} />
+<PrincipalMessage />
 
 <section class="py-24 bg-white">
 	<div class="container mx-auto px-4 text-center space-y-8">

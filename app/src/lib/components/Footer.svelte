@@ -8,7 +8,7 @@
 			<!-- College Info -->
 			<div class="space-y-6">
 				<div class="flex items-center gap-3">
-					<img src="/images/logos/degree4k.png" alt="GPGC Logo" class="h-16 w-auto bg-white rounded-lg p-1" />
+					<img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-16 w-auto" />
 					<div>
 						<h2 class="text-xl font-bold leading-tight">GPGC</h2>
 						<p class="text-xs font-medium tracking-widest text-secondary uppercase">Bahawalnagar</p>

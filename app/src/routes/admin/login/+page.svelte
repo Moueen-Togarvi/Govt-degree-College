@@ -1,0 +1,53 @@
+<script lang="ts">
+	let { data, form } = $props();
+</script>
+
+<section class="flex min-h-[calc(100vh-81px)] items-center justify-center px-6 py-16">
+	<div class="w-full max-w-md rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-[0_30px_80px_rgba(15,23,42,0.08)] backdrop-blur">
+		<div class="space-y-3 text-center">
+			<p class="text-xs font-black uppercase tracking-[0.3em] text-secondary">Secure Access</p>
+			<h2 class="text-3xl font-black text-primary">Admin Login</h2>
+			<p class="text-sm font-medium text-slate-600">
+				Neon-backed content manager access ke liye admin password enter karein.
+			</p>
+		</div>
+
+		{#if !data.configured}
+			<div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm font-semibold text-amber-900">
+				`ADMIN_PASSWORD` env variable abhi configured nahi hai.
+			</div>
+		{/if}
+
+		{#if data.setupMode}
+			<div class="mt-6 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-4 text-sm font-semibold text-sky-900">
+				Admin area use karne ke liye pehle login karein.
+			</div>
+		{/if}
+
+		{#if form?.error}
+			<div class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm font-semibold text-rose-900">
+				{form.error}
+			</div>
+		{/if}
+
+		<form method="POST" action="?/login" class="mt-8 space-y-5">
+			<div class="space-y-2">
+				<label for="password" class="text-sm font-black uppercase tracking-[0.18em] text-slate-600">Admin Password</label>
+				<input
+					id="password"
+					name="password"
+					type="password"
+					placeholder="Enter admin password"
+					class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-base font-semibold text-primary outline-none transition focus:border-secondary focus:bg-white"
+				/>
+			</div>
+
+			<button
+				type="submit"
+				class="w-full rounded-2xl bg-primary px-5 py-4 text-sm font-black uppercase tracking-[0.2em] text-white transition hover:bg-secondary"
+			>
+				Login
+			</button>
+		</form>
+	</div>
+</section>
