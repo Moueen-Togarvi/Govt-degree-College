@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { Menu, X, ChevronDown, GraduationCap, Users, BookOpen, Newspaper, LogIn, PhoneCall, Home } from 'lucide-svelte';
+	import { Menu, X, ChevronDown, GraduationCap, Users, BookOpen, Newspaper, LogIn, PhoneCall, Home, Mail, MapPin } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
-	let isMenuOpen = false;
-	let scrolled = false;
-	let activeDropdown: string | null = null;
+	let isMenuOpen = $state(false);
+	let scrolled = $state(false);
+	let activeDropdown = $state<string | null>(null);
 
 	const navLinks = [
 		{ name: 'Home', href: '/', icon: Home },
 		{ 
 			name: 'About', 
-			href: '/about', 
+			href: '/about/overview', 
 			icon: Users,
 			subLinks: [
 				{ name: 'Overview', href: '/about/overview' },
@@ -23,7 +23,7 @@
 		},
 		{ 
 			name: 'Admissions', 
-			href: '/admissions', 
+			href: '/admissions/how-to-apply', 
 			icon: GraduationCap,
 			subLinks: [
 				{ name: 'How to Apply', href: '/admissions/how-to-apply' },
@@ -35,7 +35,7 @@
 		},
 		{ 
 			name: 'Academics', 
-			href: '/academics', 
+			href: '/academics/programs', 
 			icon: BookOpen,
 			subLinks: [
 				{ name: 'Programs', href: '/academics/programs' },
@@ -47,7 +47,7 @@
 		},
 		{ 
 			name: 'Departments', 
-			href: '/departments', 
+			href: '/departments/computer-science', 
 			icon: BookOpen,
 			subLinks: [
 				{ name: 'Computer Science', href: '/departments/computer-science' },
@@ -61,7 +61,7 @@
 		},
 		{ 
 			name: 'News', 
-			href: '/news', 
+			href: '/news/announcements', 
 			icon: Newspaper,
 			subLinks: [
 				{ name: 'Announcements', href: '/news/announcements' },
@@ -107,11 +107,20 @@
 					<span>Minchinabad Road, Bahawalnagar</span>
 				</div>
 			</div>
-			<div class="flex items-center gap-4">
-				<span class="text-white/50">Follow us:</span>
-				<a href="#" class="hover:text-secondary transition-colors"><Facebook size={14} /></a>
-				<a href="#" class="hover:text-secondary transition-colors"><Twitter size={14} /></a>
-				<a href="#" class="hover:text-secondary transition-colors"><Instagram size={14} /></a>
+			<div class="flex items-center gap-3">
+				<span class="text-white/50 text-xs">Follow us:</span>
+				<!-- Facebook -->
+				<a href="/" aria-label="Facebook" class="hover:text-secondary transition-colors">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+				</a>
+				<!-- Twitter/X -->
+				<a href="/" aria-label="Twitter" class="hover:text-secondary transition-colors">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+				</a>
+				<!-- Instagram -->
+				<a href="/" aria-label="Instagram" class="hover:text-secondary transition-colors">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -134,8 +143,9 @@
 					{#each navLinks as link}
 						<div 
 							class="relative group"
-							on:mouseenter={() => activeDropdown = link.name}
-							on:mouseleave={() => activeDropdown = null}
+							role="none"
+							onmouseenter={() => activeDropdown = link.name}
+							onmouseleave={() => activeDropdown = null}
 						>
 							<a 
 								href={link.href} 
@@ -177,7 +187,8 @@
 				<!-- Mobile Menu Toggle -->
 				<button 
 					class="lg:hidden p-2 rounded-xl text-primary hover:bg-primary/5 transition-colors"
-					on:click={toggleMenu}
+					onclick={toggleMenu}
+					aria-label="Toggle Menu"
 				>
 					{#if isMenuOpen}
 						<X size={28} />
@@ -197,7 +208,7 @@
 					<div>
 						<button 
 							class="w-full flex items-center justify-between p-4 rounded-2xl text-lg font-bold text-primary hover:bg-primary/5"
-							on:click={() => toggleDropdown(link.name)}
+							onclick={() => toggleDropdown(link.name)}
 						>
 							<span class="flex items-center gap-3">
 								<link.icon size={20} class="text-secondary" />
@@ -211,7 +222,7 @@
 						{#if link.subLinks && activeDropdown === link.name}
 							<div class="ml-12 flex flex-col gap-1 border-l-2 border-secondary/20 pl-4 py-2 animate-in slide-in-from-left-2">
 								{#each link.subLinks as sub}
-									<a href={sub.href} class="p-3 text-sm font-semibold text-primary/70 hover:text-primary transition-colors" on:click={() => isMenuOpen = false}>
+									<a href={sub.href} class="p-3 text-sm font-semibold text-primary/70 hover:text-primary transition-colors" onclick={() => isMenuOpen = false}>
 										{sub.name}
 									</a>
 								{/each}
@@ -221,7 +232,7 @@
 				{/each}
 
 				<div class="mt-6 flex flex-col gap-3">
-					<a href="/student-portal" class="flex items-center justify-center gap-2 p-4 rounded-2xl bg-secondary text-white font-bold text-center shadow-lg" on:click={() => isMenuOpen = false}>
+					<a href="/student-portal" class="flex items-center justify-center gap-2 p-4 rounded-2xl bg-secondary text-white font-bold text-center shadow-lg" onclick={() => isMenuOpen = false}>
 						<LogIn size={20} />
 						Student Portal
 					</a>
