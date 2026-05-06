@@ -89,79 +89,103 @@
 	});
 </script>
 
-<nav class="fixed top-0 z-50 w-full transition-all duration-300 {scrolled ? 'bg-white/95 shadow-md backdrop-blur-md py-2' : 'bg-white py-4'}">
-	<div class="container mx-auto px-4 lg:px-8">
-		<div class="flex items-center justify-between">
-			<!-- Logo Section -->
-			<a href="/" class="flex items-center gap-3 group">
-				<img src="/images/logos/degree4k.png" alt="GPGC Logo" class="h-12 w-auto transition-transform duration-300 group-hover:scale-110" />
-				<div class="hidden md:block">
-					<h1 class="text-lg font-bold leading-tight tracking-tight text-primary">GPGC</h1>
-					<p class="text-[10px] font-medium tracking-widest text-secondary uppercase">Bahawalnagar</p>
+<nav class="fixed top-0 z-50 w-full transition-all duration-300">
+	<!-- Top Bar (Inspiration from Eduka) -->
+	<div class="hidden lg:block bg-primary text-white/90 py-2 border-b border-white/10">
+		<div class="container mx-auto px-4 lg:px-8 flex justify-between items-center text-xs font-medium">
+			<div class="flex items-center gap-6">
+				<div class="flex items-center gap-2">
+					<PhoneCall size={14} class="text-secondary" />
+					<span>+92 (63) 9240123</span>
 				</div>
-			</a>
-
-			<!-- Desktop Navigation -->
-			<div class="hidden lg:flex items-center gap-1">
-				{#each navLinks as link}
-					<div 
-						class="relative group"
-						on:mouseenter={() => activeDropdown = link.name}
-						on:mouseleave={() => activeDropdown = null}
-					>
-						<a 
-							href={link.href} 
-							class="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 {$page.url.pathname === link.href ? 'text-secondary bg-primary' : 'text-primary hover:bg-primary/5'}"
-						>
-							<link.icon size={16} />
-							{link.name}
-							{#if link.subLinks}
-								<ChevronDown size={14} class="transition-transform duration-200 group-hover:rotate-180" />
-							{/if}
-						</a>
-
-						<!-- Dropdown Menu -->
-						{#if link.subLinks}
-							<div class="absolute left-0 top-full pt-2 opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
-								<div class="bg-white border border-border-soft shadow-xl rounded-2xl overflow-hidden min-w-[220px]">
-									{#each link.subLinks as sub}
-										<a 
-											href={sub.href} 
-											class="block px-6 py-3 text-sm font-medium text-primary hover:bg-primary hover:text-white transition-colors duration-150"
-										>
-											{sub.name}
-										</a>
-									{/each}
-								</div>
-							</div>
-						{/if}
-					</div>
-				{/each}
-				
-				<!-- Action Buttons -->
-				<div class="ml-4 flex items-center gap-2 border-l border-border-soft pl-6">
-					<a href="/student-portal" class="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold text-white bg-secondary hover:bg-secondary/90 transition-all shadow-sm active:scale-95">
-						<LogIn size={16} />
-						Portal
-					</a>
-					<a href="/contact" class="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold text-primary border-2 border-primary hover:bg-primary hover:text-white transition-all active:scale-95">
-						<PhoneCall size={16} />
-						Contact
-					</a>
+				<div class="flex items-center gap-2">
+					<Mail size={14} class="text-secondary" />
+					<span>info@gpgcbwn.edu.pk</span>
+				</div>
+				<div class="flex items-center gap-2">
+					<MapPin size={14} class="text-secondary" />
+					<span>Minchinabad Road, Bahawalnagar</span>
 				</div>
 			</div>
+			<div class="flex items-center gap-4">
+				<span class="text-white/50">Follow us:</span>
+				<a href="#" class="hover:text-secondary transition-colors"><Facebook size={14} /></a>
+				<a href="#" class="hover:text-secondary transition-colors"><Twitter size={14} /></a>
+				<a href="#" class="hover:text-secondary transition-colors"><Instagram size={14} /></a>
+			</div>
+		</div>
+	</div>
 
-			<!-- Mobile Menu Toggle -->
-			<button 
-				class="lg:hidden p-2 rounded-xl text-primary hover:bg-primary/5 transition-colors"
-				on:click={toggleMenu}
-			>
-				{#if isMenuOpen}
-					<X size={28} />
-				{:else}
-					<Menu size={28} />
-				{/if}
-			</button>
+	<!-- Main Navbar -->
+	<div class="{scrolled ? 'bg-white/95 shadow-lg backdrop-blur-md py-2' : 'bg-white py-4'} transition-all duration-300">
+		<div class="container mx-auto px-4 lg:px-8">
+			<div class="flex items-center justify-between">
+				<!-- Logo Section -->
+				<a href="/" class="flex items-center gap-3 group">
+					<img src="/images/logos/degree4k.png" alt="GPGC Logo" class="h-12 w-auto transition-transform duration-300 group-hover:scale-110" />
+					<div class="hidden md:block">
+						<h1 class="text-lg font-bold leading-tight tracking-tight text-primary">GPGC</h1>
+						<p class="text-[10px] font-medium tracking-widest text-secondary uppercase font-bold">Bahawalnagar</p>
+					</div>
+				</a>
+
+				<!-- Desktop Navigation -->
+				<div class="hidden lg:flex items-center gap-1">
+					{#each navLinks as link}
+						<div 
+							class="relative group"
+							on:mouseenter={() => activeDropdown = link.name}
+							on:mouseleave={() => activeDropdown = null}
+						>
+							<a 
+								href={link.href} 
+								class="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {$page.url.pathname === link.href ? 'text-secondary' : 'text-primary hover:text-secondary'}"
+							>
+								{link.name}
+								{#if link.subLinks}
+									<ChevronDown size={14} class="transition-transform duration-200 group-hover:rotate-180" />
+								{/if}
+							</a>
+
+							<!-- Dropdown Menu -->
+							{#if link.subLinks}
+								<div class="absolute left-0 top-full pt-2 opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
+									<div class="bg-white border-t-4 border-secondary shadow-2xl rounded-b-xl overflow-hidden min-w-[240px]">
+										{#each link.subLinks as sub}
+											<a 
+												href={sub.href} 
+												class="block px-6 py-4 text-sm font-bold text-primary hover:bg-neutral-soft hover:text-secondary border-b border-neutral-100 last:border-0 transition-all duration-150"
+											>
+												{sub.name}
+											</a>
+										{/each}
+									</div>
+								</div>
+							{/if}
+						</div>
+					{/each}
+					
+					<!-- Action Buttons -->
+					<div class="ml-4 flex items-center gap-3 pl-6 border-l border-neutral-200">
+						<a href="/student-portal" class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-black text-white bg-secondary hover:bg-secondary/90 transition-all shadow-md active:scale-95 uppercase tracking-wider">
+							<LogIn size={16} />
+							Portal
+						</a>
+					</div>
+				</div>
+
+				<!-- Mobile Menu Toggle -->
+				<button 
+					class="lg:hidden p-2 rounded-xl text-primary hover:bg-primary/5 transition-colors"
+					on:click={toggleMenu}
+				>
+					{#if isMenuOpen}
+						<X size={28} />
+					{:else}
+						<Menu size={28} />
+					{/if}
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -197,13 +221,9 @@
 				{/each}
 
 				<div class="mt-6 flex flex-col gap-3">
-					<a href="/student-portal" class="flex items-center justify-center gap-2 p-4 rounded-2xl bg-secondary text-white font-bold text-center" on:click={() => isMenuOpen = false}>
+					<a href="/student-portal" class="flex items-center justify-center gap-2 p-4 rounded-2xl bg-secondary text-white font-bold text-center shadow-lg" on:click={() => isMenuOpen = false}>
 						<LogIn size={20} />
 						Student Portal
-					</a>
-					<a href="/contact" class="flex items-center justify-center gap-2 p-4 rounded-2xl border-2 border-primary text-primary font-bold text-center" on:click={() => isMenuOpen = false}>
-						<PhoneCall size={20} />
-						Contact Us
 					</a>
 				</div>
 			</div>

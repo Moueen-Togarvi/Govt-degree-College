@@ -3,12 +3,12 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-  /* Premium Academic Palette */
-  --color-primary: #002147; /* Deep Oxford Blue */
-  --color-secondary: #D4AF37; /* Royal Gold */
-  --color-accent: #800000; /* Heritage Maroon */
-  --color-neutral-soft: #F9FAFB; /* Light Grayish background */
-  --color-border-soft: #E5E7EB;
+  /* Eduka-inspired Premium Palette */
+  --color-primary: #0D5D56; /* Deep Teal */
+  --color-secondary: #F7941D; /* Vibrant Orange */
+  --color-accent: #117D74; /* Mid Teal */
+  --color-neutral-soft: #F8F9FA; /* Off-white background */
+  --color-border-soft: #E2E8F0;
 
   /* Typography */
   --font-serif: 'Playfair Display', serif;

@@ -15,7 +15,7 @@
 <div class="flex flex-col min-h-screen bg-white">
 	<Navbar />
 	
-	<main class="flex-grow pt-[80px]">
+	<main class="flex-grow pt-[120px]">
 		{@render children()}
 	</main>
 
