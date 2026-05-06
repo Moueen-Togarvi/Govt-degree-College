@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build/Output
+/app/build/
+/app/.svelte-kit/
+/app/package/
+/dist/
+/.output
+/.vercel
+/.netlify
+/.wrangler
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+!.env.test
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Security/Certificates
+.npmrc
+.yarnrc
+*.pem
+*.key
+auth.json
+secrets.json
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
