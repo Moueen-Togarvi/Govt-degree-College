@@ -1,3 +1,36 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@theme {
+  /* Premium Academic Palette */
+  --color-primary: #002147; /* Deep Oxford Blue */
+  --color-secondary: #D4AF37; /* Royal Gold */
+  --color-accent: #800000; /* Heritage Maroon */
+  --color-neutral-soft: #F9FAFB; /* Light Grayish background */
+  --color-border-soft: #E5E7EB;
+
+  /* Typography */
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Animations */
+  --animate-float: float 3s ease-in-out infinite;
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+:root {
+  background-color: var(--color-neutral-soft);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
