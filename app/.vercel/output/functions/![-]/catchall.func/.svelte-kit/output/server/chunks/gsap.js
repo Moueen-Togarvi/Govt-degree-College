@@ -1,8 +1,7 @@
 import { f as sanitize_props, m as spread_props, p as slot } from "./dev.js";
 import { t as Icon } from "./Icon.js";
-import { gsap } from "gsap";
 import "gsap/ScrollTrigger";
-import "lenis";
+import { gsap } from "gsap";
 //#region node_modules/lucide-svelte/dist/icons/phone-call.svelte
 function Phone_call($$renderer, $$props) {
 	Icon($$renderer, spread_props([
@@ -37,8 +36,5 @@ function Phone_call($$renderer, $$props) {
 function ensureGsap() {
 	return gsap;
 }
-function initLenis() {
-	return null;
-}
 //#endregion
-export { initLenis as n, Phone_call as r, ensureGsap as t };
+export { Phone_call as n, ensureGsap as t };

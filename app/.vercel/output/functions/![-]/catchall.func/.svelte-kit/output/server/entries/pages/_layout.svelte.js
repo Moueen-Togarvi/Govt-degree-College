@@ -1,4 +1,5 @@
 import "../../chunks/index-server.js";
+import "../../chunks/exports.js";
 import { Y as escape_html, _ as unsubscribe_stores, c as ensure_array_like, f as sanitize_props, g as stringify, h as store_get, l as head, m as spread_props, n as attr_class, p as slot, q as attr } from "../../chunks/dev.js";
 import { t as Icon } from "../../chunks/Icon.js";
 import { t as Book_open } from "../../chunks/book-open.js";
@@ -6,9 +7,10 @@ import { t as External_link } from "../../chunks/external-link.js";
 import { t as Graduation_cap } from "../../chunks/graduation-cap.js";
 import { n as Mail, t as Phone } from "../../chunks/phone.js";
 import { t as Map_pin } from "../../chunks/map-pin.js";
-import { r as Phone_call } from "../../chunks/gsap.js";
+import { n as Phone_call } from "../../chunks/gsap.js";
 import { t as Users } from "../../chunks/users.js";
 import { t as page } from "../../chunks/stores.js";
+import "gsap/ScrollTrigger";
 //#region node_modules/lucide-svelte/dist/icons/chevron-down.svelte
 function Chevron_down($$renderer, $$props) {
 	Icon($$renderer, spread_props([
@@ -426,7 +428,7 @@ function _layout($$renderer, $$props) {
 			$$renderer.push("<!--[0-->");
 			Navbar($$renderer, {});
 		} else $$renderer.push("<!--[-1-->");
-		$$renderer.push(`<!--]--> <main${attr_class(`flex-grow ${stringify(store_get($$store_subs ??= {}, "$page", page).url.pathname.startsWith("/admin") ? "" : "pt-[105px]")}`)}>`);
+		$$renderer.push(`<!--]--> <main${attr_class(`flex-grow overflow-x-clip ${stringify(store_get($$store_subs ??= {}, "$page", page).url.pathname.startsWith("/admin") ? "" : "pt-[105px]")}`)}>`);
 		children($$renderer);
 		$$renderer.push(`<!----></main> `);
 		if (!store_get($$store_subs ??= {}, "$page", page).url.pathname.startsWith("/admin")) {

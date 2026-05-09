@@ -7,7 +7,7 @@ import { t as Bell_ring } from "../../chunks/bell-ring.js";
 import { n as Building_2, t as School } from "../../chunks/school.js";
 import { t as File_text } from "../../chunks/file-text.js";
 import { t as Graduation_cap } from "../../chunks/graduation-cap.js";
-import { r as Phone_call } from "../../chunks/gsap.js";
+import { n as Phone_call } from "../../chunks/gsap.js";
 import { t as Scroll_text } from "../../chunks/scroll-text.js";
 import { t as Users } from "../../chunks/users.js";
 //#region node_modules/lucide-svelte/dist/icons/arrow-down.svelte
@@ -329,7 +329,7 @@ function Hero($$renderer, $$props) {
 		onDestroy(() => {
 			if (typeTimer) clearTimeout(typeTimer);
 		});
-		$$renderer.push(`<section class="relative flex min-h-[105vh] flex-col items-center justify-center overflow-hidden bg-primary"><div data-hero-curtain="" class="pointer-events-none absolute inset-0 z-40 origin-top bg-[linear-gradient(180deg,_#0d5d56_0%,_#f68b1f_100%)]"></div> <div class="absolute inset-0 z-0"><img data-parallax-bg="" src="/images/logos/hero section bg.png" alt="College Campus" class="w-full h-full object-cover opacity-90 transition-transform duration-[10s] hover:scale-110"/> <div class="absolute inset-0 bg-gradient-to-b from-primary/30 via-primary/10 to-primary/60 backdrop-brightness-[0.85]"></div></div> <div data-hero-eyebrow="" class="absolute left-8 top-12 z-30 lg:left-16"><p class="text-secondary font-black uppercase tracking-[0.3em] text-sm lg:text-base">Welcome to</p> <div class="w-12 h-1 bg-secondary mt-2 rounded-full"></div></div> <div class="container relative z-30 mx-auto px-4 text-center lg:px-8 flex flex-col items-center"><div class="space-y-3"><h2 data-hero-kicker="" class="text-[10px] font-bold uppercase tracking-[0.35em] text-white/60 lg:text-xs">Our Institution</h2> <p data-hero-legacy="" class="text-[9px] font-medium uppercase tracking-[0.35em] text-secondary/90 lg:text-[10px]">Legacy 1945</p> <h1 class="mt-4 text-3xl font-black leading-tight tracking-tight text-white drop-shadow-2xl lg:text-5xl xl:text-7xl"><!--[-->`);
+		$$renderer.push(`<section data-stack-skip="true" class="relative flex min-h-[105vh] flex-col items-center justify-center overflow-hidden bg-primary"><div data-hero-curtain="" class="pointer-events-none absolute inset-0 z-40 origin-top bg-[linear-gradient(180deg,_#0d5d56_0%,_#f68b1f_100%)]"></div> <div class="absolute inset-0 z-0"><img data-parallax-bg="" src="/images/logos/hero section bg.png" alt="College Campus" class="w-full h-full object-cover opacity-90 transition-transform duration-[10s] hover:scale-110"/> <div class="absolute inset-0 bg-gradient-to-b from-primary/30 via-primary/10 to-primary/60 backdrop-brightness-[0.85]"></div></div> <div data-hero-eyebrow="" class="absolute left-8 top-12 z-30 lg:left-16"><p class="text-secondary font-black uppercase tracking-[0.3em] text-sm lg:text-base">Welcome to</p> <div class="w-12 h-1 bg-secondary mt-2 rounded-full"></div></div> <div class="container relative z-30 mx-auto px-4 text-center lg:px-8 flex flex-col items-center"><div class="space-y-3"><h2 data-hero-kicker="" class="text-[10px] font-bold uppercase tracking-[0.35em] text-white/60 lg:text-xs">Our Institution</h2> <p data-hero-legacy="" class="text-[9px] font-medium uppercase tracking-[0.35em] text-secondary/90 lg:text-[10px]">Legacy 1945</p> <h1 class="mt-4 text-3xl font-black leading-tight tracking-tight text-white drop-shadow-2xl lg:text-5xl xl:text-7xl"><!--[-->`);
 		const each_array = ensure_array_like(heroTitleLines);
 		for (let lineIndex = 0, $$length = each_array.length; lineIndex < $$length; lineIndex++) {
 			let line = each_array[lineIndex];
@@ -427,234 +427,228 @@ function ImportantNotices($$renderer, $$props) {
 }
 //#endregion
 //#region src/lib/components/home/PrincipalMessage.svelte
-function PrincipalMessage($$renderer, $$props) {
-	$$renderer.component(($$renderer) => {
-		$$renderer.push(`<section class="relative overflow-hidden bg-white py-24"><div class="absolute inset-0 bg-[radial-gradient(circle_at_left,_rgba(13,93,86,0.06),_transparent_40%)]"></div> <div class="container relative z-10 mx-auto px-4 lg:px-8"><div class="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]"><div class="relative"><div class="absolute -left-4 top-10 h-28 w-28 rounded-full bg-secondary/15 blur-3xl"></div> <div class="absolute -bottom-10 right-10 h-36 w-36 rounded-full bg-primary/10 blur-3xl"></div> <div data-principal-img="" class="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white p-3 shadow-[0_28px_80px_rgba(13,93,86,0.12)]"><img src="/images/logos/image%20copy%202.png" alt="Prof. Wajahat Majeed" class="h-full w-full rounded-[1.5rem] object-cover"/></div> <div data-principal-card="" class="absolute bottom-8 left-0 right-8 mx-auto max-w-xs rounded-[1.5rem] border border-white/20 bg-primary/90 px-6 py-5 text-white shadow-2xl shadow-primary/30 backdrop-blur"><div class="mb-3 flex items-center gap-2 text-secondary">`);
-		Shield_check($$renderer, { size: 18 });
-		$$renderer.push(`<!----> <span class="text-xs font-black uppercase tracking-[0.28em]">Accessible Learning</span></div> <p class="text-lg font-black leading-7">Education from intermediate to BS level with a public-sector foundation.</p></div></div> <div data-principal-content="" class="space-y-8"><div class="space-y-4"><p class="text-sm font-black uppercase tracking-[0.35em] text-secondary">Principal's Message</p> <p class="max-w-2xl text-base font-medium leading-8 text-primary/65 lg:text-lg">Our mission is to keep quality education within reach for the students of Bahawalnagar, from free intermediate classes to guided BS pathways.</p></div> <div class="relative overflow-hidden rounded-[2rem] border border-border-soft bg-neutral-soft/80 p-8 shadow-[0_20px_60px_rgba(13,93,86,0.08)]">`);
-		Quote($$renderer, {
-			size: 42,
-			class: "mb-5 text-secondary/70"
-		});
-		$$renderer.push(`<!----> <p class="text-lg font-medium leading-8 text-primary/80">It is a privilege to welcome students and families to Govt Post Graduate College Bahawalnagar. We are committed to an environment where ambition is supported by strong teaching, clear guidance, and public trust.</p> <p class="mt-5 text-base font-medium leading-8 text-primary/65">Our 11th and 12th classes open the door to free intermediate education, while our BS programs extend that journey through KFUEIT-affiliated study in both morning and evening shifts.</p></div> <div class="pt-2"><h4 class="text-2xl font-black text-primary">Prof. Wajahat Majeed</h4> <p class="font-bold text-secondary">Principal, GPGC Bahawalnagar</p></div> <a href="/about/administration" class="inline-flex items-center gap-3 font-black text-primary transition-all group hover:text-secondary">Read Full Biography <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 transition-all group-hover:bg-secondary group-hover:text-white">`);
-		Arrow_right($$renderer, { size: 18 });
-		$$renderer.push(`<!----></div></a></div></div></div></section>`);
+function PrincipalMessage($$renderer) {
+	$$renderer.push(`<section class="relative overflow-hidden bg-white py-24"><div class="absolute inset-0 bg-[radial-gradient(circle_at_left,_rgba(13,93,86,0.06),_transparent_40%)]"></div> <div class="container relative z-10 mx-auto px-4 lg:px-8"><div class="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]"><div class="relative"><div class="absolute -left-4 top-10 h-28 w-28 rounded-full bg-secondary/15 blur-3xl"></div> <div class="absolute -bottom-10 right-10 h-36 w-36 rounded-full bg-primary/10 blur-3xl"></div> <div class="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white p-3 shadow-[0_28px_80px_rgba(13,93,86,0.12)]"><img src="/images/logos/image%20copy%202.png" alt="Prof. Wajahat Majeed" class="h-full w-full rounded-[1.5rem] object-cover"/></div> <div class="absolute bottom-8 left-0 right-8 mx-auto max-w-xs rounded-[1.5rem] border border-white/20 bg-primary/90 px-6 py-5 text-white shadow-2xl shadow-primary/30 backdrop-blur"><div class="mb-3 flex items-center gap-2 text-secondary">`);
+	Shield_check($$renderer, { size: 18 });
+	$$renderer.push(`<!----> <span class="text-xs font-black uppercase tracking-[0.28em]">Accessible Learning</span></div> <p class="text-lg font-black leading-7">Education from intermediate to BS level with a public-sector foundation.</p></div></div> <div class="space-y-8"><div class="space-y-4"><p class="text-sm font-black uppercase tracking-[0.35em] text-secondary">Principal's Message</p> <p class="max-w-2xl text-base font-medium leading-8 text-primary/65 lg:text-lg">Our mission is to keep quality education within reach for the students of Bahawalnagar, from free intermediate classes to guided BS pathways.</p></div> <div class="relative overflow-hidden rounded-[2rem] border border-border-soft bg-neutral-soft/80 p-8 shadow-[0_20px_60px_rgba(13,93,86,0.08)]">`);
+	Quote($$renderer, {
+		size: 42,
+		class: "mb-5 text-secondary/70"
 	});
+	$$renderer.push(`<!----> <p class="text-lg font-medium leading-8 text-primary/80">It is a privilege to welcome students and families to Govt Post Graduate College Bahawalnagar. We are committed to an environment where ambition is supported by strong teaching, clear guidance, and public trust.</p> <p class="mt-5 text-base font-medium leading-8 text-primary/65">Our 11th and 12th classes open the door to free intermediate education, while our BS programs extend that journey through KFUEIT-affiliated study in both morning and evening shifts.</p></div> <div class="pt-2"><h4 class="text-2xl font-black text-primary">Prof. Wajahat Majeed</h4> <p class="font-bold text-secondary">Principal, GPGC Bahawalnagar</p></div> <a href="/about/administration" class="inline-flex items-center gap-3 font-black text-primary transition-all group hover:text-secondary">Read Full Biography <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 transition-all group-hover:bg-secondary group-hover:text-white">`);
+	Arrow_right($$renderer, { size: 18 });
+	$$renderer.push(`<!----></div></a></div></div></div></section>`);
 }
 //#endregion
 //#region src/lib/components/home/Stats.svelte
-function Stats($$renderer, $$props) {
-	$$renderer.component(($$renderer) => {
-		const stats = [
-			{
-				label: "Active Students",
-				value: "5,000+",
-				target: 5e3,
-				suffix: "+",
-				icon: Users
-			},
-			{
-				label: "Departments",
-				value: "7",
-				target: 7,
-				suffix: "",
-				icon: Building_2
-			},
-			{
-				label: "Teachers",
-				value: "50+",
-				target: 50,
-				suffix: "+",
-				icon: School
-			},
-			{
-				label: "BS Shifts",
-				value: "2",
-				target: 2,
-				suffix: "",
-				icon: Clock_3
-			},
-			{
-				label: "Legacy",
-				value: "1945",
-				target: 1945,
-				suffix: "",
-				icon: Graduation_cap
-			}
-		];
-		const particles = [
-			{
-				top: "14%",
-				left: "8%",
-				size: 12,
-				delay: "0s",
-				duration: "6.5s",
-				variant: "star"
-			},
-			{
-				top: "22%",
-				left: "27%",
-				size: 14,
-				delay: "1.2s",
-				duration: "7.2s",
-				variant: "broken"
-			},
-			{
-				top: "18%",
-				left: "74%",
-				size: 12,
-				delay: "0.5s",
-				duration: "6.8s",
-				variant: "star"
-			},
-			{
-				top: "30%",
-				left: "88%",
-				size: 10,
-				delay: "1.6s",
-				duration: "7.6s",
-				variant: "broken"
-			},
-			{
-				top: "52%",
-				left: "14%",
-				size: 12,
-				delay: "0.9s",
-				duration: "6.9s",
-				variant: "star"
-			},
-			{
-				top: "64%",
-				left: "38%",
-				size: 10,
-				delay: "1.8s",
-				duration: "7.4s",
-				variant: "broken"
-			},
-			{
-				top: "58%",
-				left: "62%",
-				size: 13,
-				delay: "0.4s",
-				duration: "6.7s",
-				variant: "star"
-			},
-			{
-				top: "74%",
-				left: "82%",
-				size: 11,
-				delay: "1.1s",
-				duration: "7.1s",
-				variant: "broken"
-			},
-			{
-				top: "82%",
-				left: "22%",
-				size: 10,
-				delay: "0.7s",
-				duration: "6.4s",
-				variant: "star"
-			},
-			{
-				top: "86%",
-				left: "69%",
-				size: 12,
-				delay: "1.4s",
-				duration: "7.7s",
-				variant: "broken"
-			}
-		];
-		$$renderer.push(`<section class="relative overflow-hidden bg-white py-14 lg:py-16 svelte-19rawm5"><div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(247,148,29,0.06),_transparent_38%)] svelte-19rawm5"></div> <div class="stats-orb stats-orb-teal svelte-19rawm5"></div> <div class="stats-orb stats-orb-orange svelte-19rawm5"></div> <div class="stats-orb stats-orb-soft svelte-19rawm5"></div> <div class="pointer-events-none absolute inset-0 svelte-19rawm5"><!--[-->`);
-		const each_array = ensure_array_like(particles);
-		for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
-			let particle = each_array[$$index];
-			$$renderer.push(`<span${attr_class(`stats-particle ${particle.variant === "broken" ? "stats-particle-broken" : "stats-particle-star"}`, "svelte-19rawm5")}${attr_style(`top:${particle.top};left:${particle.left};width:${particle.size}px;height:${particle.size}px;animation-delay:${particle.delay};animation-duration:${particle.duration};`)}></span>`);
+function Stats($$renderer) {
+	const stats = [
+		{
+			label: "Active Students",
+			value: "5,000+",
+			target: 5e3,
+			suffix: "+",
+			icon: Users
+		},
+		{
+			label: "Departments",
+			value: "7",
+			target: 7,
+			suffix: "",
+			icon: Building_2
+		},
+		{
+			label: "Teachers",
+			value: "50+",
+			target: 50,
+			suffix: "+",
+			icon: School
+		},
+		{
+			label: "BS Shifts",
+			value: "2",
+			target: 2,
+			suffix: "",
+			icon: Clock_3
+		},
+		{
+			label: "Legacy",
+			value: "1945",
+			target: 1945,
+			suffix: "",
+			icon: Graduation_cap
 		}
-		$$renderer.push(`<!--]--></div> <div class="container relative z-10 mx-auto px-4 lg:px-8 svelte-19rawm5"><div data-stats-frame="" class="stats-frame relative overflow-hidden rounded-[2rem] border border-primary/10 px-4 py-8 lg:px-6 svelte-19rawm5"><div class="pointer-events-none absolute inset-0 svelte-19rawm5"><div class="stats-frame-border svelte-19rawm5"></div> <span class="stats-beam stats-beam-top svelte-19rawm5"></span> <span class="stats-beam stats-beam-right svelte-19rawm5"></span> <span class="stats-beam stats-beam-bottom svelte-19rawm5"></span> <span class="stats-beam stats-beam-left svelte-19rawm5"></span></div> <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-5 svelte-19rawm5"><!--[-->`);
-		const each_array_1 = ensure_array_like(stats);
-		for (let index = 0, $$length = each_array_1.length; index < $$length; index++) {
-			let stat = each_array_1[index];
-			$$renderer.push(`<div data-stats-card="" class="text-center svelte-19rawm5"${attr_style(`animation-delay: ${index * 90}ms`)}><div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float svelte-19rawm5">`);
-			if (stat.icon) {
-				$$renderer.push("<!--[-->");
-				stat.icon($$renderer, {
-					size: 24,
-					strokeWidth: 1.9
-				});
-				$$renderer.push("<!--]-->");
-			} else {
-				$$renderer.push("<!--[!-->");
-				$$renderer.push("<!--]-->");
-			}
-			$$renderer.push(`</div> <p data-stat-value="" class="text-3xl font-black text-primary lg:text-4xl svelte-19rawm5">${escape_html(stat.value)}</p> <h3 class="mt-2 text-sm font-black uppercase tracking-[0.18em] text-primary/65 lg:text-base svelte-19rawm5">${escape_html(stat.label)}</h3></div>`);
+	];
+	const particles = [
+		{
+			top: "14%",
+			left: "8%",
+			size: 12,
+			delay: "0s",
+			duration: "6.5s",
+			variant: "star"
+		},
+		{
+			top: "22%",
+			left: "27%",
+			size: 14,
+			delay: "1.2s",
+			duration: "7.2s",
+			variant: "broken"
+		},
+		{
+			top: "18%",
+			left: "74%",
+			size: 12,
+			delay: "0.5s",
+			duration: "6.8s",
+			variant: "star"
+		},
+		{
+			top: "30%",
+			left: "88%",
+			size: 10,
+			delay: "1.6s",
+			duration: "7.6s",
+			variant: "broken"
+		},
+		{
+			top: "52%",
+			left: "14%",
+			size: 12,
+			delay: "0.9s",
+			duration: "6.9s",
+			variant: "star"
+		},
+		{
+			top: "64%",
+			left: "38%",
+			size: 10,
+			delay: "1.8s",
+			duration: "7.4s",
+			variant: "broken"
+		},
+		{
+			top: "58%",
+			left: "62%",
+			size: 13,
+			delay: "0.4s",
+			duration: "6.7s",
+			variant: "star"
+		},
+		{
+			top: "74%",
+			left: "82%",
+			size: 11,
+			delay: "1.1s",
+			duration: "7.1s",
+			variant: "broken"
+		},
+		{
+			top: "82%",
+			left: "22%",
+			size: 10,
+			delay: "0.7s",
+			duration: "6.4s",
+			variant: "star"
+		},
+		{
+			top: "86%",
+			left: "69%",
+			size: 12,
+			delay: "1.4s",
+			duration: "7.7s",
+			variant: "broken"
 		}
-		$$renderer.push(`<!--]--></div></div></div></section>`);
-	});
+	];
+	$$renderer.push(`<section class="relative overflow-hidden bg-white py-14 lg:py-16 svelte-19rawm5"><div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(247,148,29,0.06),_transparent_38%)] svelte-19rawm5"></div> <div class="stats-orb stats-orb-teal svelte-19rawm5"></div> <div class="stats-orb stats-orb-orange svelte-19rawm5"></div> <div class="stats-orb stats-orb-soft svelte-19rawm5"></div> <div class="pointer-events-none absolute inset-0 svelte-19rawm5"><!--[-->`);
+	const each_array = ensure_array_like(particles);
+	for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
+		let particle = each_array[$$index];
+		$$renderer.push(`<span${attr_class(`stats-particle ${particle.variant === "broken" ? "stats-particle-broken" : "stats-particle-star"}`, "svelte-19rawm5")}${attr_style(`top:${particle.top};left:${particle.left};width:${particle.size}px;height:${particle.size}px;animation-delay:${particle.delay};animation-duration:${particle.duration};`)}></span>`);
+	}
+	$$renderer.push(`<!--]--></div> <div class="container relative z-10 mx-auto px-4 lg:px-8 svelte-19rawm5"><div class="stats-frame relative overflow-hidden rounded-[2rem] border border-primary/10 px-4 py-8 lg:px-6 svelte-19rawm5"><div class="pointer-events-none absolute inset-0 svelte-19rawm5"><div class="stats-frame-border svelte-19rawm5"></div> <span class="stats-beam stats-beam-top svelte-19rawm5"></span> <span class="stats-beam stats-beam-right svelte-19rawm5"></span> <span class="stats-beam stats-beam-bottom svelte-19rawm5"></span> <span class="stats-beam stats-beam-left svelte-19rawm5"></span></div> <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-5 svelte-19rawm5"><!--[-->`);
+	const each_array_1 = ensure_array_like(stats);
+	for (let index = 0, $$length = each_array_1.length; index < $$length; index++) {
+		let stat = each_array_1[index];
+		$$renderer.push(`<div class="text-center svelte-19rawm5"${attr_style(`animation-delay: ${index * 90}ms`)}><div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float svelte-19rawm5">`);
+		if (stat.icon) {
+			$$renderer.push("<!--[-->");
+			stat.icon($$renderer, {
+				size: 24,
+				strokeWidth: 1.9
+			});
+			$$renderer.push("<!--]-->");
+		} else {
+			$$renderer.push("<!--[!-->");
+			$$renderer.push("<!--]-->");
+		}
+		$$renderer.push(`</div> <p class="text-3xl font-black text-primary lg:text-4xl svelte-19rawm5">${escape_html(stat.value)}</p> <h3 class="mt-2 text-sm font-black uppercase tracking-[0.18em] text-primary/65 lg:text-base svelte-19rawm5">${escape_html(stat.label)}</h3></div>`);
+	}
+	$$renderer.push(`<!--]--></div></div></div></section>`);
 }
 //#endregion
 //#region src/lib/components/home/FeaturedPrograms.svelte
-function FeaturedPrograms($$renderer, $$props) {
-	$$renderer.component(($$renderer) => {
-		const programs = [
-			{
-				title: "11th Class",
-				tag: "Free",
-				tagStyle: "bg-secondary/10 text-secondary border-secondary/20",
-				description: "Intermediate Part-I under the Government of Punjab with accessible, no-fee learning.",
-				href: "/academics/11th",
-				cta: "View 11th Class",
-				icon: University
-			},
-			{
-				title: "12th Class",
-				tag: "Free",
-				tagStyle: "bg-secondary/10 text-secondary border-secondary/20",
-				description: "Intermediate Part-II continues the same public-sector pathway with zero tuition burden.",
-				href: "/academics/12th",
-				cta: "View 12th Class",
-				icon: Badge_check
-			},
-			{
-				title: "BS Morning",
-				tag: "KFUEIT Affiliated",
-				tagStyle: "bg-primary/10 text-primary border-primary/15",
-				description: "Structured morning BS classes with university-linked academic direction and campus support.",
-				href: "/academics/bs",
-				cta: "Explore BS Morning",
-				icon: Graduation_cap
-			},
-			{
-				title: "BS Evening",
-				tag: "KFUEIT Affiliated",
-				tagStyle: "bg-primary/10 text-primary border-primary/15",
-				description: "An evening BS option designed for flexibility while staying within the same affiliated framework.",
-				href: "/academics/bs",
-				cta: "Explore BS Evening",
-				icon: Clock_3
-			}
-		];
-		$$renderer.push(`<section class="relative overflow-hidden bg-neutral-soft py-24" style="perspective: 1200px;"><div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(13,93,86,0.07),_transparent_36%)]"></div> <div class="container relative z-10 mx-auto px-4 lg:px-8"><div class="mx-auto mb-14 max-w-3xl text-center motion-rise"><p class="mb-4 text-sm font-black uppercase tracking-[0.35em] text-secondary">Featured Programs</p> <h2 class="text-4xl font-black text-primary lg:text-5xl">Clear paths for intermediate and BS students.</h2> <p class="mt-5 text-base font-medium leading-8 text-primary/65 lg:text-lg">Every card below matches the actual academic structure of the college, with free intermediate classes and KFUEIT-affiliated BS study.</p></div> <div class="grid gap-6 lg:grid-cols-2 2xl:grid-cols-4"><!--[-->`);
-		const each_array = ensure_array_like(programs);
-		for (let index = 0, $$length = each_array.length; index < $$length; index++) {
-			let program = each_array[index];
-			$$renderer.push(`<div data-program-card="" class="group relative overflow-hidden rounded-[2rem] border border-border-soft bg-white p-8 shadow-[0_24px_70px_rgba(13,93,86,0.08)] transition-all duration-300 hover:shadow-[0_28px_90px_rgba(13,93,86,0.12)]" style="transform-style: preserve-3d;"><div class="absolute right-0 top-0 h-32 w-32 rounded-full bg-secondary/10 blur-3xl transition-transform duration-500 group-hover:scale-125"></div> <div class="relative flex h-full flex-col"><div class="mb-8 flex items-start justify-between gap-4"><div class="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-primary text-white motion-float">`);
-			if (program.icon) {
-				$$renderer.push("<!--[-->");
-				program.icon($$renderer, { size: 30 });
-				$$renderer.push("<!--]-->");
-			} else {
-				$$renderer.push("<!--[!-->");
-				$$renderer.push("<!--]-->");
-			}
-			$$renderer.push(`</div> <span${attr_class(`rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] ${program.tagStyle}`)}>${escape_html(program.tag)}</span></div> <h3 class="text-2xl font-black text-primary">${escape_html(program.title)}</h3> <p class="mt-4 flex-1 text-sm font-medium leading-7 text-primary/65">${escape_html(program.description)}</p> <a${attr("href", program.href)} class="mt-8 inline-flex items-center gap-3 font-black text-primary transition-colors hover:text-secondary">${escape_html(program.cta)} `);
-			Arrow_right($$renderer, {
-				size: 18,
-				class: "transition-transform group-hover:translate-x-1"
-			});
-			$$renderer.push(`<!----></a></div></div>`);
+function FeaturedPrograms($$renderer) {
+	const programs = [
+		{
+			title: "11th Class",
+			tag: "Free",
+			tagStyle: "bg-secondary/10 text-secondary border-secondary/20",
+			description: "Intermediate Part-I under the Government of Punjab with accessible, no-fee learning.",
+			href: "/academics/11th",
+			cta: "View 11th Class",
+			icon: University
+		},
+		{
+			title: "12th Class",
+			tag: "Free",
+			tagStyle: "bg-secondary/10 text-secondary border-secondary/20",
+			description: "Intermediate Part-II continues the same public-sector pathway with zero tuition burden.",
+			href: "/academics/12th",
+			cta: "View 12th Class",
+			icon: Badge_check
+		},
+		{
+			title: "BS Morning",
+			tag: "KFUEIT Affiliated",
+			tagStyle: "bg-primary/10 text-primary border-primary/15",
+			description: "Structured morning BS classes with university-linked academic direction and campus support.",
+			href: "/academics/bs",
+			cta: "Explore BS Morning",
+			icon: Graduation_cap
+		},
+		{
+			title: "BS Evening",
+			tag: "KFUEIT Affiliated",
+			tagStyle: "bg-primary/10 text-primary border-primary/15",
+			description: "An evening BS option designed for flexibility while staying within the same affiliated framework.",
+			href: "/academics/bs",
+			cta: "Explore BS Evening",
+			icon: Clock_3
 		}
-		$$renderer.push(`<!--]--></div></div></section>`);
-	});
+	];
+	$$renderer.push(`<section class="relative overflow-hidden bg-neutral-soft py-24"><div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(13,93,86,0.07),_transparent_36%)]"></div> <div class="container relative z-10 mx-auto px-4 lg:px-8"><div class="mx-auto mb-14 max-w-3xl text-center motion-rise"><p class="mb-4 text-sm font-black uppercase tracking-[0.35em] text-secondary">Featured Programs</p> <h2 class="text-4xl font-black text-primary lg:text-5xl">Clear paths for intermediate and BS students.</h2> <p class="mt-5 text-base font-medium leading-8 text-primary/65 lg:text-lg">Every card below matches the actual academic structure of the college, with free intermediate classes and KFUEIT-affiliated BS study.</p></div> <div class="grid gap-6 lg:grid-cols-2 2xl:grid-cols-4"><!--[-->`);
+	const each_array = ensure_array_like(programs);
+	for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
+		let program = each_array[$$index];
+		$$renderer.push(`<div class="group relative overflow-hidden rounded-[2rem] border border-border-soft bg-white p-8 shadow-[0_24px_70px_rgba(13,93,86,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_90px_rgba(13,93,86,0.12)]"><div class="absolute right-0 top-0 h-32 w-32 rounded-full bg-secondary/10 blur-3xl transition-transform duration-500 group-hover:scale-125"></div> <div class="relative flex h-full flex-col"><div class="mb-8 flex items-start justify-between gap-4"><div class="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-primary text-white motion-float">`);
+		if (program.icon) {
+			$$renderer.push("<!--[-->");
+			program.icon($$renderer, { size: 30 });
+			$$renderer.push("<!--]-->");
+		} else {
+			$$renderer.push("<!--[!-->");
+			$$renderer.push("<!--]-->");
+		}
+		$$renderer.push(`</div> <span${attr_class(`rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] ${program.tagStyle}`)}>${escape_html(program.tag)}</span></div> <h3 class="text-2xl font-black text-primary">${escape_html(program.title)}</h3> <p class="mt-4 flex-1 text-sm font-medium leading-7 text-primary/65">${escape_html(program.description)}</p> <a${attr("href", program.href)} class="mt-8 inline-flex items-center gap-3 font-black text-primary transition-colors hover:text-secondary">${escape_html(program.cta)} `);
+		Arrow_right($$renderer, {
+			size: 18,
+			class: "transition-transform group-hover:translate-x-1"
+		});
+		$$renderer.push(`<!----></a></div></div>`);
+	}
+	$$renderer.push(`<!--]--></div></div></section>`);
 }
 //#endregion
 //#region src/lib/components/home/GalleryPreview.svelte
@@ -706,7 +700,7 @@ function GalleryPreview($$renderer, $$props) {
 		const visibleItems = derived(() => Array.from({ length: 5 }, (_, offset) => galleryItems[(activeIndex + offset) % galleryItems.length]));
 		$$renderer.push(`<section class="relative overflow-hidden bg-neutral-soft py-24"><div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(247,148,29,0.10),_transparent_26%)]"></div> <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(13,93,86,0.08),_transparent_26%)]"></div> <div class="container relative z-10 mx-auto px-4 lg:px-8"><div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"><div class="max-w-3xl motion-rise"><p class="mb-4 text-sm font-black uppercase tracking-[0.35em] text-secondary">Campus Life</p> <h2 class="text-4xl font-black text-primary lg:text-5xl">A premium grid shaped around real moments from campus.</h2> <p class="mt-5 text-base font-medium leading-8 text-primary/65 lg:text-lg">Images now rotate every 5 seconds with smooth transitions, while the layout keeps one large campus frame and compact square highlights.</p></div> <a href="/news/gallery" class="inline-flex items-center gap-3 self-start rounded-full border border-primary/15 bg-white px-6 py-3 font-black text-primary shadow-sm transition-all hover:-translate-y-1 hover:text-secondary motion-rise">View Full Gallery `);
 		Arrow_right($$renderer, { size: 18 });
-		$$renderer.push(`<!----></a></div> <div class="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-stretch"><div data-gallery-item="" class="group relative isolate h-[420px] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_24px_70px_rgba(13,93,86,0.10)] lg:h-[470px]"><!--[-->`);
+		$$renderer.push(`<!----></a></div> <div class="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-stretch"><div class="group relative isolate h-[420px] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_24px_70px_rgba(13,93,86,0.10)] lg:h-[470px]"><!--[-->`);
 		const each_array = ensure_array_like([visibleItems()[0]]);
 		for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
 			let item = each_array[$$index];
@@ -716,56 +710,54 @@ function GalleryPreview($$renderer, $$props) {
 		const each_array_1 = ensure_array_like(visibleItems().slice(1));
 		for (let i = 0, $$length = each_array_1.length; i < $$length; i++) {
 			let item = each_array_1[i];
-			$$renderer.push(`<div data-gallery-item="" class="group relative isolate aspect-square overflow-hidden rounded-[1.7rem] border border-white/60 bg-white shadow-[0_18px_50px_rgba(13,93,86,0.08)] lg:h-full"><div class="absolute inset-0 transition-opacity duration-700"><img${attr("src", item.src)}${attr("alt", item.title)} class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]" loading="lazy" decoding="async"/> <div class="absolute inset-0 bg-gradient-to-t from-primary/88 via-primary/8 to-transparent"></div> <div class="absolute inset-x-0 bottom-0 p-4 text-white"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-secondary">${escape_html(item.tag)}</p> <h3 class="mt-2 text-lg font-black leading-tight lg:text-xl">${escape_html(item.title)}</h3></div></div></div>`);
+			$$renderer.push(`<div class="group relative isolate aspect-square overflow-hidden rounded-[1.7rem] border border-white/60 bg-white shadow-[0_18px_50px_rgba(13,93,86,0.08)] lg:h-full"><div class="absolute inset-0 transition-opacity duration-700"><img${attr("src", item.src)}${attr("alt", item.title)} class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]" loading="lazy" decoding="async"/> <div class="absolute inset-0 bg-gradient-to-t from-primary/88 via-primary/8 to-transparent"></div> <div class="absolute inset-x-0 bottom-0 p-4 text-white"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-secondary">${escape_html(item.tag)}</p> <h3 class="mt-2 text-lg font-black leading-tight lg:text-xl">${escape_html(item.title)}</h3></div></div></div>`);
 		}
 		$$renderer.push(`<!--]--></div></div></div></section>`);
 	});
 }
 //#endregion
 //#region src/lib/components/home/AdmissionsJourney.svelte
-function AdmissionsJourney($$renderer, $$props) {
-	$$renderer.component(($$renderer) => {
-		const steps = [
-			{
-				title: "Choose Your Program",
-				description: "Select 11th, 12th, BS Morning, or BS Evening according to your academic path.",
-				icon: Graduation_cap
-			},
-			{
-				title: "Prepare Documents",
-				description: "Collect the required certificates, records, and application materials.",
-				icon: File_text
-			},
-			{
-				title: "Verification and Guidance",
-				description: "Follow the admission procedure, eligibility checks, and merit-related steps.",
-				icon: Clipboard_check
-			},
-			{
-				title: "Start Classes",
-				description: "Begin free intermediate studies or move into KFUEIT-affiliated BS classes.",
-				icon: Badge_check
-			}
-		];
-		$$renderer.push(`<section class="relative overflow-hidden bg-white py-24"><div class="absolute inset-0 bg-[linear-gradient(180deg,_rgba(247,148,29,0.03),_transparent_30%,_rgba(13,93,86,0.05))]"></div> <div class="container relative z-10 mx-auto px-4 lg:px-8"><div class="mx-auto mb-14 max-w-3xl text-center motion-rise"><p class="mb-4 text-sm font-black uppercase tracking-[0.35em] text-secondary">Admissions Journey</p> <h2 class="text-4xl font-black text-primary lg:text-5xl">A clear path from interest to enrollment.</h2> <p class="mt-5 text-base font-medium leading-8 text-primary/65 lg:text-lg">Keep the process easy to understand: 11th and 12th classes are free, while BS programs are the ones affiliated with KFUEIT.</p></div> <div class="relative"><div class="absolute left-0 right-0 top-10 hidden xl:block pointer-events-none"><svg width="100%" height="20" viewBox="0 0 1200 20" fill="none" class="overflow-visible"><path data-journey-path="" d="M 150 10 L 1050 10" stroke="#f68b1f" stroke-width="2" stroke-dasharray="1000" stroke-dashoffset="0" opacity="0.25"></path></svg></div> <div class="grid gap-6 xl:grid-cols-4"><!--[-->`);
-		const each_array = ensure_array_like(steps);
-		for (let index = 0, $$length = each_array.length; index < $$length; index++) {
-			let step = each_array[index];
-			$$renderer.push(`<div data-journey-step="" class="relative rounded-[2rem] border border-border-soft bg-neutral-soft/80 p-7 shadow-[0_20px_60px_rgba(13,93,86,0.08)]"><div class="mb-6 flex items-center justify-between"><div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float">`);
-			if (step.icon) {
-				$$renderer.push("<!--[-->");
-				step.icon($$renderer, { size: 24 });
-				$$renderer.push("<!--]-->");
-			} else {
-				$$renderer.push("<!--[!-->");
-				$$renderer.push("<!--]-->");
-			}
-			$$renderer.push(`</div> <span class="text-xs font-black uppercase tracking-[0.24em] text-secondary">Step ${escape_html(index + 1)}</span></div> <h3 class="text-xl font-black text-primary">${escape_html(step.title)}</h3> <p class="mt-3 text-sm font-medium leading-7 text-primary/65">${escape_html(step.description)}</p></div>`);
+function AdmissionsJourney($$renderer) {
+	const steps = [
+		{
+			title: "Choose Your Program",
+			description: "Select 11th, 12th, BS Morning, or BS Evening according to your academic path.",
+			icon: Graduation_cap
+		},
+		{
+			title: "Prepare Documents",
+			description: "Collect the required certificates, records, and application materials.",
+			icon: File_text
+		},
+		{
+			title: "Verification and Guidance",
+			description: "Follow the admission procedure, eligibility checks, and merit-related steps.",
+			icon: Clipboard_check
+		},
+		{
+			title: "Start Classes",
+			description: "Begin free intermediate studies or move into KFUEIT-affiliated BS classes.",
+			icon: Badge_check
 		}
-		$$renderer.push(`<!--]--></div></div> <div class="mt-10 flex flex-col gap-4 rounded-[2rem] border border-secondary/20 bg-secondary/10 p-6 text-primary lg:flex-row lg:items-center lg:justify-between motion-rise"><div><p class="text-sm font-black uppercase tracking-[0.28em] text-secondary">Important Note</p> <p class="mt-2 text-lg font-black">11th and 12th classes are free. KFUEIT affiliation applies to BS classes only.</p></div> <a href="/admissions/how-to-apply" class="inline-flex items-center gap-3 self-start rounded-full bg-primary px-6 py-3 font-black text-white transition-all hover:-translate-y-1 hover:bg-accent">Read Admission Guide `);
-		Arrow_right($$renderer, { size: 18 });
-		$$renderer.push(`<!----></a></div></div></section>`);
-	});
+	];
+	$$renderer.push(`<section class="relative overflow-hidden bg-white py-24"><div class="absolute inset-0 bg-[linear-gradient(180deg,_rgba(247,148,29,0.03),_transparent_30%,_rgba(13,93,86,0.05))]"></div> <div class="container relative z-10 mx-auto px-4 lg:px-8"><div class="mx-auto mb-14 max-w-3xl text-center motion-rise"><p class="mb-4 text-sm font-black uppercase tracking-[0.35em] text-secondary">Admissions Journey</p> <h2 class="text-4xl font-black text-primary lg:text-5xl">A clear path from interest to enrollment.</h2> <p class="mt-5 text-base font-medium leading-8 text-primary/65 lg:text-lg">Keep the process easy to understand: 11th and 12th classes are free, while BS programs are the ones affiliated with KFUEIT.</p></div> <div class="relative"><div class="absolute left-0 right-0 top-10 hidden xl:block pointer-events-none"><svg width="100%" height="20" viewBox="0 0 1200 20" fill="none" class="overflow-visible"><path d="M 150 10 L 1050 10" stroke="#f68b1f" stroke-width="2" stroke-dasharray="1000" stroke-dashoffset="0" opacity="0.25"></path></svg></div> <div class="grid gap-6 xl:grid-cols-4"><!--[-->`);
+	const each_array = ensure_array_like(steps);
+	for (let index = 0, $$length = each_array.length; index < $$length; index++) {
+		let step = each_array[index];
+		$$renderer.push(`<div class="relative rounded-[2rem] border border-border-soft bg-neutral-soft/80 p-7 shadow-[0_20px_60px_rgba(13,93,86,0.08)]"><div class="mb-6 flex items-center justify-between"><div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float">`);
+		if (step.icon) {
+			$$renderer.push("<!--[-->");
+			step.icon($$renderer, { size: 24 });
+			$$renderer.push("<!--]-->");
+		} else {
+			$$renderer.push("<!--[!-->");
+			$$renderer.push("<!--]-->");
+		}
+		$$renderer.push(`</div> <span class="text-xs font-black uppercase tracking-[0.24em] text-secondary">Step ${escape_html(index + 1)}</span></div> <h3 class="text-xl font-black text-primary">${escape_html(step.title)}</h3> <p class="mt-3 text-sm font-medium leading-7 text-primary/65">${escape_html(step.description)}</p></div>`);
+	}
+	$$renderer.push(`<!--]--></div></div> <div class="mt-10 flex flex-col gap-4 rounded-[2rem] border border-secondary/20 bg-secondary/10 p-6 text-primary lg:flex-row lg:items-center lg:justify-between motion-rise"><div><p class="text-sm font-black uppercase tracking-[0.28em] text-secondary">Important Note</p> <p class="mt-2 text-lg font-black">11th and 12th classes are free. KFUEIT affiliation applies to BS classes only.</p></div> <a href="/admissions/how-to-apply" class="inline-flex items-center gap-3 self-start rounded-full bg-primary px-6 py-3 font-black text-white transition-all hover:-translate-y-1 hover:bg-accent">Read Admission Guide `);
+	Arrow_right($$renderer, { size: 18 });
+	$$renderer.push(`<!----></a></div></div></section>`);
 }
 //#endregion
 //#region src/lib/components/home/FinalCta.svelte
@@ -795,14 +787,14 @@ function _page($$renderer, $$props) {
 		NewsTicker($$renderer, { announcements: data.tickerAnnouncements });
 		$$renderer.push(`<!----> `);
 		Hero($$renderer, {});
-		$$renderer.push(`<!----> <div class="home-stack-zone svelte-1uha8ag"><div class="home-stack-panel svelte-1uha8ag"><div data-stack-sticky="" class="home-stack-sticky svelte-1uha8ag">`);
+		$$renderer.push(`<!----> `);
 		Stats($$renderer, {});
-		$$renderer.push(`<!----></div></div> <div class="home-stack-panel svelte-1uha8ag"><div data-stack-sticky="" class="home-stack-sticky svelte-1uha8ag">`);
+		$$renderer.push(`<!----> `);
 		FeaturedPrograms($$renderer, {});
-		$$renderer.push(`<!----></div></div> <div class="home-stack-panel svelte-1uha8ag"><div data-stack-sticky="" class="home-stack-sticky svelte-1uha8ag">`);
-		ImportantNotices($$renderer, { notices: data.noticeBoardItems });
-		$$renderer.push(`<!----></div></div></div> `);
+		$$renderer.push(`<!----> `);
 		HomeLogos($$renderer, {});
+		$$renderer.push(`<!----> `);
+		ImportantNotices($$renderer, { notices: data.noticeBoardItems });
 		$$renderer.push(`<!----> `);
 		PrincipalMessage($$renderer, {});
 		$$renderer.push(`<!----> `);
