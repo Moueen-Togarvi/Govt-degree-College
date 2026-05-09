@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { Menu, X, ChevronDown, GraduationCap, Users, BookOpen, Newspaper, LogIn, PhoneCall, Home, Mail, MapPin } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { onMount, tick } from 'svelte';
+	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
 
 	let isMenuOpen = $state(false);
+	let menuVisible = $state(false);
 	let scrolled = $state(false);
 	let activeDropdown = $state<string | null>(null);
+	let navElement = $state<HTMLElement | null>(null);
+	let mobileDrawer = $state<HTMLElement | null>(null);
+	let menuAnimating = false;
 
 	const navLinks = [
 		{ name: 'Home', href: '/', icon: Home },
@@ -72,26 +77,238 @@
 		}
 	];
 
-	function toggleMenu() {
-		isMenuOpen = !isMenuOpen;
-	}
-
 	function toggleDropdown(name: string) {
 		activeDropdown = activeDropdown === name ? null : name;
+	}
+
+	async function animateMobileMenu(direction: 'in' | 'out') {
+		if (!mobileDrawer || prefersReducedMotion()) return;
+
+		const gsap = ensureGsap();
+		const rows = mobileDrawer.querySelectorAll('[data-mobile-row]');
+		const portal = mobileDrawer.querySelector('[data-mobile-portal]');
+
+		try {
+			await new Promise<void>((resolve) => {
+				const timeline = gsap.timeline({
+					defaults: {
+						ease: direction === 'in' ? 'power3.out' : 'power3.in'
+					},
+					onComplete: resolve
+				});
+
+				if (direction === 'in') {
+					gsap.set(mobileDrawer, {
+						autoAlpha: 1,
+						clipPath: 'inset(0 0 100% 0)'
+					});
+					gsap.set([rows, portal], {
+						autoAlpha: 0,
+						y: 28,
+						skewY: 5,
+						filter: 'blur(8px)'
+					});
+
+					timeline
+						.to(mobileDrawer, {
+							clipPath: 'inset(0 0 0% 0)',
+							duration: 0.52
+						})
+						.to(
+							rows,
+							{
+								autoAlpha: 1,
+								y: 0,
+								skewY: 0,
+								filter: 'blur(0px)',
+								duration: 0.48,
+								stagger: 0.06
+							},
+							'-=0.32'
+						)
+						.to(
+							portal,
+							{
+								autoAlpha: 1,
+								y: 0,
+								skewY: 0,
+								filter: 'blur(0px)',
+								duration: 0.42
+							},
+							'-=0.18'
+						);
+				} else {
+					timeline
+						.to(
+							[rows, portal],
+							{
+								autoAlpha: 0,
+								y: 24,
+								skewY: 4,
+								filter: 'blur(8px)',
+								duration: 0.2,
+								stagger: {
+									each: 0.03,
+									from: 'end'
+								}
+							}
+						)
+						.to(
+							mobileDrawer,
+							{
+								autoAlpha: 0,
+								clipPath: 'inset(0 0 100% 0)',
+								duration: 0.34
+							},
+							'-=0.08'
+						);
+				}
+			});
+		} catch (error) {
+			console.error('Navbar mobile menu animation failed:', error);
+			gsap.set(mobileDrawer, { clearProps: 'all', autoAlpha: 1 });
+			gsap.set([rows, portal], { clearProps: 'all', autoAlpha: 1 });
+		}
+	}
+
+	async function openMenu() {
+		if (menuAnimating) return;
+
+		menuAnimating = true;
+		menuVisible = true;
+		isMenuOpen = true;
+		await tick();
+		await animateMobileMenu('in');
+		menuAnimating = false;
+	}
+
+	async function closeMenu() {
+		if (menuAnimating || !menuVisible) return;
+
+		menuAnimating = true;
+		await animateMobileMenu('out');
+		isMenuOpen = false;
+		menuVisible = false;
+		activeDropdown = null;
+		menuAnimating = false;
+	}
+
+	async function toggleMenu() {
+		if (menuVisible) {
+			await closeMenu();
+			return;
+		}
+
+		await openMenu();
 	}
 
 	onMount(() => {
 		const handleScroll = () => {
 			scrolled = window.scrollY > 20;
 		};
+
+		handleScroll();
 		window.addEventListener('scroll', handleScroll);
+
+		if (navElement && !prefersReducedMotion()) {
+			const gsap = ensureGsap();
+			const context = gsap.context(() => {
+				try {
+					const navItems = gsap.utils.toArray<HTMLElement>('[data-nav-item]');
+					const topBar = document.querySelector('[data-nav-topbar]');
+					const mainNav = document.querySelector('[data-nav-shell]');
+
+					gsap
+						.timeline({
+							defaults: {
+								ease: 'power3.out'
+							}
+						})
+						.from('[data-nav-shell]', {
+							autoAlpha: 0,
+							y: -36,
+							duration: 0.6
+						})
+						.from(
+							'[data-nav-logo]',
+							{
+								autoAlpha: 0,
+								x: -28,
+								skewY: 5,
+								duration: 0.55
+							},
+							'-=0.25'
+						)
+						.from(
+							navItems,
+							{
+								autoAlpha: 0,
+								y: -20,
+								skewY: 5,
+								duration: 0.4,
+								stagger: 0.06
+							},
+							'-=0.26'
+						)
+						.from(
+							'[data-nav-cta]',
+							{
+								autoAlpha: 0,
+								scale: 0.88,
+								filter: 'blur(8px)',
+								immediateRender: false,
+								duration: 0.45
+							},
+							'-=0.18'
+						);
+
+						ScrollTrigger.create({
+							start: 'top -50',
+							onToggle: (self) => {
+							const isScrolled = self.isActive;
+							if (topBar) {
+								gsap.to(topBar, {
+									height: isScrolled ? 0 : 'auto',
+									autoAlpha: isScrolled ? 0 : 1,
+									duration: 0.4,
+									ease: 'power2.inOut'
+								});
+							}
+							if (mainNav) {
+								gsap.to(mainNav, {
+									paddingTop: isScrolled ? '4px' : '8px',
+									paddingBottom: isScrolled ? '4px' : '8px',
+									backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 1)',
+									boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.08)' : '0 0 0 rgba(0,0,0,0)',
+									duration: 0.4,
+									ease: 'power2.inOut'
+								});
+							}
+						}
+					});
+				} catch (error) {
+					console.error('Navbar GSAP animation failed:', error);
+					gsap.set('[data-nav-shell]', { clearProps: 'all', autoAlpha: 1 });
+					gsap.set('[data-nav-cta]', { clearProps: 'all', autoAlpha: 1 });
+				}
+			}, navElement);
+
+			return () => {
+				window.removeEventListener('scroll', handleScroll);
+				context.revert();
+			};
+		}
+
 		return () => window.removeEventListener('scroll', handleScroll);
 	});
 </script>
 
-<nav class="fixed top-0 z-50 w-full transition-all duration-500 {scrolled ? 'shadow-[0_10px_30px_rgba(0,0,0,0.08)]' : ''}">
+<nav
+	bind:this={navElement}
+	class="fixed top-0 z-50 w-full transition-all duration-500 {scrolled ? 'shadow-[0_10px_30px_rgba(0,0,0,0.08)]' : ''}"
+>
 	<!-- Top Bar (Inspiration from Eduka) -->
-	<div class="hidden lg:block bg-primary text-white/90 py-2 border-b border-white/10">
+	<div data-nav-topbar class="hidden lg:block bg-primary text-white/90 py-2 border-b border-white/10 overflow-hidden">
 		<div class="container mx-auto px-4 lg:px-8 flex justify-between items-center text-xs font-medium">
 			<div class="flex items-center gap-6">
 				<div class="flex items-center gap-2">
@@ -126,11 +343,14 @@
 	</div>
 
 	<!-- Main Navbar -->
-	<div class="{scrolled ? 'bg-white/95 shadow-lg backdrop-blur-md py-0.5' : 'bg-white py-1'} transition-all duration-300">
+	<div
+		data-nav-shell
+		class="{scrolled ? 'bg-white/95 shadow-lg backdrop-blur-md py-0.5' : 'bg-white py-1'} transition-all duration-300"
+	>
 		<div class="container mx-auto px-4 lg:px-8">
 			<div class="flex items-center justify-between">
 				<!-- Logo Section -->
-				<a href="/" class="flex items-center gap-4 group">
+				<a data-nav-logo href="/" class="flex items-center gap-4 group">
 					<div class="bg-white p-1 rounded-lg shadow-sm border border-neutral-100 group-hover:border-secondary transition-colors">
 						<img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-14 w-auto transition-transform duration-300 group-hover:scale-105" />
 					</div>
@@ -144,6 +364,7 @@
 				<div class="hidden lg:flex items-center gap-1">
 					{#each navLinks as link}
 						<div 
+							data-nav-item
 							class="relative group"
 							role="none"
 							onmouseenter={() => activeDropdown = link.name}
@@ -182,7 +403,11 @@
 					
 					<!-- Action Buttons -->
 					<div class="ml-6 flex items-center gap-3 pl-8 border-l border-neutral-200">
-						<a href="/student-portal" class="flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-black text-white bg-secondary hover:bg-secondary/90 hover:scale-105 hover:shadow-lg hover:shadow-secondary/20 transition-all active:scale-95 uppercase tracking-widest">
+						<a
+							data-nav-cta
+							href="/student-portal"
+							class="flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-black text-white bg-secondary hover:bg-secondary/90 hover:scale-105 hover:shadow-lg hover:shadow-secondary/20 transition-all active:scale-95 uppercase tracking-widest"
+						>
 							<LogIn size={16} />
 							Portal
 						</a>
@@ -206,11 +431,14 @@
 	</div>
 
 	<!-- Mobile Navigation Drawer -->
-	{#if isMenuOpen}
-		<div class="lg:hidden fixed inset-0 top-[68px] bg-white z-40 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
+	{#if menuVisible}
+		<div
+			bind:this={mobileDrawer}
+			class="mobile-drawer lg:hidden fixed inset-0 top-[68px] z-40 overflow-y-auto bg-white"
+		>
 			<div class="flex flex-col p-6 gap-2">
 				{#each navLinks as link}
-					<div>
+					<div data-mobile-row>
 						<button 
 							class="w-full flex items-center justify-between p-4 rounded-2xl text-lg font-bold text-primary hover:bg-primary/5"
 							onclick={() => toggleDropdown(link.name)}
@@ -227,7 +455,11 @@
 						{#if link.subLinks && activeDropdown === link.name}
 							<div class="ml-12 flex flex-col gap-1 border-l-2 border-secondary/20 pl-4 py-2 animate-in slide-in-from-left-2">
 								{#each link.subLinks as sub}
-									<a href={sub.href} class="p-3 text-sm font-semibold text-primary/70 hover:text-primary transition-colors" onclick={() => isMenuOpen = false}>
+									<a
+										href={sub.href}
+										class="p-3 text-sm font-semibold text-primary/70 transition-colors hover:text-primary"
+										onclick={closeMenu}
+									>
 										{sub.name}
 									</a>
 								{/each}
@@ -237,7 +469,12 @@
 				{/each}
 
 				<div class="mt-6 flex flex-col gap-3">
-					<a href="/student-portal" class="flex items-center justify-center gap-2 p-4 rounded-2xl bg-secondary text-white font-bold text-center shadow-lg" onclick={() => isMenuOpen = false}>
+					<a
+						data-mobile-portal
+						href="/student-portal"
+						class="flex items-center justify-center gap-2 rounded-2xl bg-secondary p-4 text-center font-bold text-white shadow-lg"
+						onclick={closeMenu}
+					>
 						<LogIn size={20} />
 						Student Portal
 					</a>
@@ -246,3 +483,10 @@
 		</div>
 	{/if}
 </nav>
+
+<style>
+	.mobile-drawer {
+		clip-path: inset(0 0 100% 0);
+		will-change: clip-path, opacity, transform;
+	}
+</style>

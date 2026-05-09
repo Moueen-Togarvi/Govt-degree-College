@@ -4,8 +4,15 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { ensureGsap, initLenis } from '$lib/gsap';
 
 	let { children } = $props();
+
+	onMount(() => {
+		ensureGsap();
+		initLenis();
+	});
 </script>
 
 <svelte:head>

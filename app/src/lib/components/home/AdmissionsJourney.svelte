@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { ArrowRight, BadgeCheck, ClipboardCheck, FileText, GraduationCap } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
 
 	const steps = [
 		{
@@ -23,9 +25,42 @@
 			icon: BadgeCheck
 		}
 	];
+
+	let sectionEl = $state<HTMLElement | null>(null);
+
+	onMount(() => {
+		if (!sectionEl || prefersReducedMotion()) return;
+
+		const gsap = ensureGsap();
+		const context = gsap.context(() => {
+			gsap.from('[data-journey-step]', {
+				autoAlpha: 0,
+				y: 30,
+				stagger: 0.15,
+				duration: 0.8,
+				ease: 'power3.out',
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top 70%'
+				}
+			});
+
+			gsap.from('[data-journey-path]', {
+				strokeDashoffset: 1000,
+				duration: 2.5,
+				ease: 'power1.inOut',
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top 60%'
+				}
+			});
+		}, sectionEl);
+
+		return () => context.revert();
+	});
 </script>
 
-<section class="relative overflow-hidden bg-white py-24">
+<section bind:this={sectionEl} class="relative overflow-hidden bg-white py-24">
 	<div class="absolute inset-0 bg-[linear-gradient(180deg,_rgba(247,148,29,0.03),_transparent_30%,_rgba(13,93,86,0.05))]"></div>
 
 	<div class="container relative z-10 mx-auto px-4 lg:px-8">
@@ -38,11 +73,23 @@
 		</div>
 
 		<div class="relative">
-			<div class="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-transparent via-secondary/35 to-transparent xl:block"></div>
+			<div class="absolute left-0 right-0 top-10 hidden xl:block pointer-events-none">
+				<svg width="100%" height="20" viewBox="0 0 1200 20" fill="none" class="overflow-visible">
+					<path 
+						data-journey-path
+						d="M 150 10 L 1050 10" 
+						stroke="#f68b1f" 
+						stroke-width="2" 
+						stroke-dasharray="1000" 
+						stroke-dashoffset="0"
+						opacity="0.25"
+					/>
+				</svg>
+			</div>
 
 			<div class="grid gap-6 xl:grid-cols-4">
 				{#each steps as step, index}
-					<div class="relative rounded-[2rem] border border-border-soft bg-neutral-soft/80 p-7 shadow-[0_20px_60px_rgba(13,93,86,0.08)] motion-rise" style={`animation-delay: ${index * 120}ms`}>
+					<div data-journey-step class="relative rounded-[2rem] border border-border-soft bg-neutral-soft/80 p-7 shadow-[0_20px_60px_rgba(13,93,86,0.08)]">
 						<div class="mb-6 flex items-center justify-between">
 							<div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float">
 								<step.icon size={24} />

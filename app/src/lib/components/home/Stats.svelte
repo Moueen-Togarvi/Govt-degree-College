@@ -1,30 +1,42 @@
 <script lang="ts">
 	import { Building2, Clock3, GraduationCap, School, Users } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
 
 	const stats = [
 		{
 			label: 'Active Students',
 			value: '5,000+',
+			target: 5000,
+			suffix: '+',
 			icon: Users
 		},
 		{
 			label: 'Departments',
 			value: '7',
+			target: 7,
+			suffix: '',
 			icon: Building2
 		},
 		{
 			label: 'Teachers',
 			value: '50+',
+			target: 50,
+			suffix: '+',
 			icon: School
 		},
 		{
 			label: 'BS Shifts',
 			value: '2',
+			target: 2,
+			suffix: '',
 			icon: Clock3
 		},
 		{
 			label: 'Legacy',
 			value: '1945',
+			target: 1945,
+			suffix: '',
 			icon: GraduationCap
 		}
 	];
@@ -41,9 +53,86 @@
 		{ top: '82%', left: '22%', size: 10, delay: '0.7s', duration: '6.4s', variant: 'star' },
 		{ top: '86%', left: '69%', size: 12, delay: '1.4s', duration: '7.7s', variant: 'broken' }
 	];
+
+	let sectionEl = $state<HTMLElement | null>(null);
+
+	function formatStatValue(index: number, numericValue: number) {
+		const stat = stats[index];
+		const rounded = Math.round(numericValue);
+
+		if (stat.target >= 1000) {
+			return `${rounded.toLocaleString()}${stat.suffix}`;
+		}
+
+		return `${rounded}${stat.suffix}`;
+	}
+
+	onMount(() => {
+		if (!sectionEl || prefersReducedMotion()) return;
+
+		const gsap = ensureGsap();
+		const context = gsap.context(() => {
+			const cards = gsap.utils.toArray<HTMLElement>('[data-stats-card]');
+			const values = gsap.utils.toArray<HTMLElement>('[data-stat-value]');
+
+			gsap.from('[data-stats-frame]', {
+				autoAlpha: 0,
+				scale: 0.96,
+				filter: 'blur(14px)',
+				clipPath: 'inset(0 0 100% 0 round 2rem)',
+				duration: 1,
+				ease: 'power3.out',
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top 72%'
+				}
+			});
+
+			gsap.from(cards, {
+				autoAlpha: 0,
+				y: 88,
+				scale: 0.84,
+				filter: 'blur(12px)',
+				rotate: (index) => [-8, -4, 0, 4, 8][index] ?? 0,
+				duration: 1.05,
+				ease: 'back.out(1.18)',
+				stagger: 0.11,
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top 66%'
+				}
+			});
+
+			values.forEach((element, index) => {
+				const counter = { value: 0 };
+
+				gsap.fromTo(
+					counter,
+					{
+						value: 0
+					},
+					{
+						value: stats[index].target,
+						duration: 1.8,
+						ease: 'power2.out',
+						scrollTrigger: {
+							trigger: sectionEl,
+							start: 'top 66%',
+							once: true
+						},
+						onUpdate: () => {
+							element.textContent = formatStatValue(index, counter.value);
+						}
+					}
+				);
+			});
+		}, sectionEl);
+
+		return () => context.revert();
+	});
 </script>
 
-<section class="relative overflow-hidden bg-white py-14 lg:py-16">
+<section bind:this={sectionEl} class="relative overflow-hidden bg-white py-14 lg:py-16">
 	<div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(247,148,29,0.06),_transparent_38%)]"></div>
 	<div class="stats-orb stats-orb-teal"></div>
 	<div class="stats-orb stats-orb-orange"></div>
@@ -59,7 +148,10 @@
 	</div>
 
 	<div class="container relative z-10 mx-auto px-4 lg:px-8">
-		<div class="stats-frame relative overflow-hidden rounded-[2rem] border border-primary/10 px-4 py-8 lg:px-6">
+		<div
+			data-stats-frame
+			class="stats-frame relative overflow-hidden rounded-[2rem] border border-primary/10 px-4 py-8 lg:px-6"
+		>
 			<div class="pointer-events-none absolute inset-0">
 				<div class="stats-frame-border"></div>
 				<span class="stats-beam stats-beam-top"></span>
@@ -70,11 +162,11 @@
 
 			<div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-5">
 				{#each stats as stat, index}
-					<div class="text-center motion-rise" style={`animation-delay: ${index * 90}ms`}>
+					<div data-stats-card class="text-center" style={`animation-delay: ${index * 90}ms`}>
 						<div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float">
 							<stat.icon size={24} strokeWidth={1.9} />
 						</div>
-						<p class="text-3xl font-black text-primary lg:text-4xl">{stat.value}</p>
+						<p data-stat-value class="text-3xl font-black text-primary lg:text-4xl">{stat.value}</p>
 						<h3 class="mt-2 text-sm font-black uppercase tracking-[0.18em] text-primary/65 lg:text-base">
 							{stat.label}
 						</h3>

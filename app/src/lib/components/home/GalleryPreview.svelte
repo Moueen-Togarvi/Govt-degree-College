@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { ArrowRight } from 'lucide-svelte';
-	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
 
 	const galleryItems = [
+		// ... existing items
 		{
 			src: '/images/gallery/Gemini_Generated_Image_hwtnmyhwtnmyhwtn.png',
 			title: 'Open-Air Academic Session',
@@ -47,6 +48,7 @@
 	];
 
 	let activeIndex = $state(0);
+	let sectionEl = $state<HTMLElement | null>(null);
 
 	const visibleItems = $derived(
 		Array.from({ length: 5 }, (_, offset) => galleryItems[(activeIndex + offset) % galleryItems.length])
@@ -57,11 +59,35 @@
 			activeIndex = (activeIndex + 1) % galleryItems.length;
 		}, 5000);
 
-		return () => window.clearInterval(interval);
+		if (!sectionEl || prefersReducedMotion()) return () => clearInterval(interval);
+
+		const gsap = ensureGsap();
+		const context = gsap.context(() => {
+			const items = gsap.utils.toArray<HTMLElement>('[data-gallery-item]');
+			
+			gsap.from(items, {
+				autoAlpha: 0,
+				x: (i) => [-100, 100, -100, 100, 0][i % 5],
+				y: (i) => [-100, -100, 100, 100, 100][i % 5],
+				scale: 0.5,
+				duration: 1.2,
+				stagger: 0.15,
+				ease: 'power4.out',
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top 65%'
+				}
+			});
+		}, sectionEl);
+
+		return () => {
+			clearInterval(interval);
+			context.revert();
+		};
 	});
 </script>
 
-<section class="relative overflow-hidden bg-neutral-soft py-24">
+<section bind:this={sectionEl} class="relative overflow-hidden bg-neutral-soft py-24">
 	<div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(247,148,29,0.10),_transparent_26%)]"></div>
 	<div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(13,93,86,0.08),_transparent_26%)]"></div>
 
@@ -87,47 +113,45 @@
 		</div>
 
 		<div class="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-stretch">
-			<div class="group relative isolate h-[420px] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_24px_70px_rgba(13,93,86,0.10)] lg:h-[470px]">
-				{#key visibleItems[0].src}
-					<div class="absolute inset-0" in:fade={{ duration: 550 }}>
+			<div data-gallery-item class="group relative isolate h-[420px] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_24px_70px_rgba(13,93,86,0.10)] lg:h-[470px]">
+				{#each [visibleItems[0]] as item (item.src)}
+					<div class="absolute inset-0 transition-opacity duration-700">
 						<img
-							src={visibleItems[0].src}
-							alt={visibleItems[0].title}
+							src={item.src}
+							alt={item.title}
 							class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]"
 							fetchpriority="high"
 						/>
 						<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/18 to-transparent"></div>
 						<div class="absolute inset-x-0 bottom-0 p-8 text-white">
 							<p class="text-xs font-black uppercase tracking-[0.28em] text-secondary">
-								{visibleItems[0].tag}
+								{item.tag}
 							</p>
-							<h3 class="mt-3 text-3xl font-black lg:text-4xl">{visibleItems[0].title}</h3>
+							<h3 class="mt-3 text-3xl font-black lg:text-4xl">{item.title}</h3>
 						</div>
 					</div>
-				{/key}
+				{/each}
 			</div>
 
 			<div class="grid gap-5 sm:grid-cols-2 lg:h-[470px] lg:grid-cols-2 lg:grid-rows-2">
-				{#each visibleItems.slice(1) as item (item.src)}
-					<div class="group relative isolate aspect-square overflow-hidden rounded-[1.7rem] border border-white/60 bg-white shadow-[0_18px_50px_rgba(13,93,86,0.08)] lg:h-full">
-						{#key item.src}
-							<div class="absolute inset-0" in:fade={{ duration: 550 }}>
-								<img
-									src={item.src}
-									alt={item.title}
-									class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]"
-									loading="lazy"
-									decoding="async"
-								/>
-								<div class="absolute inset-0 bg-gradient-to-t from-primary/88 via-primary/8 to-transparent"></div>
-								<div class="absolute inset-x-0 bottom-0 p-4 text-white">
-									<p class="text-[11px] font-black uppercase tracking-[0.22em] text-secondary">
-										{item.tag}
-									</p>
-									<h3 class="mt-2 text-lg font-black leading-tight lg:text-xl">{item.title}</h3>
-								</div>
+				{#each visibleItems.slice(1) as item, i (item.src)}
+					<div data-gallery-item class="group relative isolate aspect-square overflow-hidden rounded-[1.7rem] border border-white/60 bg-white shadow-[0_18px_50px_rgba(13,93,86,0.08)] lg:h-full">
+						<div class="absolute inset-0 transition-opacity duration-700">
+							<img
+								src={item.src}
+								alt={item.title}
+								class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]"
+								loading="lazy"
+								decoding="async"
+							/>
+							<div class="absolute inset-0 bg-gradient-to-t from-primary/88 via-primary/8 to-transparent"></div>
+							<div class="absolute inset-x-0 bottom-0 p-4 text-white">
+								<p class="text-[11px] font-black uppercase tracking-[0.22em] text-secondary">
+									{item.tag}
+								</p>
+								<h3 class="mt-2 text-lg font-black leading-tight lg:text-xl">{item.title}</h3>
 							</div>
-						{/key}
+						</div>
 					</div>
 				{/each}
 			</div>

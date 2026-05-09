@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { ArrowRight, BadgeCheck, Clock3, GraduationCap, School2 } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
 
 	const programs = [
+		// ... existing programs
 		{
 			title: '11th Class',
 			tag: 'Free',
@@ -39,9 +42,67 @@
 			icon: Clock3
 		}
 	];
+
+	let sectionEl = $state<HTMLElement | null>(null);
+
+	onMount(() => {
+		if (!sectionEl || prefersReducedMotion()) return;
+
+		const gsap = ensureGsap();
+		const context = gsap.context(() => {
+			const cards = gsap.utils.toArray<HTMLElement>('[data-program-card]');
+
+			gsap.from(cards, {
+				autoAlpha: 0,
+				y: 60,
+				rotateY: 25,
+				stagger: 0.1,
+				duration: 1,
+				ease: 'power4.out',
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top 70%'
+				}
+			});
+
+			cards.forEach((card) => {
+				card.addEventListener('mousemove', (e: MouseEvent) => {
+					const rect = card.getBoundingClientRect();
+					const x = e.clientX - rect.left;
+					const y = e.clientY - rect.top;
+					const centerX = rect.width / 2;
+					const centerY = rect.height / 2;
+					const rotateX = (y - centerY) / 10;
+					const rotateY = (centerX - x) / 10;
+
+					gsap.to(card, {
+						rotateX: rotateX,
+						rotateY: rotateY,
+						scale: 1.02,
+						duration: 0.5,
+						ease: 'power3.out',
+						overwrite: true
+					});
+				});
+
+				card.addEventListener('mouseleave', () => {
+					gsap.to(card, {
+						rotateX: 0,
+						rotateY: 0,
+						scale: 1,
+						duration: 0.5,
+						ease: 'power3.out',
+						overwrite: true
+					});
+				});
+			});
+		}, sectionEl);
+
+		return () => context.revert();
+	});
 </script>
 
-<section class="relative overflow-hidden bg-neutral-soft py-24">
+<section bind:this={sectionEl} class="relative overflow-hidden bg-neutral-soft py-24" style="perspective: 1200px;">
 	<div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(13,93,86,0.07),_transparent_36%)]"></div>
 
 	<div class="container relative z-10 mx-auto px-4 lg:px-8">
@@ -55,7 +116,7 @@
 
 		<div class="grid gap-6 lg:grid-cols-2 2xl:grid-cols-4">
 			{#each programs as program, index}
-				<div class="group relative overflow-hidden rounded-[2rem] border border-border-soft bg-white p-8 shadow-[0_24px_70px_rgba(13,93,86,0.08)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_28px_90px_rgba(13,93,86,0.12)] motion-rise" style={`animation-delay: ${index * 110}ms`}>
+				<div data-program-card class="group relative overflow-hidden rounded-[2rem] border border-border-soft bg-white p-8 shadow-[0_24px_70px_rgba(13,93,86,0.08)] transition-all duration-300 hover:shadow-[0_28px_90px_rgba(13,93,86,0.12)]" style="transform-style: preserve-3d;">
 					<div class="absolute right-0 top-0 h-32 w-32 rounded-full bg-secondary/10 blur-3xl transition-transform duration-500 group-hover:scale-125"></div>
 
 					<div class="relative flex h-full flex-col">
