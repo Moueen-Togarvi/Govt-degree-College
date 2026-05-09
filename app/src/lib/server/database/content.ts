@@ -7,9 +7,13 @@ import type {
 	QuickLink,
 	TickerAnnouncement
 } from '$lib/types/content';
-import { withDatabase } from '$lib/server/db';
+import { isExpectedDatabaseError, withDatabase } from '$lib/server/db';
+import { readLocalContentStore, updateLocalContentStore } from '$lib/server/local-content-store';
 
 const defaultEventImage = '/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg';
+const preferLocalStore =
+	process.env.CONTENT_STORE_MODE === 'local' ||
+	(process.env.NODE_ENV !== 'production' && process.env.CONTENT_STORE_MODE !== 'database');
 
 type AnnouncementRow = {
 	id: number | string;
@@ -66,6 +70,13 @@ type QuickLinkRow = {
 	href: string;
 	icon_name: string | null;
 };
+
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+	month: 'short',
+	day: '2-digit',
+	year: 'numeric',
+	timeZone: 'UTC'
+});
 
 function mapAnnouncement(row: AnnouncementRow): Announcement {
 	return {
@@ -135,36 +146,117 @@ function mapQuickLink(row: QuickLinkRow): QuickLink {
 	};
 }
 
-export async function listAnnouncements(limit = 12): Promise<Announcement[]> {
-	const rows = await withDatabase('list announcements', async (sql) =>
-		(await sql`
-			SELECT
-				id,
-				title,
-				description,
-				category,
-				to_char(date, 'Mon DD, YYYY') AS formatted_date,
-				to_char(date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS iso_date
-			FROM announcements
-			ORDER BY date DESC, id DESC
-			LIMIT ${limit}
-		`) as AnnouncementRow[]
-	);
+function formatDisplayDate(value: string) {
+	return dateFormatter.format(new Date(value));
+}
 
-	return rows.map(mapAnnouncement);
+function toIsoDateTime(value?: string | null) {
+	if (value) {
+		const date = new Date(value);
+		if (!Number.isNaN(date.getTime())) return date.toISOString();
+	}
+
+	return new Date().toISOString();
+}
+
+function toIsoDate(value?: string | null) {
+	if (value && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+		return value;
+	}
+
+	if (value) {
+		const date = new Date(value);
+		if (!Number.isNaN(date.getTime())) return date.toISOString().slice(0, 10);
+	}
+
+	return new Date().toISOString().slice(0, 10);
+}
+
+function nextId(items: Array<{ id: number }>) {
+	return items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+}
+
+async function withContentFallback<T>(
+	databaseOperation: () => Promise<T>,
+	localOperation: () => Promise<T>
+): Promise<T> {
+	if (preferLocalStore) {
+		return localOperation();
+	}
+
+	try {
+		return await databaseOperation();
+	} catch (error) {
+		if (isExpectedDatabaseError(error)) {
+			return localOperation();
+		}
+
+		throw error;
+	}
+}
+
+async function withContentMutation(
+	databaseOperation: () => Promise<unknown>,
+	localOperation: () => Promise<void>
+): Promise<void> {
+	return withContentFallback(
+		async () => {
+			await databaseOperation();
+		},
+		localOperation
+	);
+}
+
+export async function listAnnouncements(limit = 12): Promise<Announcement[]> {
+	return withContentFallback(
+		async () => {
+			const rows = await withDatabase('list announcements', async (sql) =>
+				(await sql`
+					SELECT
+						id,
+						title,
+						description,
+						category,
+						to_char(date, 'Mon DD, YYYY') AS formatted_date,
+						to_char(date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS iso_date
+					FROM announcements
+					ORDER BY date DESC, id DESC
+					LIMIT ${limit}
+				`) as AnnouncementRow[]
+			);
+
+			return rows.map(mapAnnouncement);
+		},
+		async () => {
+			const store = await readLocalContentStore();
+			return [...store.announcements]
+				.sort((left, right) => right.isoDate.localeCompare(left.isoDate) || right.id - left.id)
+				.slice(0, limit);
+		}
+	);
 }
 
 export async function listLatestNewsItems(limit = 8): Promise<LatestNewsItem[]> {
-	const rows = await withDatabase('list latest news items', async (sql) =>
-		(await sql`
-			SELECT id, title, href, sort_order
-			FROM latest_news_items
-			ORDER BY sort_order ASC, id DESC
-			LIMIT ${limit}
-		`) as LatestNewsRow[]
-	);
+	return withContentFallback(
+		async () => {
+			const rows = await withDatabase('list latest news items', async (sql) =>
+				(await sql`
+					SELECT id, title, href, sort_order
+					FROM latest_news_items
+					ORDER BY sort_order ASC, id DESC
+					LIMIT ${limit}
+				`) as LatestNewsRow[]
+			);
 
-	return rows.map(mapLatestNewsItem);
+			return rows.map(mapLatestNewsItem);
+		},
+		async () => {
+			const store = await readLocalContentStore();
+			return [...store.latestNewsItems]
+				.sort((left, right) => left.sortOrder - right.sortOrder || right.id - left.id)
+				.slice(0, limit);
+		}
+	);
 }
 
 export async function listTickerAnnouncements(limit = 6): Promise<TickerAnnouncement[]> {
@@ -175,75 +267,101 @@ export async function listNoticeBoardItems(
 	limit = 3,
 	{ includeExpired = false }: { includeExpired?: boolean } = {}
 ): Promise<NoticeBoardItem[]> {
-	const rows = await withDatabase('list notice board items', async (sql) =>
-		includeExpired
-			? ((await sql`
-					SELECT
-						id,
-						title,
-						message,
-						tag,
-						to_char(notice_date, 'Mon DD, YYYY') AS formatted_date,
-						to_char(notice_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS iso_date,
-						CASE
-							WHEN expiry_date IS NULL THEN NULL
-							ELSE to_char(expiry_date, 'Mon DD, YYYY')
-						END AS formatted_expiry_date,
-						CASE
-							WHEN expiry_date IS NULL THEN NULL
-							ELSE to_char(expiry_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
-						END AS iso_expiry_date,
-						sort_order
-					FROM notice_board_items
-					ORDER BY sort_order ASC, notice_date DESC, id DESC
-					LIMIT ${limit}
-				`) as NoticeBoardRow[])
-			: ((await sql`
-					SELECT
-						id,
-						title,
-						message,
-						tag,
-						to_char(notice_date, 'Mon DD, YYYY') AS formatted_date,
-						to_char(notice_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS iso_date,
-						CASE
-							WHEN expiry_date IS NULL THEN NULL
-							ELSE to_char(expiry_date, 'Mon DD, YYYY')
-						END AS formatted_expiry_date,
-						CASE
-							WHEN expiry_date IS NULL THEN NULL
-							ELSE to_char(expiry_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
-						END AS iso_expiry_date,
-						sort_order
-					FROM notice_board_items
-					WHERE expiry_date IS NULL OR expiry_date >= CURRENT_TIMESTAMP
-					ORDER BY sort_order ASC, notice_date DESC, id DESC
-					LIMIT ${limit}
-				`) as NoticeBoardRow[])
-	);
+	return withContentFallback(
+		async () => {
+			const rows = await withDatabase('list notice board items', async (sql) =>
+				includeExpired
+					? ((await sql`
+							SELECT
+								id,
+								title,
+								message,
+								tag,
+								to_char(notice_date, 'Mon DD, YYYY') AS formatted_date,
+								to_char(notice_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS iso_date,
+								CASE
+									WHEN expiry_date IS NULL THEN NULL
+									ELSE to_char(expiry_date, 'Mon DD, YYYY')
+								END AS formatted_expiry_date,
+								CASE
+									WHEN expiry_date IS NULL THEN NULL
+									ELSE to_char(expiry_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
+								END AS iso_expiry_date,
+								sort_order
+							FROM notice_board_items
+							ORDER BY sort_order ASC, notice_date DESC, id DESC
+							LIMIT ${limit}
+						`) as NoticeBoardRow[])
+					: ((await sql`
+							SELECT
+								id,
+								title,
+								message,
+								tag,
+								to_char(notice_date, 'Mon DD, YYYY') AS formatted_date,
+								to_char(notice_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS iso_date,
+								CASE
+									WHEN expiry_date IS NULL THEN NULL
+									ELSE to_char(expiry_date, 'Mon DD, YYYY')
+								END AS formatted_expiry_date,
+								CASE
+									WHEN expiry_date IS NULL THEN NULL
+									ELSE to_char(expiry_date AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
+								END AS iso_expiry_date,
+								sort_order
+							FROM notice_board_items
+							WHERE expiry_date IS NULL OR expiry_date >= CURRENT_TIMESTAMP
+							ORDER BY sort_order ASC, notice_date DESC, id DESC
+							LIMIT ${limit}
+						`) as NoticeBoardRow[])
+			);
 
-	return rows.map(mapNoticeBoardItem);
+			return rows.map(mapNoticeBoardItem);
+		},
+		async () => {
+			const store = await readLocalContentStore();
+			const now = Date.now();
+			return [...store.noticeBoardItems]
+				.filter((item) => {
+					if (includeExpired || !item.expiryIsoDate) return true;
+					const expiryTime = new Date(item.expiryIsoDate).getTime();
+					return Number.isNaN(expiryTime) || expiryTime >= now;
+				})
+				.sort((left, right) => left.sortOrder - right.sortOrder || right.isoDate.localeCompare(left.isoDate) || right.id - left.id)
+				.slice(0, limit);
+		}
+	);
 }
 
 export async function listEvents(limit = 12): Promise<CollegeEvent[]> {
-	const rows = await withDatabase('list events', async (sql) =>
-		(await sql`
-			SELECT
-				id,
-				title,
-				to_char(date, 'Mon DD, YYYY') AS formatted_date,
-				to_char(date, 'YYYY-MM-DD') AS iso_date,
-				time,
-				location,
-				image_url,
-				status
-			FROM events
-			ORDER BY date ASC, id DESC
-			LIMIT ${limit}
-		`) as EventRow[]
-	);
+	return withContentFallback(
+		async () => {
+			const rows = await withDatabase('list events', async (sql) =>
+				(await sql`
+					SELECT
+						id,
+						title,
+						to_char(date, 'Mon DD, YYYY') AS formatted_date,
+						to_char(date, 'YYYY-MM-DD') AS iso_date,
+						time,
+						location,
+						image_url,
+						status
+					FROM events
+					ORDER BY date ASC, id DESC
+					LIMIT ${limit}
+				`) as EventRow[]
+			);
 
-	return rows.map(mapEvent);
+			return rows.map(mapEvent);
+		},
+		async () => {
+			const store = await readLocalContentStore();
+			return [...store.events]
+				.sort((left, right) => left.isoDate.localeCompare(right.isoDate) || right.id - left.id)
+				.slice(0, limit);
+		}
+	);
 }
 
 export async function listExamResults({
@@ -253,60 +371,84 @@ export async function listExamResults({
 	search?: string;
 	limit?: number;
 } = {}): Promise<ExamResult[]> {
-	const normalizedSearch = search.trim();
+	const normalizedSearch = search.trim().toLowerCase();
 
-	if (!normalizedSearch) {
-		const rows = await withDatabase('list exam results', async (sql) =>
-			(await sql`
-				SELECT
-					id,
-					title,
-					to_char(publish_date, 'Mon DD, YYYY') AS formatted_date,
-					to_char(publish_date, 'YYYY-MM-DD') AS iso_date,
-					result_type,
-					file_url
-				FROM exam_results
-				ORDER BY publish_date DESC, id DESC
-				LIMIT ${limit}
-			`) as ResultRow[]
-		);
+	return withContentFallback(
+		async () => {
+			if (!normalizedSearch) {
+				const rows = await withDatabase('list exam results', async (sql) =>
+					(await sql`
+						SELECT
+							id,
+							title,
+							to_char(publish_date, 'Mon DD, YYYY') AS formatted_date,
+							to_char(publish_date, 'YYYY-MM-DD') AS iso_date,
+							result_type,
+							file_url
+						FROM exam_results
+						ORDER BY publish_date DESC, id DESC
+						LIMIT ${limit}
+					`) as ResultRow[]
+				);
 
-		return rows.map(mapResult);
-	}
+				return rows.map(mapResult);
+			}
 
-	const rows = await withDatabase('search exam results', async (sql) =>
-		(await sql.query(
-			`
-				SELECT
-					id,
-					title,
-					to_char(publish_date, 'Mon DD, YYYY') AS formatted_date,
-					to_char(publish_date, 'YYYY-MM-DD') AS iso_date,
-					result_type,
-					file_url
-				FROM exam_results
-				WHERE title ILIKE $1 OR result_type ILIKE $1
-				ORDER BY publish_date DESC, id DESC
-				LIMIT $2
-			`,
-			[`%${normalizedSearch}%`, limit]
-		)) as ResultRow[]
+			const rows = await withDatabase('search exam results', async (sql) =>
+				(await sql.query(
+					`
+						SELECT
+							id,
+							title,
+							to_char(publish_date, 'Mon DD, YYYY') AS formatted_date,
+							to_char(publish_date, 'YYYY-MM-DD') AS iso_date,
+							result_type,
+							file_url
+						FROM exam_results
+						WHERE title ILIKE $1 OR result_type ILIKE $1
+						ORDER BY publish_date DESC, id DESC
+						LIMIT $2
+					`,
+					[`%${search.trim()}%`, limit]
+				)) as ResultRow[]
+			);
+
+			return rows.map(mapResult);
+		},
+		async () => {
+			const store = await readLocalContentStore();
+			return [...store.results]
+				.filter((item) =>
+					!normalizedSearch
+						? true
+						: item.title.toLowerCase().includes(normalizedSearch) ||
+							item.type.toLowerCase().includes(normalizedSearch)
+				)
+				.sort((left, right) => right.isoDate.localeCompare(left.isoDate) || right.id - left.id)
+				.slice(0, limit);
+		}
 	);
-
-	return rows.map(mapResult);
 }
 
 export async function listQuickLinks(limit = 8): Promise<QuickLink[]> {
-	const rows = await withDatabase('list quick links', async (sql) =>
-		(await sql`
-			SELECT id, title, description, href, icon_name
-			FROM quick_links
-			ORDER BY id ASC
-			LIMIT ${limit}
-		`) as QuickLinkRow[]
-	);
+	return withContentFallback(
+		async () => {
+			const rows = await withDatabase('list quick links', async (sql) =>
+				(await sql`
+					SELECT id, title, description, href, icon_name
+					FROM quick_links
+					ORDER BY id ASC
+					LIMIT ${limit}
+				`) as QuickLinkRow[]
+			);
 
-	return rows.map(mapQuickLink);
+			return rows.map(mapQuickLink);
+		},
+		async () => {
+			const store = await readLocalContentStore();
+			return [...store.quickLinks].sort((left, right) => left.id - right.id).slice(0, limit);
+		}
+	);
 }
 
 export async function createAnnouncement(input: {
@@ -315,14 +457,29 @@ export async function createAnnouncement(input: {
 	category: string;
 	date?: string;
 }) {
-	await withDatabase('create announcement', async (sql) =>
-		sql.query(
-			`
-				INSERT INTO announcements (title, description, category, date)
-				VALUES ($1, $2, $3, COALESCE($4::timestamptz, CURRENT_TIMESTAMP))
-			`,
-			[input.title, input.description, input.category, input.date || null]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('create announcement', async (sql) =>
+				sql.query(
+					`
+						INSERT INTO announcements (title, description, category, date)
+						VALUES ($1, $2, $3, COALESCE($4::timestamptz, CURRENT_TIMESTAMP))
+					`,
+					[input.title, input.description, input.category, input.date || null]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const isoDate = toIsoDateTime(input.date);
+				store.announcements.unshift({
+					id: nextId(store.announcements),
+					title: input.title,
+					description: input.description,
+					category: input.category,
+					date: formatDisplayDate(isoDate),
+					isoDate
+				});
+			})
 	);
 }
 
@@ -334,33 +491,64 @@ export async function createNoticeBoardItem(input: {
 	expiryDate?: string;
 	sortOrder?: number;
 }) {
-	await withDatabase('create notice board item', async (sql) =>
-		sql.query(
-			`
-				INSERT INTO notice_board_items (title, message, tag, notice_date, expiry_date, sort_order)
-				VALUES ($1, $2, $3, COALESCE($4::timestamptz, CURRENT_TIMESTAMP), $5::timestamptz, $6)
-			`,
-			[
-				input.title,
-				input.message,
-				input.tag,
-				input.date || null,
-				input.expiryDate || null,
-				input.sortOrder ?? 0
-			]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('create notice board item', async (sql) =>
+				sql.query(
+					`
+						INSERT INTO notice_board_items (title, message, tag, notice_date, expiry_date, sort_order)
+						VALUES ($1, $2, $3, COALESCE($4::timestamptz, CURRENT_TIMESTAMP), $5::timestamptz, $6)
+					`,
+					[
+						input.title,
+						input.message,
+						input.tag,
+						input.date || null,
+						input.expiryDate || null,
+						input.sortOrder ?? 0
+					]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const isoDate = toIsoDateTime(input.date);
+				const expiryIsoDate = input.expiryDate ? toIsoDateTime(input.expiryDate) : null;
+				store.noticeBoardItems.unshift({
+					id: nextId(store.noticeBoardItems),
+					title: input.title,
+					message: input.message,
+					tag: input.tag,
+					date: formatDisplayDate(isoDate),
+					isoDate,
+					sortOrder: input.sortOrder ?? 0,
+					expiryDate: expiryIsoDate ? formatDisplayDate(expiryIsoDate) : null,
+					expiryIsoDate
+				});
+			})
 	);
 }
 
 export async function createLatestNewsItem(input: { title: string; sortOrder?: number }) {
-	await withDatabase('create latest news item', async (sql) =>
-		sql.query(
-			`
-				INSERT INTO latest_news_items (title, href, sort_order)
-				VALUES ($1, $2, $3)
-			`,
-			[input.title, '/news/announcements', input.sortOrder ?? 0]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('create latest news item', async (sql) =>
+				sql.query(
+					`
+						INSERT INTO latest_news_items (title, href, sort_order)
+						VALUES ($1, $2, $3)
+					`,
+					[input.title, '/news/announcements', input.sortOrder ?? 0]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				store.latestNewsItems.push({
+					id: nextId(store.latestNewsItems),
+					title: input.title,
+					href: '/news/announcements',
+					sortOrder: input.sortOrder ?? 0
+				});
+			})
 	);
 }
 
@@ -369,21 +557,39 @@ export async function updateLatestNewsItem(input: {
 	title: string;
 	sortOrder?: number;
 }) {
-	await withDatabase('update latest news item', async (sql) =>
-		sql.query(
-			`
-				UPDATE latest_news_items
-				SET title = $1, href = $2, sort_order = $3
-				WHERE id = $4
-			`,
-			[input.title, '/news/announcements', input.sortOrder ?? 0, input.id]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('update latest news item', async (sql) =>
+				sql.query(
+					`
+						UPDATE latest_news_items
+						SET title = $1, href = $2, sort_order = $3
+						WHERE id = $4
+					`,
+					[input.title, '/news/announcements', input.sortOrder ?? 0, input.id]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const item = store.latestNewsItems.find((entry) => entry.id === input.id);
+				if (!item) return;
+				item.title = input.title;
+				item.href = '/news/announcements';
+				item.sortOrder = input.sortOrder ?? 0;
+			})
 	);
 }
 
 export async function deleteLatestNewsItem(id: number) {
-	await withDatabase('delete latest news item', async (sql) =>
-		sql.query('DELETE FROM latest_news_items WHERE id = $1', [id])
+	return withContentMutation(
+		async () =>
+			withDatabase('delete latest news item', async (sql) =>
+				sql.query('DELETE FROM latest_news_items WHERE id = $1', [id])
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				store.latestNewsItems = store.latestNewsItems.filter((item) => item.id !== id);
+			})
 	);
 }
 
@@ -396,29 +602,54 @@ export async function updateNoticeBoardItem(input: {
 	expiryDate?: string;
 	sortOrder: number;
 }) {
-	await withDatabase('update notice board item', async (sql) =>
-		sql.query(
-			`
-				UPDATE notice_board_items
-				SET title = $1, message = $2, tag = $3, notice_date = $4::timestamptz, expiry_date = $5::timestamptz, sort_order = $6
-				WHERE id = $7
-			`,
-			[
-				input.title,
-				input.message,
-				input.tag,
-				input.date,
-				input.expiryDate || null,
-				input.sortOrder,
-				input.id
-			]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('update notice board item', async (sql) =>
+				sql.query(
+					`
+						UPDATE notice_board_items
+						SET title = $1, message = $2, tag = $3, notice_date = $4::timestamptz, expiry_date = $5::timestamptz, sort_order = $6
+						WHERE id = $7
+					`,
+					[
+						input.title,
+						input.message,
+						input.tag,
+						input.date,
+						input.expiryDate || null,
+						input.sortOrder,
+						input.id
+					]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const item = store.noticeBoardItems.find((entry) => entry.id === input.id);
+				if (!item) return;
+				const isoDate = toIsoDateTime(input.date);
+				const expiryIsoDate = input.expiryDate ? toIsoDateTime(input.expiryDate) : null;
+				item.title = input.title;
+				item.message = input.message;
+				item.tag = input.tag;
+				item.sortOrder = input.sortOrder;
+				item.isoDate = isoDate;
+				item.date = formatDisplayDate(isoDate);
+				item.expiryIsoDate = expiryIsoDate;
+				item.expiryDate = expiryIsoDate ? formatDisplayDate(expiryIsoDate) : null;
+			})
 	);
 }
 
 export async function deleteNoticeBoardItem(id: number) {
-	await withDatabase('delete notice board item', async (sql) =>
-		sql.query('DELETE FROM notice_board_items WHERE id = $1', [id])
+	return withContentMutation(
+		async () =>
+			withDatabase('delete notice board item', async (sql) =>
+				sql.query('DELETE FROM notice_board_items WHERE id = $1', [id])
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				store.noticeBoardItems = store.noticeBoardItems.filter((item) => item.id !== id);
+			})
 	);
 }
 
@@ -429,21 +660,42 @@ export async function updateAnnouncement(input: {
 	category: string;
 	date: string;
 }) {
-	await withDatabase('update announcement', async (sql) =>
-		sql.query(
-			`
-				UPDATE announcements
-				SET title = $1, description = $2, category = $3, date = $4::timestamptz
-				WHERE id = $5
-			`,
-			[input.title, input.description, input.category, input.date, input.id]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('update announcement', async (sql) =>
+				sql.query(
+					`
+						UPDATE announcements
+						SET title = $1, description = $2, category = $3, date = $4::timestamptz
+						WHERE id = $5
+					`,
+					[input.title, input.description, input.category, input.date, input.id]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const item = store.announcements.find((entry) => entry.id === input.id);
+				if (!item) return;
+				const isoDate = toIsoDateTime(input.date);
+				item.title = input.title;
+				item.description = input.description;
+				item.category = input.category;
+				item.isoDate = isoDate;
+				item.date = formatDisplayDate(isoDate);
+			})
 	);
 }
 
 export async function deleteAnnouncement(id: number) {
-	await withDatabase('delete announcement', async (sql) =>
-		sql.query('DELETE FROM announcements WHERE id = $1', [id])
+	return withContentMutation(
+		async () =>
+			withDatabase('delete announcement', async (sql) =>
+				sql.query('DELETE FROM announcements WHERE id = $1', [id])
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				store.announcements = store.announcements.filter((item) => item.id !== id);
+			})
 	);
 }
 
@@ -455,14 +707,31 @@ export async function createEvent(input: {
 	imageUrl?: string | null;
 	status: string;
 }) {
-	await withDatabase('create event', async (sql) =>
-		sql.query(
-			`
-				INSERT INTO events (title, date, time, location, image_url, status)
-				VALUES ($1, $2::date, $3, $4, $5, $6)
-			`,
-			[input.title, input.date, input.time, input.location, input.imageUrl || null, input.status]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('create event', async (sql) =>
+				sql.query(
+					`
+						INSERT INTO events (title, date, time, location, image_url, status)
+						VALUES ($1, $2::date, $3, $4, $5, $6)
+					`,
+					[input.title, input.date, input.time, input.location, input.imageUrl || null, input.status]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const isoDate = toIsoDate(input.date);
+				store.events.push({
+					id: nextId(store.events),
+					title: input.title,
+					date: formatDisplayDate(isoDate),
+					isoDate,
+					time: input.time,
+					location: input.location,
+					imageUrl: input.imageUrl || defaultEventImage,
+					status: input.status
+				});
+			})
 	);
 }
 
@@ -475,21 +744,44 @@ export async function updateEvent(input: {
 	imageUrl?: string | null;
 	status: string;
 }) {
-	await withDatabase('update event', async (sql) =>
-		sql.query(
-			`
-				UPDATE events
-				SET title = $1, date = $2::date, time = $3, location = $4, image_url = $5, status = $6
-				WHERE id = $7
-			`,
-			[input.title, input.date, input.time, input.location, input.imageUrl || null, input.status, input.id]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('update event', async (sql) =>
+				sql.query(
+					`
+						UPDATE events
+						SET title = $1, date = $2::date, time = $3, location = $4, image_url = $5, status = $6
+						WHERE id = $7
+					`,
+					[input.title, input.date, input.time, input.location, input.imageUrl || null, input.status, input.id]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const item = store.events.find((entry) => entry.id === input.id);
+				if (!item) return;
+				const isoDate = toIsoDate(input.date);
+				item.title = input.title;
+				item.date = formatDisplayDate(isoDate);
+				item.isoDate = isoDate;
+				item.time = input.time;
+				item.location = input.location;
+				item.imageUrl = input.imageUrl || defaultEventImage;
+				item.status = input.status;
+			})
 	);
 }
 
 export async function deleteEvent(id: number) {
-	await withDatabase('delete event', async (sql) =>
-		sql.query('DELETE FROM events WHERE id = $1', [id])
+	return withContentMutation(
+		async () =>
+			withDatabase('delete event', async (sql) =>
+				sql.query('DELETE FROM events WHERE id = $1', [id])
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				store.events = store.events.filter((item) => item.id !== id);
+			})
 	);
 }
 
@@ -499,14 +791,29 @@ export async function createExamResult(input: {
 	resultType: string;
 	fileUrl?: string | null;
 }) {
-	await withDatabase('create exam result', async (sql) =>
-		sql.query(
-			`
-				INSERT INTO exam_results (title, publish_date, result_type, file_url)
-				VALUES ($1, $2::date, $3, $4)
-			`,
-			[input.title, input.publishDate, input.resultType, input.fileUrl || null]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('create exam result', async (sql) =>
+				sql.query(
+					`
+						INSERT INTO exam_results (title, publish_date, result_type, file_url)
+						VALUES ($1, $2::date, $3, $4)
+					`,
+					[input.title, input.publishDate, input.resultType, input.fileUrl || null]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const isoDate = toIsoDate(input.publishDate);
+				store.results.push({
+					id: nextId(store.results),
+					title: input.title,
+					date: formatDisplayDate(isoDate),
+					isoDate,
+					type: input.resultType,
+					fileUrl: input.fileUrl || null
+				});
+			})
 	);
 }
 
@@ -517,21 +824,42 @@ export async function updateExamResult(input: {
 	resultType: string;
 	fileUrl?: string | null;
 }) {
-	await withDatabase('update exam result', async (sql) =>
-		sql.query(
-			`
-				UPDATE exam_results
-				SET title = $1, publish_date = $2::date, result_type = $3, file_url = $4
-				WHERE id = $5
-			`,
-			[input.title, input.publishDate, input.resultType, input.fileUrl || null, input.id]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('update exam result', async (sql) =>
+				sql.query(
+					`
+						UPDATE exam_results
+						SET title = $1, publish_date = $2::date, result_type = $3, file_url = $4
+						WHERE id = $5
+					`,
+					[input.title, input.publishDate, input.resultType, input.fileUrl || null, input.id]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const item = store.results.find((entry) => entry.id === input.id);
+				if (!item) return;
+				const isoDate = toIsoDate(input.publishDate);
+				item.title = input.title;
+				item.date = formatDisplayDate(isoDate);
+				item.isoDate = isoDate;
+				item.type = input.resultType;
+				item.fileUrl = input.fileUrl || null;
+			})
 	);
 }
 
 export async function deleteExamResult(id: number) {
-	await withDatabase('delete exam result', async (sql) =>
-		sql.query('DELETE FROM exam_results WHERE id = $1', [id])
+	return withContentMutation(
+		async () =>
+			withDatabase('delete exam result', async (sql) =>
+				sql.query('DELETE FROM exam_results WHERE id = $1', [id])
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				store.results = store.results.filter((item) => item.id !== id);
+			})
 	);
 }
 
@@ -541,14 +869,27 @@ export async function createQuickLink(input: {
 	href: string;
 	iconName?: string | null;
 }) {
-	await withDatabase('create quick link', async (sql) =>
-		sql.query(
-			`
-				INSERT INTO quick_links (title, description, href, icon_name)
-				VALUES ($1, $2, $3, $4)
-			`,
-			[input.title, input.description, input.href, input.iconName || 'graduation-cap']
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('create quick link', async (sql) =>
+				sql.query(
+					`
+						INSERT INTO quick_links (title, description, href, icon_name)
+						VALUES ($1, $2, $3, $4)
+					`,
+					[input.title, input.description, input.href, input.iconName || 'graduation-cap']
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				store.quickLinks.push({
+					id: nextId(store.quickLinks),
+					title: input.title,
+					description: input.description,
+					href: input.href,
+					iconName: input.iconName || 'graduation-cap'
+				});
+			})
 	);
 }
 
@@ -559,20 +900,39 @@ export async function updateQuickLink(input: {
 	href: string;
 	iconName?: string | null;
 }) {
-	await withDatabase('update quick link', async (sql) =>
-		sql.query(
-			`
-				UPDATE quick_links
-				SET title = $1, description = $2, href = $3, icon_name = $4
-				WHERE id = $5
-			`,
-			[input.title, input.description, input.href, input.iconName || 'graduation-cap', input.id]
-		)
+	return withContentMutation(
+		async () =>
+			withDatabase('update quick link', async (sql) =>
+				sql.query(
+					`
+						UPDATE quick_links
+						SET title = $1, description = $2, href = $3, icon_name = $4
+						WHERE id = $5
+					`,
+					[input.title, input.description, input.href, input.iconName || 'graduation-cap', input.id]
+				)
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				const item = store.quickLinks.find((entry) => entry.id === input.id);
+				if (!item) return;
+				item.title = input.title;
+				item.description = input.description;
+				item.href = input.href;
+				item.iconName = input.iconName || 'graduation-cap';
+			})
 	);
 }
 
 export async function deleteQuickLink(id: number) {
-	await withDatabase('delete quick link', async (sql) =>
-		sql.query('DELETE FROM quick_links WHERE id = $1', [id])
+	return withContentMutation(
+		async () =>
+			withDatabase('delete quick link', async (sql) =>
+				sql.query('DELETE FROM quick_links WHERE id = $1', [id])
+			),
+		async () =>
+			updateLocalContentStore((store) => {
+				store.quickLinks = store.quickLinks.filter((item) => item.id !== id);
+			})
 	);
 }

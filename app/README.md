@@ -52,6 +52,25 @@ npm run db:setup
 npm run db:setup:schema-only
 ```
 
+## Deploy on Vercel
+
+1. Push this repository to GitHub, GitLab, or Bitbucket.
+2. In Vercel, import the repository and set the Root Directory to `app`.
+3. Set these environment variables in the Vercel project:
+
+```env
+DATABASE_URL=your-neon-or-postgres-connection-string
+ADMIN_PASSWORD=your-admin-password
+```
+
+4. Vercel will use the SvelteKit Vercel adapter automatically during build.
+5. After the first deploy, open `/api/init-db` once, or run `npm run db:setup` against your database beforehand, so tables and sample data exist.
+
+Notes:
+
+- Local JSON fallback storage is only intended for local development.
+- Production on Vercel should use `DATABASE_URL`, because Vercel serverless functions do not provide writable persistent local storage.
+
 ## API routes
 
 - `GET /api/init-db` or `POST /api/init-db`: creates tables and seeds sample data
