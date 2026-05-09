@@ -1,54 +1,8 @@
 <script lang="ts">
 	import { ArrowRight, Quote, ShieldCheck } from 'lucide-svelte';
-	import { onMount } from 'svelte';
-	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
-
-	let sectionEl = $state<HTMLElement | null>(null);
-
-	onMount(() => {
-		if (!sectionEl || prefersReducedMotion()) return;
-
-		const gsap = ensureGsap();
-		const context = gsap.context(() => {
-			gsap.from('[data-principal-img]', {
-				clipPath: 'inset(100% 0% 0% 0%)',
-				duration: 1.4,
-				ease: 'power4.inOut',
-				scrollTrigger: {
-					trigger: sectionEl,
-					start: 'top 65%'
-				}
-			});
-
-			gsap.from('[data-principal-card]', {
-				autoAlpha: 0,
-				x: 40,
-				duration: 1,
-				ease: 'power3.out',
-				scrollTrigger: {
-					trigger: sectionEl,
-					start: 'top 55%'
-				}
-			});
-
-			gsap.from('[data-principal-content] > *', {
-				autoAlpha: 0,
-				y: 30,
-				stagger: 0.15,
-				duration: 0.8,
-				ease: 'power3.out',
-				scrollTrigger: {
-					trigger: sectionEl,
-					start: 'top 60%'
-				}
-			});
-		}, sectionEl);
-
-		return () => context.revert();
-	});
 </script>
 
-<section bind:this={sectionEl} class="relative overflow-hidden bg-white py-24">
+<section class="relative overflow-hidden bg-white py-24">
 	<div class="absolute inset-0 bg-[radial-gradient(circle_at_left,_rgba(13,93,86,0.06),_transparent_40%)]"></div>
 
 	<div class="container relative z-10 mx-auto px-4 lg:px-8">
@@ -57,7 +11,7 @@
 				<div class="absolute -left-4 top-10 h-28 w-28 rounded-full bg-secondary/15 blur-3xl"></div>
 				<div class="absolute -bottom-10 right-10 h-36 w-36 rounded-full bg-primary/10 blur-3xl"></div>
 
-				<div data-principal-img class="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white p-3 shadow-[0_28px_80px_rgba(13,93,86,0.12)]">
+				<div class="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white p-3 shadow-[0_28px_80px_rgba(13,93,86,0.12)]">
 					<img
 						src="/images/logos/image%20copy%202.png"
 						alt="Prof. Wajahat Majeed"
@@ -65,7 +19,7 @@
 					/>
 				</div>
 
-				<div data-principal-card class="absolute bottom-8 left-0 right-8 mx-auto max-w-xs rounded-[1.5rem] border border-white/20 bg-primary/90 px-6 py-5 text-white shadow-2xl shadow-primary/30 backdrop-blur">
+				<div class="absolute bottom-8 left-0 right-8 mx-auto max-w-xs rounded-[1.5rem] border border-white/20 bg-primary/90 px-6 py-5 text-white shadow-2xl shadow-primary/30 backdrop-blur">
 					<div class="mb-3 flex items-center gap-2 text-secondary">
 						<ShieldCheck size={18} />
 						<span class="text-xs font-black uppercase tracking-[0.28em]">Accessible Learning</span>
@@ -74,7 +28,7 @@
 				</div>
 			</div>
 
-			<div data-principal-content class="space-y-8">
+			<div class="space-y-8">
 				<div class="space-y-4">
 					<p class="text-sm font-black uppercase tracking-[0.35em] text-secondary">Principal's Message</p>
 					<p class="max-w-2xl text-base font-medium leading-8 text-primary/65 lg:text-lg">

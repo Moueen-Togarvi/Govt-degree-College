@@ -10,7 +10,10 @@
 </script>
 
 <!-- Page Hero Banner -->
-<div class="relative min-h-[36vh] overflow-hidden bg-primary py-16 lg:min-h-[42vh] lg:py-20">
+<section
+	data-stack-panel="true"
+	class="relative min-h-[36vh] overflow-hidden bg-primary py-16 lg:min-h-[42vh] lg:py-20"
+>
 	<div class="absolute inset-0">
 		<img
 			src={sharedBackgroundImage}
@@ -48,4 +51,4 @@
 			</p>
 		{/if}
 	</div>
-</div>
+</section>

@@ -4,14 +4,39 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { ensureGsap, initLenis } from '$lib/gsap';
+	import { get } from 'svelte/store';
+	import { onMount, tick } from 'svelte';
+	import { ensureGsap, setupStickyStack } from '$lib/gsap';
 
 	let { children } = $props();
+	let mainElement = $state<HTMLElement | null>(null);
 
 	onMount(() => {
 		ensureGsap();
-		initLenis();
+
+		let cleanup = () => {};
+
+		const applyStack = async () => {
+			cleanup();
+
+			if (!mainElement || get(page).url.pathname.startsWith('/admin')) {
+				return;
+			}
+
+			await tick();
+			cleanup = setupStickyStack(mainElement, { topOffset: 116, minPanelHeight: 260 });
+		};
+
+		void applyStack();
+
+		const unsubscribe = page.subscribe(() => {
+			void applyStack();
+		});
+
+		return () => {
+			cleanup();
+			unsubscribe();
+		};
 	});
 </script>
 
@@ -25,7 +50,10 @@
 		<Navbar />
 	{/if}
 	
-	<main class="flex-grow {$page.url.pathname.startsWith('/admin') ? '' : 'pt-[105px]'}">
+	<main
+		bind:this={mainElement}
+		class="flex-grow overflow-x-clip {$page.url.pathname.startsWith('/admin') ? '' : 'pt-[105px]'}"
+	>
 		{@render children()}
 	</main>
 
@@ -33,3 +61,27 @@
 		<Footer />
 	{/if}
 </div>
+
+<style>
+	:global(.stack-shell) {
+		position: relative;
+		min-height: var(--stack-shell-height, 140vh);
+	}
+
+	:global(.stack-panel) {
+		position: sticky;
+		top: var(--stack-top, 116px);
+		will-change: transform;
+	}
+
+	@media (max-width: 1023px) {
+		:global(.stack-shell) {
+			min-height: auto;
+		}
+
+		:global(.stack-panel) {
+			position: relative;
+			top: auto;
+		}
+	}
+</style>

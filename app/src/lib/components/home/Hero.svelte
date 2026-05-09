@@ -215,6 +215,7 @@
 </script>
 
 <section
+	data-stack-skip="true"
 	bind:this={heroSection}
 	class="relative flex min-h-[105vh] flex-col items-center justify-center overflow-hidden bg-primary"
 >
