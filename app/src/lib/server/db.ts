@@ -1,5 +1,5 @@
 import { neon } from '@neondatabase/serverless';
-import { DATABASE_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export const DATABASE_CONFIG_ERROR =
 	'DATABASE_URL is not defined. Add your Neon connection string to app/.env.';
@@ -12,17 +12,23 @@ let sqlClient: SqlClient | null = null;
 let databaseRetryAfter = 0;
 let lastDatabaseWarning = '';
 
+function getDatabaseUrl() {
+	return env.DATABASE_URL ?? '';
+}
+
 export function isDatabaseConfigured() {
-	return Boolean(DATABASE_URL);
+	return Boolean(getDatabaseUrl());
 }
 
 export function getSql() {
-	if (!DATABASE_URL) {
+	const databaseUrl = getDatabaseUrl();
+
+	if (!databaseUrl) {
 		throw new Error(DATABASE_CONFIG_ERROR);
 	}
 
 	if (!sqlClient) {
-		sqlClient = neon(DATABASE_URL);
+		sqlClient = neon(databaseUrl);
 	}
 
 	return sqlClient;
