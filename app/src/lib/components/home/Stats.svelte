@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { Building2, Clock3, GraduationCap, School, Users } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
 
 	const stats = [
 		{
@@ -51,9 +53,55 @@
 		{ top: '82%', left: '22%', size: 10, delay: '0.7s', duration: '6.4s', variant: 'star' },
 		{ top: '86%', left: '69%', size: 12, delay: '1.4s', duration: '7.7s', variant: 'broken' }
 	];
+
+	let sectionEl = $state<HTMLElement | null>(null);
+
+	function formatStatValue(index: number, value: number) {
+		const stat = stats[index];
+		const rounded = Math.round(value);
+
+		if (stat.target >= 1000) {
+			return `${rounded.toLocaleString()}${stat.suffix}`;
+		}
+
+		return `${rounded}${stat.suffix}`;
+	}
+
+	onMount(() => {
+		if (!sectionEl || prefersReducedMotion()) return;
+
+		const gsap = ensureGsap();
+		const values = Array.from(
+			sectionEl.querySelectorAll<HTMLElement>('[data-stat-value]')
+		);
+
+		const triggers = values.map((element, index) =>
+			gsap.fromTo(
+				{ value: 0 },
+				{ value: 0 },
+				{
+					value: stats[index].target,
+					duration: index === stats.length - 1 ? 2 : 1.5,
+					ease: 'power2.out',
+					scrollTrigger: {
+						trigger: sectionEl,
+						start: 'top 72%',
+						once: true
+					},
+					onUpdate() {
+						element.textContent = formatStatValue(index, this.targets()[0].value);
+					}
+				}
+			).scrollTrigger
+		);
+
+		return () => {
+			triggers.forEach((trigger) => trigger?.kill());
+		};
+	});
 </script>
 
-<section class="relative overflow-hidden bg-white py-14 lg:py-16">
+<section bind:this={sectionEl} class="relative overflow-hidden bg-white py-14 lg:py-16">
 	<div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(247,148,29,0.06),_transparent_38%)]"></div>
 	<div class="stats-orb stats-orb-teal"></div>
 	<div class="stats-orb stats-orb-orange"></div>
@@ -84,7 +132,7 @@
 						<div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float">
 							<stat.icon size={24} strokeWidth={1.9} />
 						</div>
-						<p class="text-3xl font-black text-primary lg:text-4xl">{stat.value}</p>
+						<p data-stat-value class="text-3xl font-black text-primary lg:text-4xl">{stat.value}</p>
 						<h3 class="mt-2 text-sm font-black uppercase tracking-[0.18em] text-primary/65 lg:text-base">
 							{stat.label}
 						</h3>

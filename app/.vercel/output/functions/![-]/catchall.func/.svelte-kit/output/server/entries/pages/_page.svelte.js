@@ -341,12 +341,12 @@ function Hero($$renderer, $$props) {
 			}
 			$$renderer.push(`<!--]--></span></span>`);
 		}
-		$$renderer.push(`<!--]--></h1></div> <div class="mx-auto mt-10 max-w-4xl"><div class="flex flex-col items-center gap-2"><div class="relative flex w-full max-w-4xl justify-center"><div data-hero-logo-ribbon="" data-parallax-plate="" class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 items-center gap-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-4 shadow-2xl backdrop-blur-2xl"><div class="flex flex-col items-center group"><div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110"><img src="/images/logos/image.png" alt="Govt Logo" class="h-full w-full object-contain"/></div></div> <div class="h-10 w-px bg-white/10"></div> <div class="flex flex-col items-center group"><div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110"><img src="/images/logos/degree4k-removebg-preview.png" alt="College Logo" class="h-full w-full object-contain"/></div></div></div> <div data-hero-quote="" class="w-full pt-24"><svg viewBox="0 0 900 220" class="w-full overflow-visible"><path id="heroQuoteCurve" d="M 150 70 Q 450 138 750 70" fill="transparent"></path><path id="heroQuoteCurveAccent" d="M 205 142 Q 450 202 695 142" fill="transparent"></path><text class="fill-white text-[28px] font-bold italic tracking-tight drop-shadow-lg lg:text-[36px]" text-anchor="middle"><textPath href="#heroQuoteCurve" startOffset="50%">We are dedicated to</textPath></text><text class="text-[26px] font-black italic tracking-tight drop-shadow-lg transition-all duration-500 lg:text-[34px]" text-anchor="middle"${attr_style(`fill: ${currentAccentColor()};`)}><textPath href="#heroQuoteCurveAccent" startOffset="50%">${escape_html(displayedSuffix || " ")}</textPath></text></svg></div></div></div> <div class="relative mt-8 flex flex-col items-center"><div class="flex flex-wrap justify-center gap-6"><a data-hero-cta="" href="/admissions/how-to-apply" class="group flex items-center gap-4 rounded-2xl bg-secondary px-12 py-5 text-lg font-black text-white shadow-2xl shadow-secondary/40 transition-all hover:scale-105 hover:bg-secondary/90 active:scale-95">Start Your Journey `);
+		$$renderer.push(`<!--]--></h1></div> <div class="mx-auto mt-10 max-w-4xl"><div class="flex flex-col items-center gap-2"><div class="relative flex w-full max-w-4xl justify-center"><div data-hero-logo-ribbon="" data-parallax-plate="" class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 items-center gap-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-4 shadow-2xl backdrop-blur-2xl"><div class="flex flex-col items-center group"><div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110"><img src="/images/logos/image.png" alt="Govt Logo" class="h-full w-full object-contain"/></div></div> <div class="h-10 w-px bg-white/10"></div> <div class="flex flex-col items-center group"><div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110"><img src="/images/logos/degree4k-removebg-preview.png" alt="College Logo" class="h-full w-full object-contain"/></div></div></div> <div data-hero-quote="" class="w-full pt-24"><svg viewBox="0 0 900 220" class="w-full overflow-visible"><path id="heroQuoteCurve" d="M 150 70 Q 450 138 750 70" fill="transparent"></path><path id="heroQuoteCurveAccent" d="M 205 142 Q 450 202 695 142" fill="transparent"></path><text class="fill-white text-[28px] font-bold italic tracking-tight drop-shadow-lg lg:text-[36px]" text-anchor="middle"><textPath href="#heroQuoteCurve" startOffset="50%">We are dedicated to</textPath></text><text class="text-[26px] font-black italic tracking-tight drop-shadow-lg transition-all duration-500 lg:text-[34px]" text-anchor="middle"${attr_style(`fill: ${currentAccentColor()};`)}><textPath href="#heroQuoteCurveAccent" startOffset="50%">${escape_html(displayedSuffix || " ")}</textPath></text></svg></div></div></div> <div class="relative mt-8 flex flex-col items-center"><div class="flex flex-wrap justify-center gap-4"><a data-hero-cta="" href="/admissions/how-to-apply" class="group flex items-center gap-3 rounded-2xl bg-secondary px-8 py-4 text-base font-black text-white shadow-2xl shadow-secondary/40 transition-all hover:scale-105 hover:bg-secondary/90 active:scale-95 lg:px-10 lg:py-4">Start Your Journey `);
 		Arrow_right($$renderer, {
-			size: 22,
+			size: 20,
 			class: "transition-transform group-hover:translate-x-2"
 		});
-		$$renderer.push(`<!----></a> <a data-hero-cta="" href="/about/overview" class="flex items-center gap-4 rounded-2xl border border-white/20 bg-white/10 px-12 py-5 text-lg font-black text-white backdrop-blur-2xl transition-all hover:scale-105 hover:bg-white/20 active:scale-95">Discover More</a></div></div></div></div> <div data-hero-indicator="" class="absolute bottom-8 right-8 z-30 hidden lg:block"><div class="relative w-32 h-32 flex items-center justify-center group cursor-pointer hover:scale-110 transition-transform"><div class="absolute inset-0 animate-spin-slow svelte-tc3uts"><svg viewBox="0 0 100 100" class="w-full h-full text-white/80 overflow-visible"><path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent"></path><text class="text-[12px] font-black uppercase tracking-[0.15em] fill-current"><textPath href="#circlePath" startOffset="0%">EXPLORE CAMPUS • SCROLL DOWN •</textPath></text></svg></div> <div class="w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center relative z-10 group-hover:-translate-y-2 transition-transform shadow-xl">`);
+		$$renderer.push(`<!----></a> <a data-hero-cta="" href="/about/overview" class="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-black text-white backdrop-blur-2xl transition-all hover:scale-105 hover:bg-white/20 active:scale-95 lg:px-10 lg:py-4">Discover More</a></div></div></div></div> <div data-hero-indicator="" class="absolute bottom-8 right-8 z-30 hidden lg:block"><div class="relative w-32 h-32 flex items-center justify-center group cursor-pointer hover:scale-110 transition-transform"><div class="absolute inset-0 animate-spin-slow svelte-tc3uts"><svg viewBox="0 0 100 100" class="w-full h-full text-white/80 overflow-visible"><path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent"></path><text class="text-[12px] font-black uppercase tracking-[0.15em] fill-current"><textPath href="#circlePath" startOffset="0%">EXPLORE CAMPUS • SCROLL DOWN •</textPath></text></svg></div> <div class="w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center relative z-10 group-hover:-translate-y-2 transition-transform shadow-xl">`);
 		Arrow_down($$renderer, {
 			size: 20,
 			class: "animate-bounce"
@@ -441,151 +441,153 @@ function PrincipalMessage($$renderer) {
 }
 //#endregion
 //#region src/lib/components/home/Stats.svelte
-function Stats($$renderer) {
-	const stats = [
-		{
-			label: "Active Students",
-			value: "5,000+",
-			target: 5e3,
-			suffix: "+",
-			icon: Users
-		},
-		{
-			label: "Departments",
-			value: "7",
-			target: 7,
-			suffix: "",
-			icon: Building_2
-		},
-		{
-			label: "Teachers",
-			value: "50+",
-			target: 50,
-			suffix: "+",
-			icon: School
-		},
-		{
-			label: "BS Shifts",
-			value: "2",
-			target: 2,
-			suffix: "",
-			icon: Clock_3
-		},
-		{
-			label: "Legacy",
-			value: "1945",
-			target: 1945,
-			suffix: "",
-			icon: Graduation_cap
+function Stats($$renderer, $$props) {
+	$$renderer.component(($$renderer) => {
+		const stats = [
+			{
+				label: "Active Students",
+				value: "5,000+",
+				target: 5e3,
+				suffix: "+",
+				icon: Users
+			},
+			{
+				label: "Departments",
+				value: "7",
+				target: 7,
+				suffix: "",
+				icon: Building_2
+			},
+			{
+				label: "Teachers",
+				value: "50+",
+				target: 50,
+				suffix: "+",
+				icon: School
+			},
+			{
+				label: "BS Shifts",
+				value: "2",
+				target: 2,
+				suffix: "",
+				icon: Clock_3
+			},
+			{
+				label: "Legacy",
+				value: "1945",
+				target: 1945,
+				suffix: "",
+				icon: Graduation_cap
+			}
+		];
+		const particles = [
+			{
+				top: "14%",
+				left: "8%",
+				size: 12,
+				delay: "0s",
+				duration: "6.5s",
+				variant: "star"
+			},
+			{
+				top: "22%",
+				left: "27%",
+				size: 14,
+				delay: "1.2s",
+				duration: "7.2s",
+				variant: "broken"
+			},
+			{
+				top: "18%",
+				left: "74%",
+				size: 12,
+				delay: "0.5s",
+				duration: "6.8s",
+				variant: "star"
+			},
+			{
+				top: "30%",
+				left: "88%",
+				size: 10,
+				delay: "1.6s",
+				duration: "7.6s",
+				variant: "broken"
+			},
+			{
+				top: "52%",
+				left: "14%",
+				size: 12,
+				delay: "0.9s",
+				duration: "6.9s",
+				variant: "star"
+			},
+			{
+				top: "64%",
+				left: "38%",
+				size: 10,
+				delay: "1.8s",
+				duration: "7.4s",
+				variant: "broken"
+			},
+			{
+				top: "58%",
+				left: "62%",
+				size: 13,
+				delay: "0.4s",
+				duration: "6.7s",
+				variant: "star"
+			},
+			{
+				top: "74%",
+				left: "82%",
+				size: 11,
+				delay: "1.1s",
+				duration: "7.1s",
+				variant: "broken"
+			},
+			{
+				top: "82%",
+				left: "22%",
+				size: 10,
+				delay: "0.7s",
+				duration: "6.4s",
+				variant: "star"
+			},
+			{
+				top: "86%",
+				left: "69%",
+				size: 12,
+				delay: "1.4s",
+				duration: "7.7s",
+				variant: "broken"
+			}
+		];
+		$$renderer.push(`<section class="relative overflow-hidden bg-white py-14 lg:py-16 svelte-19rawm5"><div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(247,148,29,0.06),_transparent_38%)] svelte-19rawm5"></div> <div class="stats-orb stats-orb-teal svelte-19rawm5"></div> <div class="stats-orb stats-orb-orange svelte-19rawm5"></div> <div class="stats-orb stats-orb-soft svelte-19rawm5"></div> <div class="pointer-events-none absolute inset-0 svelte-19rawm5"><!--[-->`);
+		const each_array = ensure_array_like(particles);
+		for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
+			let particle = each_array[$$index];
+			$$renderer.push(`<span${attr_class(`stats-particle ${particle.variant === "broken" ? "stats-particle-broken" : "stats-particle-star"}`, "svelte-19rawm5")}${attr_style(`top:${particle.top};left:${particle.left};width:${particle.size}px;height:${particle.size}px;animation-delay:${particle.delay};animation-duration:${particle.duration};`)}></span>`);
 		}
-	];
-	const particles = [
-		{
-			top: "14%",
-			left: "8%",
-			size: 12,
-			delay: "0s",
-			duration: "6.5s",
-			variant: "star"
-		},
-		{
-			top: "22%",
-			left: "27%",
-			size: 14,
-			delay: "1.2s",
-			duration: "7.2s",
-			variant: "broken"
-		},
-		{
-			top: "18%",
-			left: "74%",
-			size: 12,
-			delay: "0.5s",
-			duration: "6.8s",
-			variant: "star"
-		},
-		{
-			top: "30%",
-			left: "88%",
-			size: 10,
-			delay: "1.6s",
-			duration: "7.6s",
-			variant: "broken"
-		},
-		{
-			top: "52%",
-			left: "14%",
-			size: 12,
-			delay: "0.9s",
-			duration: "6.9s",
-			variant: "star"
-		},
-		{
-			top: "64%",
-			left: "38%",
-			size: 10,
-			delay: "1.8s",
-			duration: "7.4s",
-			variant: "broken"
-		},
-		{
-			top: "58%",
-			left: "62%",
-			size: 13,
-			delay: "0.4s",
-			duration: "6.7s",
-			variant: "star"
-		},
-		{
-			top: "74%",
-			left: "82%",
-			size: 11,
-			delay: "1.1s",
-			duration: "7.1s",
-			variant: "broken"
-		},
-		{
-			top: "82%",
-			left: "22%",
-			size: 10,
-			delay: "0.7s",
-			duration: "6.4s",
-			variant: "star"
-		},
-		{
-			top: "86%",
-			left: "69%",
-			size: 12,
-			delay: "1.4s",
-			duration: "7.7s",
-			variant: "broken"
+		$$renderer.push(`<!--]--></div> <div class="container relative z-10 mx-auto px-4 lg:px-8 svelte-19rawm5"><div class="stats-frame relative overflow-hidden rounded-[2rem] border border-primary/10 px-4 py-8 lg:px-6 svelte-19rawm5"><div class="pointer-events-none absolute inset-0 svelte-19rawm5"><div class="stats-frame-border svelte-19rawm5"></div> <span class="stats-beam stats-beam-top svelte-19rawm5"></span> <span class="stats-beam stats-beam-right svelte-19rawm5"></span> <span class="stats-beam stats-beam-bottom svelte-19rawm5"></span> <span class="stats-beam stats-beam-left svelte-19rawm5"></span></div> <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-5 svelte-19rawm5"><!--[-->`);
+		const each_array_1 = ensure_array_like(stats);
+		for (let index = 0, $$length = each_array_1.length; index < $$length; index++) {
+			let stat = each_array_1[index];
+			$$renderer.push(`<div class="text-center svelte-19rawm5"${attr_style(`animation-delay: ${index * 90}ms`)}><div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float svelte-19rawm5">`);
+			if (stat.icon) {
+				$$renderer.push("<!--[-->");
+				stat.icon($$renderer, {
+					size: 24,
+					strokeWidth: 1.9
+				});
+				$$renderer.push("<!--]-->");
+			} else {
+				$$renderer.push("<!--[!-->");
+				$$renderer.push("<!--]-->");
+			}
+			$$renderer.push(`</div> <p data-stat-value="" class="text-3xl font-black text-primary lg:text-4xl svelte-19rawm5">${escape_html(stat.value)}</p> <h3 class="mt-2 text-sm font-black uppercase tracking-[0.18em] text-primary/65 lg:text-base svelte-19rawm5">${escape_html(stat.label)}</h3></div>`);
 		}
-	];
-	$$renderer.push(`<section class="relative overflow-hidden bg-white py-14 lg:py-16 svelte-19rawm5"><div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(247,148,29,0.06),_transparent_38%)] svelte-19rawm5"></div> <div class="stats-orb stats-orb-teal svelte-19rawm5"></div> <div class="stats-orb stats-orb-orange svelte-19rawm5"></div> <div class="stats-orb stats-orb-soft svelte-19rawm5"></div> <div class="pointer-events-none absolute inset-0 svelte-19rawm5"><!--[-->`);
-	const each_array = ensure_array_like(particles);
-	for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
-		let particle = each_array[$$index];
-		$$renderer.push(`<span${attr_class(`stats-particle ${particle.variant === "broken" ? "stats-particle-broken" : "stats-particle-star"}`, "svelte-19rawm5")}${attr_style(`top:${particle.top};left:${particle.left};width:${particle.size}px;height:${particle.size}px;animation-delay:${particle.delay};animation-duration:${particle.duration};`)}></span>`);
-	}
-	$$renderer.push(`<!--]--></div> <div class="container relative z-10 mx-auto px-4 lg:px-8 svelte-19rawm5"><div class="stats-frame relative overflow-hidden rounded-[2rem] border border-primary/10 px-4 py-8 lg:px-6 svelte-19rawm5"><div class="pointer-events-none absolute inset-0 svelte-19rawm5"><div class="stats-frame-border svelte-19rawm5"></div> <span class="stats-beam stats-beam-top svelte-19rawm5"></span> <span class="stats-beam stats-beam-right svelte-19rawm5"></span> <span class="stats-beam stats-beam-bottom svelte-19rawm5"></span> <span class="stats-beam stats-beam-left svelte-19rawm5"></span></div> <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-5 svelte-19rawm5"><!--[-->`);
-	const each_array_1 = ensure_array_like(stats);
-	for (let index = 0, $$length = each_array_1.length; index < $$length; index++) {
-		let stat = each_array_1[index];
-		$$renderer.push(`<div class="text-center svelte-19rawm5"${attr_style(`animation-delay: ${index * 90}ms`)}><div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float svelte-19rawm5">`);
-		if (stat.icon) {
-			$$renderer.push("<!--[-->");
-			stat.icon($$renderer, {
-				size: 24,
-				strokeWidth: 1.9
-			});
-			$$renderer.push("<!--]-->");
-		} else {
-			$$renderer.push("<!--[!-->");
-			$$renderer.push("<!--]-->");
-		}
-		$$renderer.push(`</div> <p class="text-3xl font-black text-primary lg:text-4xl svelte-19rawm5">${escape_html(stat.value)}</p> <h3 class="mt-2 text-sm font-black uppercase tracking-[0.18em] text-primary/65 lg:text-base svelte-19rawm5">${escape_html(stat.label)}</h3></div>`);
-	}
-	$$renderer.push(`<!--]--></div></div></div></section>`);
+		$$renderer.push(`<!--]--></div></div></div></section>`);
+	});
 }
 //#endregion
 //#region src/lib/components/home/FeaturedPrograms.svelte

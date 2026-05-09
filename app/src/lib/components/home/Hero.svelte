@@ -330,19 +330,19 @@
 			</div>
 
 			<div class="relative mt-8 flex flex-col items-center">
-				<div class="flex flex-wrap justify-center gap-6">
+				<div class="flex flex-wrap justify-center gap-4">
 					<a
 						data-hero-cta
 						href="/admissions/how-to-apply"
-						class="group flex items-center gap-4 rounded-2xl bg-secondary px-12 py-5 text-lg font-black text-white shadow-2xl shadow-secondary/40 transition-all hover:scale-105 hover:bg-secondary/90 active:scale-95"
+						class="group flex items-center gap-3 rounded-2xl bg-secondary px-8 py-4 text-base font-black text-white shadow-2xl shadow-secondary/40 transition-all hover:scale-105 hover:bg-secondary/90 active:scale-95 lg:px-10 lg:py-4"
 					>
 						Start Your Journey
-						<ArrowRight size={22} class="transition-transform group-hover:translate-x-2" />
+						<ArrowRight size={20} class="transition-transform group-hover:translate-x-2" />
 					</a>
 					<a
 						data-hero-cta
 						href="/about/overview"
-						class="flex items-center gap-4 rounded-2xl border border-white/20 bg-white/10 px-12 py-5 text-lg font-black text-white backdrop-blur-2xl transition-all hover:scale-105 hover:bg-white/20 active:scale-95"
+						class="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 text-base font-black text-white backdrop-blur-2xl transition-all hover:scale-105 hover:bg-white/20 active:scale-95 lg:px-10 lg:py-4"
 					>
 						Discover More
 					</a>
