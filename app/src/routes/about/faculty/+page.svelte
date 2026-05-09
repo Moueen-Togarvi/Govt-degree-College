@@ -171,13 +171,14 @@
 									<div class="inline-flex rounded-full border border-secondary/20 bg-white/85 px-4 py-2 text-[11px] font-black uppercase tracking-[0.28em] text-secondary shadow-sm">
 										{activeLanguage === 'english' ? 'Head of Department' : 'شعبہ سربراہ'}
 									</div>
-									<div class="overflow-hidden rounded-[1.8rem] border border-white/80 bg-[linear-gradient(180deg,rgba(233,245,255,0.95),rgba(255,255,255,1))] shadow-lg">
+									<div class="relative overflow-hidden rounded-[1.8rem] border border-white/80 bg-[linear-gradient(180deg,rgba(233,245,255,0.95),rgba(255,255,255,1))] shadow-lg">
 										{#if head}
 											<img
 												src={head.photo}
 												alt={activeLanguage === 'english' ? head.name : head.urduName}
 												class="h-72 w-full object-contain object-center p-3"
 											/>
+											<div class="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-white/40 blur-md"></div>
 										{:else}
 											<div class="flex h-72 items-center justify-center bg-neutral-soft text-center text-sm font-bold text-primary/45">
 												{activeLanguage === 'english' ? 'HOD will be added soon' : 'HOD جلد شامل کیا جائے گا'}
@@ -216,13 +217,14 @@
 									<div class="inline-flex rounded-full border border-primary/10 bg-white/85 px-4 py-2 text-[11px] font-black uppercase tracking-[0.28em] text-secondary shadow-sm">
 										{activeLanguage === 'english' ? 'Department Coordinator' : 'ڈیپارٹمنٹ کوآرڈینیٹر'}
 									</div>
-									<div class="overflow-hidden rounded-[1.8rem] border border-white/80 bg-[linear-gradient(180deg,rgba(233,245,255,0.95),rgba(255,255,255,1))] shadow-lg">
+									<div class="relative overflow-hidden rounded-[1.8rem] border border-white/80 bg-[linear-gradient(180deg,rgba(233,245,255,0.95),rgba(255,255,255,1))] shadow-lg">
 										{#if coordinator}
 											<img
 												src={coordinator.photo}
 												alt={activeLanguage === 'english' ? coordinator.name : coordinator.urduName}
 												class="h-72 w-full object-contain object-center p-3"
 											/>
+											<div class="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-white/40 blur-md"></div>
 										{:else}
 											<div class="flex h-72 items-center justify-center bg-neutral-soft text-center text-sm font-bold text-primary/45">
 												{activeLanguage === 'english'
@@ -299,23 +301,26 @@
 						<div class="hidden h-px flex-1 bg-gradient-to-r from-secondary/50 to-transparent lg:block"></div>
 					</div>
 
-					<div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+					<div class="mt-8 grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-4">
 						{#each getDepartmentFaculty(dept) as member}
-							<div class="group relative aspect-square overflow-hidden rounded-[2rem] border border-primary/10 bg-white shadow-[0_18px_45px_rgba(13,93,86,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(13,93,86,0.14)]">
-								<img
-									src={member.photo}
-									alt={activeLanguage === 'english' ? member.name : member.urduName}
-									class="absolute inset-0 h-full w-full object-cover object-[center_18%] transition-transform duration-500 group-hover:scale-[1.03]"
-								/>
-								<div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white via-white/94 to-transparent"></div>
-								<div class="absolute inset-x-0 bottom-0 p-5">
-									<div class="inline-flex rounded-full bg-secondary/12 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-secondary backdrop-blur-sm">
+							<div class="group relative overflow-hidden rounded-[2rem] border border-primary/10 bg-white shadow-[0_18px_45px_rgba(13,93,86,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(13,93,86,0.14)]">
+								<div class="relative overflow-hidden rounded-b-none bg-[linear-gradient(180deg,rgba(233,245,255,0.95),rgba(255,255,255,1))]">
+									<img
+										src={member.photo}
+										alt={activeLanguage === 'english' ? member.name : member.urduName}
+										class="h-48 w-full object-contain object-center p-3 transition-transform duration-500 group-hover:scale-[1.03]"
+									/>
+									<!-- Small overlay to hide watermark -->
+									<div class="absolute bottom-2 right-2 h-6 w-6 rounded-full bg-white/40 blur-md opacity-50"></div>
+								</div>
+								<div class="bg-[#0D5D56] p-5">
+									<div class="inline-flex rounded-full bg-secondary/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-secondary border border-secondary/20 backdrop-blur-md">
 										{activeLanguage === 'english' ? member.role : member.urduRole}
 									</div>
-									<h3 class="mt-3 line-clamp-2 text-xl font-black text-primary">
+									<h3 class="mt-3 line-clamp-1 text-lg font-black text-white">
 										{activeLanguage === 'english' ? member.name : member.urduName}
 									</h3>
-									<p class="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-primary/70">
+									<p class="mt-1 line-clamp-1 text-sm font-semibold leading-5 text-white/70">
 										{activeLanguage === 'english'
 											? member.qualification
 											: member.urduQualification}
