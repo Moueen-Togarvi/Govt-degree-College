@@ -9,14 +9,16 @@
 	];
 
 	const images = [
-		{ src: "/images/gallery/682757218_1491086206363014_2879876708562002240_n.jpg", title: "College Campus" },
-		{ src: "/images/gallery/547755271_1299324492205854_5011253499358894922_n.jpg", title: "Science Block" },
-		{ src: "/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg", title: "Library Hall" },
-		{ src: "/images/gallery/497498149_1184322940372677_5964474392879878424_n.jpg", title: "Main Gate" },
-		{ src: "/images/gallery/474603631_1113700027116416_3753317337439731517_n.jpg", title: "Academic Block" },
-		{ src: "/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg", title: "Admin Office" },
-		{ src: "/images/gallery/488936577_1152937786844526_8441555087243500544_n.jpg", title: "Auditorium" },
-		{ src: "/images/gallery/489370014_1155981606540144_7733475266851659714_n.jpg", title: "Sports Complex" }
+		{ src: "/images/gallery/Gemini_Generated_Image_hwtnmyhwtnmyhwtn.png", title: "Open-Air Academic Session" },
+		{ src: "/images/gallery/Gemini_Generated_Image_jec4ltjec4ltjec4.png", title: "Courtyard Garden" },
+		{ src: "/images/gallery/Gemini_Generated_Image_kgigjckgigjckgig.png", title: "Mathematics Weekly Test" },
+		{ src: "/images/gallery/Gemini_Generated_Image_dcuevidcuevidcue.png", title: "Hockey Team Spirit" },
+		{ src: "/images/gallery/Gemini_Generated_Image_v7frg0v7frg0v7fr.png", title: "Promotion Award Ceremony" },
+		{ src: "/images/gallery/Gemini_Generated_Image_kbyw6zkbyw6zkbyw.png", title: "Football Team Gathering" },
+		{ src: "/images/gallery/Gemini_Generated_Image_5tkvlb5tkvlb5tkv.png", title: "Achievement Recognition" },
+		{ src: "/images/gallery/opst1.png", title: "Sports Week Participation" },
+		{ src: "/images/gallery/Gemini_Generated_Image_iyh10xiyh10xiyh1.png", title: "Campus Gathering" },
+		{ src: "/images/gallery/Gemini_Generated_Image_t8ri2ct8ri2ct8ri.png", title: "Student Activity Moment" }
 	];
 </script>
 
@@ -28,7 +30,7 @@
 	title="Campus Gallery" 
 	subtitle="A visual journey through our campus and academic life."
 	{breadcrumbs}
-	image="/images/gallery/682757218_1491086206363014_2879876708562002240_n.jpg"
+	image="/images/gallery/Gemini_Generated_Image_hwtnmyhwtnmyhwtn.png"
 />
 
 <section class="py-24 bg-white">
@@ -36,7 +38,7 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 			{#each images as image}
 				<div class="group relative aspect-square overflow-hidden rounded-3xl bg-neutral-soft border border-border-soft hover:shadow-2xl transition-all duration-500 cursor-pointer">
-					<img src={image.src} alt={image.title} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+					<img src={image.src} alt={image.title} loading="lazy" decoding="async" class="w-full h-full object-cover object-center [image-rendering:auto] transition-transform duration-700 group-hover:scale-110" />
 					<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
 						<div class="space-y-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
 							<p class="text-secondary font-black uppercase tracking-widest text-xs">Category</p>

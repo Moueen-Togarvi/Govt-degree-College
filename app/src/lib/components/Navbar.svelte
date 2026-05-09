@@ -104,7 +104,7 @@
 				</div>
 				<div class="flex items-center gap-2">
 					<MapPin size={14} class="text-secondary" />
-					<span>Minchinabad Road, Bahawalnagar</span>
+					<span>College Road, Bahawalnagar</span>
 				</div>
 			</div>
 			<div class="flex items-center gap-3">

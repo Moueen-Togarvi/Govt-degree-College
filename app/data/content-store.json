@@ -9,14 +9,6 @@
       "category": "Admissions"
     },
     {
-      "id": 2,
-      "date": "May 06, 2026",
-      "isoDate": "2026-05-06T00:00:00.000Z",
-      "title": "BS Morning and Evening Admissions Notice",
-      "description": "Admissions are open for BS programs affiliated with KFUEIT in both morning and evening shifts. Contact the college for eligibility and fee details.",
-      "category": "Admissions"
-    },
-    {
       "id": 3,
       "date": "May 03, 2026",
       "isoDate": "2026-05-03T00:00:00.000Z",
@@ -38,17 +30,6 @@
       "expiryIsoDate": null
     },
     {
-      "id": 2,
-      "title": "BS Morning & Evening Admissions",
-      "message": "BS admissions are open in both morning and evening shifts under KFUEIT affiliation.",
-      "tag": "BS Notice",
-      "date": "May 06, 2026",
-      "isoDate": "2026-05-06T00:00:00.000Z",
-      "sortOrder": 2,
-      "expiryDate": null,
-      "expiryIsoDate": null
-    },
-    {
       "id": 3,
       "title": "Bring Required Documents",
       "message": "Intermediate applicants should bring previous result cards, photographs, and B-Form copy during admission.",
@@ -66,12 +47,6 @@
       "title": "11th Class admissions are now open",
       "href": "/news/announcements",
       "sortOrder": 1
-    },
-    {
-      "id": 2,
-      "title": "BS morning and evening admissions notice",
-      "href": "/news/announcements",
-      "sortOrder": 2
     },
     {
       "id": 3,
@@ -102,40 +77,7 @@
       "status": "Upcoming"
     }
   ],
-  "results": [
-    {
-      "id": 1,
-      "title": "BS Computer Science (2nd Semester) - Spring 2026",
-      "date": "Oct 20, 2026",
-      "isoDate": "2026-10-20T00:00:00.000Z",
-      "type": "Semester",
-      "fileUrl": null
-    },
-    {
-      "id": 2,
-      "title": "BS English (4th Semester) - Spring 2026",
-      "date": "Oct 18, 2026",
-      "isoDate": "2026-10-18T00:00:00.000Z",
-      "type": "Semester",
-      "fileUrl": null
-    },
-    {
-      "id": 3,
-      "title": "Intermediate Part-I (Mock Exams)",
-      "date": "Oct 10, 2026",
-      "isoDate": "2026-10-10T00:00:00.000Z",
-      "type": "Annual",
-      "fileUrl": null
-    },
-    {
-      "id": 4,
-      "title": "BS Zoology (1st Semester) - Spring 2026",
-      "date": "Oct 05, 2026",
-      "isoDate": "2026-10-05T00:00:00.000Z",
-      "type": "Semester",
-      "fileUrl": null
-    }
-  ],
+  "results": [],
   "quickLinks": [
     {
       "id": 1,
@@ -174,93 +116,72 @@
       "urduName": "کمپیوٹر سائنس"
     },
     {
-      "id": 2,
-      "name": "English",
-      "slug": "english",
-      "urduName": "انگلش"
+      "id": 4,
+      "name": "Mathematics",
+      "slug": "mathematics",
+      "urduName": "ریاضی"
     },
     {
-      "id": 3,
-      "name": "Urdu",
-      "slug": "urdu",
-      "urduName": "اردو"
+      "id": 5,
+      "name": "Chemistry",
+      "slug": "chemistry",
+      "urduName": "Chemistry"
+    },
+    {
+      "id": 6,
+      "name": "Physics",
+      "slug": "physics",
+      "urduName": "Physics"
+    },
+    {
+      "id": 7,
+      "name": "Zoology",
+      "slug": "zoology",
+      "urduName": "Zoology"
+    },
+    {
+      "id": 8,
+      "name": "Islamiyat",
+      "slug": "islamiyat",
+      "urduName": "Islamiyat"
     }
   ],
   "facultyMembers": [
     {
-      "id": 1,
+      "id": 7,
       "departmentId": 1,
       "departmentName": "Computer Science",
       "departmentSlug": "computer-science",
-      "name": "Prof. Muhammad Zahid",
-      "education": "MS Computer Science",
+      "name": "Muhammad Jabbar Joyia",
+      "education": "BS Computer Science",
       "subject": "Computer Science",
-      "imageUrl": "/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg",
-      "isHod": true,
+      "imageUrl": "/images/staff/jabbar4k.png",
+      "isHod": false,
       "isCoordinator": false,
       "isTeachingStaff": true
     },
     {
-      "id": 2,
+      "id": 8,
+      "departmentId": 4,
+      "departmentName": "Mathematics",
+      "departmentSlug": "mathematics",
+      "name": "Muhammad Mushahid Hussain",
+      "education": "MPhil Mathematics",
+      "subject": "Mathematics",
+      "imageUrl": "/images/staff/mushaid hussain 4k.png",
+      "isHod": false,
+      "isCoordinator": false,
+      "isTeachingStaff": true
+    },
+    {
+      "id": 9,
       "departmentId": 1,
       "departmentName": "Computer Science",
       "departmentSlug": "computer-science",
-      "name": "Dr. Ahmed Hassan",
-      "education": "PhD AI",
-      "subject": "Artificial Intelligence",
-      "imageUrl": "/images/gallery/474603631_1113700027116416_3753317337439731517_n.jpg",
-      "isHod": false,
-      "isCoordinator": true,
-      "isTeachingStaff": true
-    },
-    {
-      "id": 3,
-      "departmentId": 2,
-      "departmentName": "English",
-      "departmentSlug": "english",
-      "name": "Prof. Sajjad Haider",
-      "education": "MA English Literature",
-      "subject": "English Literature",
-      "imageUrl": "/images/gallery/497498149_1184322940372677_5964474392879878424_n.jpg",
-      "isHod": true,
-      "isCoordinator": false,
-      "isTeachingStaff": true
-    },
-    {
-      "id": 4,
-      "departmentId": 2,
-      "departmentName": "English",
-      "departmentSlug": "english",
-      "name": "Ms. Amna Bibi",
-      "education": "M.Phil Linguistics",
-      "subject": "English",
-      "imageUrl": "/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg",
-      "isHod": false,
-      "isCoordinator": true,
-      "isTeachingStaff": true
-    },
-    {
-      "id": 5,
-      "departmentId": 3,
-      "departmentName": "Urdu",
-      "departmentSlug": "urdu",
-      "name": "Prof. Khalid Mahmood",
-      "education": "MA Urdu",
-      "subject": "Urdu",
-      "imageUrl": "/images/gallery/547755271_1299324492205854_5011253499358894922_n.jpg",
-      "isHod": true,
-      "isCoordinator": false,
-      "isTeachingStaff": true
-    },
-    {
-      "id": 6,
-      "departmentId": 3,
-      "departmentName": "Urdu",
-      "departmentSlug": "urdu",
-      "name": "Ms. Naila Ashraf",
-      "education": "M.Phil Urdu",
-      "subject": "Urdu",
-      "imageUrl": "/images/gallery/488936577_1152937786844526_8441555087243500544_n.jpg",
+      "name": "Saeed Bhutta",
+      "education": "BS Computer Science",
+      "subject": "Computer Science",
+      "imageUrl": "/images/staff/saed4k.png",
       "isHod": false,
       "isCoordinator": true,
       "isTeachingStaff": true

@@ -23,7 +23,7 @@
 	);
 
 	function getDepartmentHead(department: FacultyDirectoryDepartment): FacultyDirectoryMember | null {
-		return department.staff.find((member) => member.isHod) ?? department.staff[0] ?? null;
+		return department.staff.find((member) => member.isHod) ?? null;
 	}
 
 	function getDepartmentCoordinator(department: FacultyDirectoryDepartment): FacultyDirectoryMember | null {
@@ -171,12 +171,12 @@
 									<div class="inline-flex rounded-full border border-secondary/20 bg-white/85 px-4 py-2 text-[11px] font-black uppercase tracking-[0.28em] text-secondary shadow-sm">
 										{activeLanguage === 'english' ? 'Head of Department' : 'شعبہ سربراہ'}
 									</div>
-									<div class="overflow-hidden rounded-[1.8rem] border border-white/80 bg-white shadow-lg">
+									<div class="overflow-hidden rounded-[1.8rem] border border-white/80 bg-[linear-gradient(180deg,rgba(233,245,255,0.95),rgba(255,255,255,1))] shadow-lg">
 										{#if head}
 											<img
 												src={head.photo}
 												alt={activeLanguage === 'english' ? head.name : head.urduName}
-												class="h-72 w-full object-cover object-center"
+												class="h-72 w-full object-contain object-center p-3"
 											/>
 										{:else}
 											<div class="flex h-72 items-center justify-center bg-neutral-soft text-center text-sm font-bold text-primary/45">
@@ -216,12 +216,12 @@
 									<div class="inline-flex rounded-full border border-primary/10 bg-white/85 px-4 py-2 text-[11px] font-black uppercase tracking-[0.28em] text-secondary shadow-sm">
 										{activeLanguage === 'english' ? 'Department Coordinator' : 'ڈیپارٹمنٹ کوآرڈینیٹر'}
 									</div>
-									<div class="overflow-hidden rounded-[1.8rem] border border-white/80 bg-white shadow-lg">
+									<div class="overflow-hidden rounded-[1.8rem] border border-white/80 bg-[linear-gradient(180deg,rgba(233,245,255,0.95),rgba(255,255,255,1))] shadow-lg">
 										{#if coordinator}
 											<img
 												src={coordinator.photo}
 												alt={activeLanguage === 'english' ? coordinator.name : coordinator.urduName}
-												class="h-72 w-full object-cover object-center"
+												class="h-72 w-full object-contain object-center p-3"
 											/>
 										{:else}
 											<div class="flex h-72 items-center justify-center bg-neutral-soft text-center text-sm font-bold text-primary/45">
@@ -301,29 +301,25 @@
 
 					<div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
 						{#each getDepartmentFaculty(dept) as member}
-							<div class="group relative overflow-hidden rounded-[2rem] border border-primary/10 bg-white p-4 shadow-[0_18px_45px_rgba(13,93,86,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(13,93,86,0.14)]">
-								<div class="absolute inset-x-5 top-0 h-20 rounded-b-[1.25rem] bg-gradient-to-b from-secondary/12 to-transparent"></div>
-								<div class="relative space-y-5">
-									<div class="overflow-hidden rounded-[1.6rem] border border-border-soft bg-neutral-soft">
-										<img
-											src={member.photo}
-											alt={activeLanguage === 'english' ? member.name : member.urduName}
-											class="h-60 w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
-										/>
+							<div class="group relative aspect-square overflow-hidden rounded-[2rem] border border-primary/10 bg-white shadow-[0_18px_45px_rgba(13,93,86,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(13,93,86,0.14)]">
+								<img
+									src={member.photo}
+									alt={activeLanguage === 'english' ? member.name : member.urduName}
+									class="absolute inset-0 h-full w-full object-cover object-[center_18%] transition-transform duration-500 group-hover:scale-[1.03]"
+								/>
+								<div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white via-white/94 to-transparent"></div>
+								<div class="absolute inset-x-0 bottom-0 p-5">
+									<div class="inline-flex rounded-full bg-secondary/12 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-secondary backdrop-blur-sm">
+										{activeLanguage === 'english' ? member.role : member.urduRole}
 									</div>
-									<div class="space-y-2">
-										<div class="inline-flex rounded-full bg-secondary/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-secondary">
-											{activeLanguage === 'english' ? member.role : member.urduRole}
-										</div>
-										<h3 class="text-xl font-black text-primary">
-											{activeLanguage === 'english' ? member.name : member.urduName}
-										</h3>
-										<p class="text-sm font-semibold leading-7 text-primary/65">
-											{activeLanguage === 'english'
-												? member.qualification
-												: member.urduQualification}
-										</p>
-									</div>
+									<h3 class="mt-3 line-clamp-2 text-xl font-black text-primary">
+										{activeLanguage === 'english' ? member.name : member.urduName}
+									</h3>
+									<p class="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-primary/70">
+										{activeLanguage === 'english'
+											? member.qualification
+											: member.urduQualification}
+									</p>
 								</div>
 							</div>
 						{/each}

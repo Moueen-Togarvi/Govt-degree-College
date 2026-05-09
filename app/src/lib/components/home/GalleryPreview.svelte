@@ -5,44 +5,44 @@
 
 	const galleryItems = [
 		{
-			src: '/images/gallery/543459255_1288642623274041_7370685911892750194_n.jpg',
-			title: 'Campus Entrance',
+			src: '/images/gallery/Gemini_Generated_Image_hwtnmyhwtnmyhwtn.png',
+			title: 'Open-Air Academic Session',
+			tag: 'Campus Life'
+		},
+		{
+			src: '/images/gallery/Gemini_Generated_Image_jec4ltjec4ltjec4.png',
+			title: 'Courtyard Garden',
 			tag: 'Campus'
 		},
 		{
-			src: '/images/gallery/489290757_1152937760177862_1944043555997507703_n.jpg',
-			title: 'Student Community',
-			tag: 'Students'
+			src: '/images/gallery/Gemini_Generated_Image_kgigjckgigjckgig.png',
+			title: 'Mathematics Weekly Test',
+			tag: 'Academics'
 		},
 		{
-			src: '/images/gallery/544756802_1288642559940714_7566178749056628309_n.jpg',
-			title: 'Academic Blocks',
-			tag: 'Departments'
+			src: '/images/gallery/Gemini_Generated_Image_dcuevidcuevidcue.png',
+			title: 'Hockey Team Spirit',
+			tag: 'Sports'
 		},
 		{
-			src: '/images/gallery/497498149_1184322940372677_5964474392879878424_n.jpg',
-			title: 'Classroom Focus',
-			tag: 'Learning'
-		},
-		{
-			src: '/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg',
-			title: 'Student Participation',
-			tag: 'Classes'
-		},
-		{
-			src: '/images/gallery/474603261_1114315973721488_3688329175050708929_n.jpg',
-			title: 'Campus Events',
+			src: '/images/gallery/Gemini_Generated_Image_v7frg0v7frg0v7fr.png',
+			title: 'Promotion Award Ceremony',
 			tag: 'Events'
 		},
 		{
-			src: '/images/gallery/543406756_1287667523371551_8002641646226004304_n.jpg',
-			title: 'College Sessions',
-			tag: 'Activities'
+			src: '/images/gallery/Gemini_Generated_Image_kbyw6zkbyw6zkbyw.png',
+			title: 'Football Team Gathering',
+			tag: 'Students'
 		},
 		{
-			src: '/images/gallery/474603631_1113700027116416_3753317337439731517_n.jpg',
-			title: 'Faculty Presence',
-			tag: 'Faculty'
+			src: '/images/gallery/Gemini_Generated_Image_5tkvlb5tkvlb5tkv.png',
+			title: 'Achievement Recognition',
+			tag: 'Honours'
+		},
+		{
+			src: '/images/gallery/opst1.png',
+			title: 'Sports Week Participation',
+			tag: 'Activities'
 		}
 	];
 
@@ -93,7 +93,8 @@
 						<img
 							src={visibleItems[0].src}
 							alt={visibleItems[0].title}
-							class="absolute inset-0 h-full w-full object-cover object-center"
+							class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]"
+							fetchpriority="high"
 						/>
 						<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/18 to-transparent"></div>
 						<div class="absolute inset-x-0 bottom-0 p-8 text-white">
@@ -114,7 +115,9 @@
 								<img
 									src={item.src}
 									alt={item.title}
-									class="absolute inset-0 h-full w-full object-cover object-center"
+									class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]"
+									loading="lazy"
+									decoding="async"
 								/>
 								<div class="absolute inset-0 bg-gradient-to-t from-primary/88 via-primary/8 to-transparent"></div>
 								<div class="absolute inset-x-0 bottom-0 p-4 text-white">
