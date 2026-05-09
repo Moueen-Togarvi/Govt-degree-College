@@ -87,13 +87,13 @@
 		</div>
 
 		<div class="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-stretch">
-			<div class="group relative h-[420px] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_24px_70px_rgba(13,93,86,0.10)] lg:h-[470px]">
+			<div class="group relative isolate h-[420px] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_24px_70px_rgba(13,93,86,0.10)] lg:h-[470px]">
 				{#key visibleItems[0].src}
 					<div class="absolute inset-0" in:fade={{ duration: 550 }}>
 						<img
 							src={visibleItems[0].src}
 							alt={visibleItems[0].title}
-							class="h-full w-full object-cover object-center transition-transform duration-[1600ms] group-hover:scale-105"
+							class="absolute inset-0 h-full w-full object-cover object-center"
 						/>
 						<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/18 to-transparent"></div>
 						<div class="absolute inset-x-0 bottom-0 p-8 text-white">
@@ -108,13 +108,13 @@
 
 			<div class="grid gap-5 sm:grid-cols-2 lg:h-[470px] lg:grid-cols-2 lg:grid-rows-2">
 				{#each visibleItems.slice(1) as item (item.src)}
-					<div class="group relative aspect-square overflow-hidden rounded-[1.7rem] border border-white/60 bg-white shadow-[0_18px_50px_rgba(13,93,86,0.08)] lg:h-full">
+					<div class="group relative isolate aspect-square overflow-hidden rounded-[1.7rem] border border-white/60 bg-white shadow-[0_18px_50px_rgba(13,93,86,0.08)] lg:h-full">
 						{#key item.src}
 							<div class="absolute inset-0" in:fade={{ duration: 550 }}>
 								<img
 									src={item.src}
 									alt={item.title}
-									class="h-full w-full object-cover object-center transition-transform duration-[1600ms] group-hover:scale-108"
+									class="absolute inset-0 h-full w-full object-cover object-center"
 								/>
 								<div class="absolute inset-0 bg-gradient-to-t from-primary/88 via-primary/8 to-transparent"></div>
 								<div class="absolute inset-x-0 bottom-0 p-4 text-white">
@@ -131,9 +131,3 @@
 		</div>
 	</div>
 </section>
-
-<style>
-	.group:hover .group-hover\:scale-108 {
-		transform: scale(1.08);
-	}
-</style>

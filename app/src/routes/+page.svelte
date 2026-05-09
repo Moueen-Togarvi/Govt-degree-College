@@ -9,6 +9,7 @@
 	import GalleryPreview from '$lib/components/home/GalleryPreview.svelte';
 	import AdmissionsJourney from '$lib/components/home/AdmissionsJourney.svelte';
 	import FinalCta from '$lib/components/home/FinalCta.svelte';
+	import LightBeamDivider from '$lib/components/home/LightBeamDivider.svelte';
 
 	let { data } = $props();
 </script>
@@ -30,4 +31,5 @@
 <PrincipalMessage />
 <GalleryPreview />
 <AdmissionsJourney />
+<LightBeamDivider />
 <FinalCta />

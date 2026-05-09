@@ -99,5 +99,11 @@
 				Designed & Developed with Excellence
 			</p>
 		</div>
+
+		<div class="mt-6 border-t border-white/8 pt-4 text-center">
+			<p class="text-xs text-white/45">
+				This site developed by Moueen Togarvi | Phone: 03241940988
+			</p>
+		</div>
 	</div>
 </footer>

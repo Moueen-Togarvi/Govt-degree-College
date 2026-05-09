@@ -46,7 +46,7 @@
 	});
 </script>
 
-<section class="relative min-h-[95vh] flex flex-col items-center justify-center overflow-hidden bg-primary">
+<section class="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-primary">
 	<!-- Background Image (Forced Fill) -->
 	<div class="absolute inset-0 z-0">
 		<img 
@@ -66,7 +66,7 @@
 
 
 	<!-- Main Content -->
-	<div class="container mx-auto px-4 lg:px-8 relative z-30 text-center space-y-12 pt-16">
+	<div class="container relative z-30 mx-auto px-4 pt-16 text-center lg:px-8">
 		<!-- Top Center: Main Title -->
 		<div class="space-y-4 animate-in fade-in slide-in-from-top-8 duration-1000 delay-200">
 			<h2 class="text-white/50 font-bold uppercase tracking-[0.5em] text-xs lg:text-sm">Our Institution</h2>
@@ -77,18 +77,18 @@
 		</div>
 
 		<!-- Bottom Center: Typewriter Quote -->
-		<div class="max-w-4xl mx-auto space-y-8">
-			<div class="flex flex-col items-center gap-5">
+		<div class="mx-auto mt-6 max-w-4xl">
+			<div class="flex flex-col items-center gap-2">
 				<div class="relative flex w-full max-w-4xl justify-center">
-					<div class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 items-center gap-4 rounded-[1.6rem] border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-xl shadow-2xl shadow-primary/20">
-						<div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10">
+					<div class="absolute left-1/2 top-1 z-10 flex -translate-x-1/2 items-center gap-3 rounded-[1.6rem] border border-white/10 bg-white/10 px-3.5 py-2.5 backdrop-blur-xl shadow-2xl shadow-primary/20">
+						<div class="flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white/90 p-2.5 shadow-lg shadow-black/10">
 							<img
 								src="/images/logos/image.png"
 								alt="Government of Punjab logo"
 								class="h-full w-full object-contain"
 							/>
 						</div>
-						<div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10">
+						<div class="flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white/90 p-2.5 shadow-lg shadow-black/10">
 							<img
 								src="/images/logos/degree4k-removebg-preview.png"
 								alt="GPGC Bahawalnagar logo"
@@ -97,20 +97,20 @@
 						</div>
 					</div>
 
-					<div class="w-full pt-16">
-						<svg viewBox="0 0 900 240" class="w-full overflow-visible">
+					<div class="w-full pt-12">
+						<svg viewBox="0 0 900 200" class="w-full overflow-visible">
 							<path
 								id="heroQuoteCurve"
-								d="M 120 86 Q 450 190 780 86"
+								d="M 150 70 Q 450 138 750 70"
 								fill="transparent"
 							/>
 							<path
 								id="heroQuoteCurveAccent"
-								d="M 170 138 Q 450 214 730 138"
+								d="M 205 122 Q 450 172 695 122"
 								fill="transparent"
 							/>
 							<text
-								class="fill-white text-[28px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] lg:text-[34px]"
+								class="fill-white text-[28px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] lg:text-[33px]"
 								text-anchor="middle"
 							>
 								<textPath href="#heroQuoteCurve" startOffset="50%">
@@ -118,7 +118,7 @@
 								</textPath>
 							</text>
 							<text
-								class="text-[26px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-all duration-500 lg:text-[32px]"
+								class="text-[24px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-all duration-500 lg:text-[30px]"
 								text-anchor="middle"
 								style={`fill: ${currentAccentColor};`}
 							>
@@ -132,9 +132,7 @@
 				</div>
 			</div>
 
-			<div class="relative flex flex-col items-center gap-8 pt-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
-
-
+			<div class="relative mt-2 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
 				<div class="flex flex-wrap justify-center gap-6">
 					<a href="/admissions/how-to-apply" class="flex items-center gap-3 px-10 py-5 bg-secondary text-white rounded-2xl font-black text-lg hover:bg-secondary/90 hover:scale-105 transition-all shadow-2xl shadow-secondary/30 active:scale-95 group">
 						Start Your Journey
