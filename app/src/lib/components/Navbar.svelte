@@ -89,7 +89,7 @@
 	});
 </script>
 
-<nav class="fixed top-0 z-50 w-full transition-all duration-300">
+<nav class="fixed top-0 z-50 w-full transition-all duration-500 {scrolled ? 'shadow-[0_10px_30px_rgba(0,0,0,0.08)]' : ''}">
 	<!-- Top Bar (Inspiration from Eduka) -->
 	<div class="hidden lg:block bg-primary text-white/90 py-2 border-b border-white/10">
 		<div class="container mx-auto px-4 lg:px-8 flex justify-between items-center text-xs font-medium">
@@ -151,12 +151,15 @@
 						>
 							<a 
 								href={link.href} 
-								class="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 {$page.url.pathname === link.href ? 'text-secondary' : 'text-primary hover:text-secondary'}"
+								class="relative flex items-center gap-1.5 px-5 py-3 text-sm font-bold tracking-wide transition-all duration-300 {$page.url.pathname === link.href ? 'text-secondary' : 'text-primary hover:text-secondary'} group/link"
 							>
 								{link.name}
 								{#if link.subLinks}
-									<ChevronDown size={14} class="transition-transform duration-200 group-hover:rotate-180" />
+									<ChevronDown size={14} class="transition-transform duration-300 group-hover:rotate-180 opacity-70" />
 								{/if}
+								
+								<!-- Animated Underline -->
+								<span class="absolute bottom-1 left-5 right-5 h-[2px] bg-secondary scale-x-0 transition-transform duration-300 origin-left group-hover/link:scale-x-100 {$page.url.pathname === link.href ? 'scale-x-100' : ''}"></span>
 							</a>
 
 							<!-- Dropdown Menu -->
@@ -178,8 +181,8 @@
 					{/each}
 					
 					<!-- Action Buttons -->
-					<div class="ml-4 flex items-center gap-3 pl-6 border-l border-neutral-200">
-						<a href="/student-portal" class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-black text-white bg-secondary hover:bg-secondary/90 transition-all shadow-md active:scale-95 uppercase tracking-wider">
+					<div class="ml-6 flex items-center gap-3 pl-8 border-l border-neutral-200">
+						<a href="/student-portal" class="flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-black text-white bg-secondary hover:bg-secondary/90 hover:scale-105 hover:shadow-lg hover:shadow-secondary/20 transition-all active:scale-95 uppercase tracking-widest">
 							<LogIn size={16} />
 							Portal
 						</a>

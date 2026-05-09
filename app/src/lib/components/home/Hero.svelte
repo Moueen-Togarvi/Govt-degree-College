@@ -50,11 +50,12 @@
 	<!-- Background Image (Forced Fill) -->
 	<div class="absolute inset-0 z-0">
 		<img 
-			src="/images/logos/hero%20section%20bg.png" 
+			src="/images/logos/hero section bg.png" 
 			alt="College Campus" 
-			class="w-full h-full object-fill opacity-80"
+			class="w-full h-full object-cover opacity-90 transition-transform duration-[10s] hover:scale-110"
 		/>
-		<div class="absolute inset-0 bg-primary/50"></div>
+		<!-- Lighter, warmer overlay -->
+		<div class="absolute inset-0 bg-gradient-to-b from-primary/30 via-primary/10 to-primary/60 backdrop-brightness-[0.85]"></div>
 	</div>
 
 	<!-- Top Left: Welcome Text -->
@@ -66,51 +67,43 @@
 
 
 	<!-- Main Content -->
-	<div class="container relative z-30 mx-auto px-4 pt-16 text-center lg:px-8">
+	<div class="container relative z-30 mx-auto px-4 text-center lg:px-8 flex flex-col items-center">
 		<!-- Top Center: Main Title -->
-		<div class="space-y-4 animate-in fade-in slide-in-from-top-8 duration-1000 delay-200">
-			<h2 class="text-white/50 font-bold uppercase tracking-[0.5em] text-xs lg:text-sm">Our Institution</h2>
-			<p class="text-secondary font-black uppercase tracking-[0.45em] text-[0.65rem] lg:text-xs">Legacy 1945</p>
-			<h1 class="text-2xl lg:text-4xl xl:text-5xl font-black text-white leading-tight drop-shadow-2xl">
+		<div class="space-y-3 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+			<h2 class="text-white/60 font-bold uppercase tracking-[0.35em] text-[10px] lg:text-xs">Our Institution</h2>
+			<p class="text-secondary/90 font-medium uppercase tracking-[0.35em] text-[9px] lg:text-[10px]">Legacy 1945</p>
+			<h1 class="mt-4 text-3xl lg:text-5xl xl:text-7xl font-black text-white leading-tight drop-shadow-2xl tracking-tight">
 				Govt Graduate College <br /> <span class="text-secondary">Bahawalnagar</span>
 			</h1>
 		</div>
 
 		<!-- Bottom Center: Typewriter Quote -->
-		<div class="mx-auto mt-6 max-w-4xl">
+		<div class="mx-auto mt-10 max-w-4xl">
 			<div class="flex flex-col items-center gap-2">
 				<div class="relative flex w-full max-w-4xl justify-center">
-					<div class="absolute left-1/2 top-1 z-10 flex -translate-x-1/2 items-center gap-4 rounded-[1.6rem] border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-xl shadow-2xl shadow-primary/20">
-						<div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10">
-							<img
-								src="/images/logos/image.png"
-								alt="Government of Punjab logo"
-								class="h-full w-full object-contain"
-							/>
+					<!-- Logos with Labels and Divider -->
+					<div class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 items-center gap-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-4 backdrop-blur-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
+						<div class="flex flex-col items-center group">
+							<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110">
+								<img src="/images/logos/image.png" alt="Govt Logo" class="h-full w-full object-contain" />
+							</div>
 						</div>
-						<div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10">
-							<img
-								src="/images/logos/degree4k-removebg-preview.png"
-								alt="GPGC Bahawalnagar logo"
-								class="h-full w-full object-contain"
-							/>
+						
+						<div class="h-10 w-px bg-white/10"></div>
+						
+						<div class="flex flex-col items-center group">
+							<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110">
+								<img src="/images/logos/degree4k-removebg-preview.png" alt="College Logo" class="h-full w-full object-contain" />
+							</div>
 						</div>
 					</div>
 
-					<div class="w-full pt-13">
+					<div class="w-full pt-24">
 						<svg viewBox="0 0 900 220" class="w-full overflow-visible">
-							<path
-								id="heroQuoteCurve"
-								d="M 150 70 Q 450 138 750 70"
-								fill="transparent"
-							/>
-							<path
-								id="heroQuoteCurveAccent"
-								d="M 205 142 Q 450 202 695 142"
-								fill="transparent"
-							/>
+							<path id="heroQuoteCurve" d="M 150 70 Q 450 138 750 70" fill="transparent" />
+							<path id="heroQuoteCurveAccent" d="M 205 142 Q 450 202 695 142" fill="transparent" />
 							<text
-								class="fill-white text-[28px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] lg:text-[33px]"
+								class="fill-white text-[28px] font-bold italic tracking-tight drop-shadow-lg lg:text-[36px]"
 								text-anchor="middle"
 							>
 								<textPath href="#heroQuoteCurve" startOffset="50%">
@@ -118,7 +111,7 @@
 								</textPath>
 							</text>
 							<text
-								class="text-[24px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-all duration-500 lg:text-[30px]"
+								class="text-[26px] font-black italic tracking-tight drop-shadow-lg transition-all duration-500 lg:text-[34px]"
 								text-anchor="middle"
 								style={`fill: ${currentAccentColor};`}
 							>
@@ -127,18 +120,17 @@
 								</textPath>
 							</text>
 						</svg>
-
 					</div>
 				</div>
 			</div>
 
-			<div class="relative mt-2 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
+			<div class="relative mt-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-700">
 				<div class="flex flex-wrap justify-center gap-6">
-					<a href="/admissions/how-to-apply" class="flex items-center gap-3 px-10 py-5 bg-secondary text-white rounded-2xl font-black text-lg hover:bg-secondary/90 hover:scale-105 transition-all shadow-2xl shadow-secondary/30 active:scale-95 group">
+					<a href="/admissions/how-to-apply" class="flex items-center gap-4 px-12 py-5 bg-secondary text-white rounded-2xl font-black text-lg hover:bg-secondary/90 hover:scale-105 transition-all shadow-2xl shadow-secondary/40 active:scale-95 group">
 						Start Your Journey
 						<ArrowRight size={22} class="transition-transform group-hover:translate-x-2" />
 					</a>
-					<a href="/about/overview" class="flex items-center gap-3 px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-2xl font-black text-lg hover:bg-white/10 transition-all active:scale-95">
+					<a href="/about/overview" class="flex items-center gap-4 px-12 py-5 bg-white/10 backdrop-blur-2xl border border-white/20 text-white rounded-2xl font-black text-lg hover:bg-white/20 transition-all active:scale-95 hover:scale-105">
 						Discover More
 					</a>
 				</div>
