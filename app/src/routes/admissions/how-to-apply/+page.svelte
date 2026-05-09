@@ -9,10 +9,26 @@
 	];
 
 	const steps = [
-		{ title: 'Online Registration', desc: 'Visit the OCAS portal or our website and register with your email.', icon: UserCheck },
-		{ title: 'Fill Information', desc: 'Enter your personal and academic details as per your matric results.', icon: FileText },
-		{ title: 'Submit Documents', desc: 'Upload scanned copies of your matric certificate and CNIC/B-Form.', icon: Send },
-		{ title: 'Verify & Confirm', desc: 'Review your application and submit. Print the fee challan for payment.', icon: CheckCircle2 }
+		{
+			title: 'Visit College Admin Office',
+			desc: 'Visit the college admission office first and get the prospectus with complete admission guidance.',
+			icon: UserCheck
+		},
+		{
+			title: 'Fill Information',
+			desc: 'Complete the admission form with your personal and academic details according to your previous result.',
+			icon: FileText
+		},
+		{
+			title: 'Submit Documents',
+			desc: 'Attach required documents including result card, photographs, and CNIC or B-Form copy.',
+			icon: Send
+		},
+		{
+			title: 'Verification & Confirmation',
+			desc: 'Submit the form for verification and follow the office instructions for final admission confirmation.',
+			icon: CheckCircle2
+		}
 	];
 </script>
 
@@ -48,11 +64,8 @@
 			</div>
 
 			<div class="mt-20 p-10 bg-primary rounded-3xl text-white text-center space-y-6">
-				<h3 class="text-2xl font-black italic">"Ready to Join the Premier College of Bahawalnagar?"</h3>
-				<p class="text-white/70 max-w-2xl mx-auto">Click the button below to visit the official OCAS portal and begin your application process today.</p>
-				<a href="https://ocas.punjab.gov.pk" target="_blank" class="inline-block bg-secondary text-white px-10 py-4 rounded-xl font-black hover:bg-secondary/90 hover:scale-105 transition-all shadow-xl shadow-secondary/20">
-					Visit OCAS Portal
-				</a>
+				<h3 class="text-2xl font-black italic">"Start with the college admission office for proper guidance."</h3>
+				<p class="text-white/70 max-w-2xl mx-auto">Students can collect the prospectus, confirm eligibility, and receive admission instructions directly from the college administration office.</p>
 			</div>
 		</div>
 	</div>

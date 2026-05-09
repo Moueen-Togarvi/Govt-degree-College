@@ -1,55 +1,59 @@
 <script lang="ts">
-	import { Quote, ArrowRight } from 'lucide-svelte';
+	import { ArrowRight, Quote, ShieldCheck } from 'lucide-svelte';
 </script>
 
-<section class="py-24 bg-white relative overflow-hidden">
-	<div class="container mx-auto px-4 lg:px-8">
-		<div class="flex flex-col lg:flex-row items-center gap-16">
-			<!-- Image Section -->
-			<div class="w-full lg:w-1/2 relative">
-				<div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
-					<img 
-						src="/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg" 
-						alt="Principal of GPGC" 
-						class="w-full h-auto object-cover"
+<section class="relative overflow-hidden bg-white py-24">
+	<div class="absolute inset-0 bg-[radial-gradient(circle_at_left,_rgba(13,93,86,0.06),_transparent_40%)]"></div>
+
+	<div class="container relative z-10 mx-auto px-4 lg:px-8">
+		<div class="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+			<div class="relative motion-slide">
+				<div class="absolute -left-4 top-10 h-28 w-28 rounded-full bg-secondary/15 blur-3xl"></div>
+				<div class="absolute -bottom-10 right-10 h-36 w-36 rounded-full bg-primary/10 blur-3xl"></div>
+
+				<div class="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white p-3 shadow-[0_28px_80px_rgba(13,93,86,0.12)]">
+					<img
+						src="/images/logos/image%20copy%202.png"
+						alt="Prof. Wajahat Majeed"
+						class="h-full w-full rounded-[1.5rem] object-cover"
 					/>
 				</div>
-				<!-- Decorative elements -->
-				<div class="absolute -top-10 -left-10 w-40 h-40 bg-secondary/10 rounded-full blur-3xl z-0"></div>
-				<div class="absolute -bottom-10 -right-10 w-60 h-60 bg-primary/5 rounded-full blur-3xl z-0"></div>
-				<div class="absolute bottom-10 -left-6 bg-secondary text-white px-8 py-4 rounded-2xl shadow-xl z-20">
-					<p class="text-xl font-black italic">"Education is the key"</p>
+
+				<div class="absolute bottom-8 left-0 right-8 mx-auto max-w-xs rounded-[1.5rem] border border-white/20 bg-primary/90 px-6 py-5 text-white shadow-2xl shadow-primary/30 backdrop-blur">
+					<div class="mb-3 flex items-center gap-2 text-secondary">
+						<ShieldCheck size={18} />
+						<span class="text-xs font-black uppercase tracking-[0.28em]">Accessible Learning</span>
+					</div>
+					<p class="text-lg font-black leading-7">Education from intermediate to BS level with a public-sector foundation.</p>
 				</div>
 			</div>
 
-			<!-- Text Section -->
-			<div class="w-full lg:w-1/2 space-y-8">
+			<div class="space-y-8 motion-rise">
 				<div class="space-y-4">
-					<p class="text-secondary font-black uppercase tracking-widest text-sm">Principal's Message</p>
-					<h2 class="text-4xl lg:text-5xl font-black text-primary leading-tight">
-						Our Education System <span class="text-secondary">Inspires</span> You More.
-					</h2>
-				</div>
-
-				<div class="relative">
-					<Quote size={48} class="absolute -top-6 -left-6 text-primary/5 -z-0" />
-					<p class="text-lg text-primary/70 leading-relaxed relative z-10">
-						It is a great honor to welcome you to Govt Post Graduate College Bahawalnagar. Our institution has been a beacon of light for decades, nurturing talent and fostering intellectual growth in South Punjab. We are committed to providing a holistic learning environment where students excel not only in academics but also in character and leadership.
+					<p class="text-sm font-black uppercase tracking-[0.35em] text-secondary">Principal's Message</p>
+					<p class="max-w-2xl text-base font-medium leading-8 text-primary/65 lg:text-lg">
+						Our mission is to keep quality education within reach for the students of Bahawalnagar, from free intermediate classes to guided BS pathways.
 					</p>
 				</div>
 
-				<p class="text-lg text-primary/70 leading-relaxed">
-					As we embrace modern educational standards through our affiliation with KFUEIT, we ensure that our students are prepared for the challenges of the 21st century. I invite you to explore our programs and become part of our prestigious legacy.
-				</p>
-
-				<div class="pt-4">
-					<h4 class="text-2xl font-black text-primary">Prof. Dr. Muhammad Ahmed</h4>
-					<p class="text-secondary font-bold">Principal, GPGC Bahawalnagar</p>
+				<div class="relative overflow-hidden rounded-[2rem] border border-border-soft bg-neutral-soft/80 p-8 shadow-[0_20px_60px_rgba(13,93,86,0.08)]">
+					<Quote size={42} class="mb-5 text-secondary/70" />
+					<p class="text-lg font-medium leading-8 text-primary/80">
+						It is a privilege to welcome students and families to Govt Post Graduate College Bahawalnagar. We are committed to an environment where ambition is supported by strong teaching, clear guidance, and public trust.
+					</p>
+					<p class="mt-5 text-base font-medium leading-8 text-primary/65">
+						Our 11th and 12th classes open the door to free intermediate education, while our BS programs extend that journey through KFUEIT-affiliated study in both morning and evening shifts.
+					</p>
 				</div>
 
-				<a href="/about/administration" class="inline-flex items-center gap-3 text-primary font-black hover:text-secondary transition-all group">
+				<div class="pt-2">
+					<h4 class="text-2xl font-black text-primary">Prof. Wajahat Majeed</h4>
+					<p class="font-bold text-secondary">Principal, GPGC Bahawalnagar</p>
+				</div>
+
+				<a href="/about/administration" class="inline-flex items-center gap-3 font-black text-primary transition-all group hover:text-secondary">
 					Read Full Biography
-					<div class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-all">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 transition-all group-hover:bg-secondary group-hover:text-white">
 						<ArrowRight size={18} />
 					</div>
 				</a>

@@ -7,12 +7,26 @@ export type Announcement = {
 	isoDate: string;
 };
 
-export type TickerAnnouncement = {
+export type NoticeBoardItem = {
 	id: number;
 	title: string;
-	category: string;
-	href: string;
+	message: string;
+	tag: string;
+	date: string;
+	isoDate: string;
+	sortOrder: number;
+	expiryDate: string | null;
+	expiryIsoDate: string | null;
 };
+
+export type LatestNewsItem = {
+	id: number;
+	title: string;
+	href: string;
+	sortOrder: number;
+};
+
+export type TickerAnnouncement = LatestNewsItem;
 
 export type CollegeEvent = {
 	id: number;

@@ -1,25 +1,34 @@
-import { fallbackQuickLinks, fallbackTickerAnnouncements } from '$lib/content/fallback';
-import { listQuickLinks, listTickerAnnouncements } from '$lib/server/database/content';
+import {
+	fallbackNoticeBoardItems,
+	fallbackTickerAnnouncements
+} from '$lib/content/fallback';
+import { listNoticeBoardItems, listTickerAnnouncements } from '$lib/server/database/content';
+import { logDatabaseLoadError } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const [tickerAnnouncements, quickLinks] = await Promise.all([
+		const [tickerAnnouncements, noticeBoardItems] = await Promise.all([
 			listTickerAnnouncements(),
-			listQuickLinks(4)
+			listNoticeBoardItems(3)
 		]);
 
+		const safeNoticeBoardItems =
+			noticeBoardItems.length > 0 ? noticeBoardItems : fallbackNoticeBoardItems;
+		const safeTickerAnnouncements =
+			tickerAnnouncements.length > 0 ? tickerAnnouncements : fallbackTickerAnnouncements;
+
 		return {
-			tickerAnnouncements,
-			quickLinks,
+			tickerAnnouncements: safeTickerAnnouncements,
+			noticeBoardItems: safeNoticeBoardItems,
 			databaseConnected: true
 		};
 	} catch (error) {
-		console.error('Home page Neon load failed:', error);
+		logDatabaseLoadError('Home page load', error);
 
 		return {
 			tickerAnnouncements: fallbackTickerAnnouncements,
-			quickLinks: fallbackQuickLinks,
+			noticeBoardItems: fallbackNoticeBoardItems,
 			databaseConnected: false
 		};
 	}

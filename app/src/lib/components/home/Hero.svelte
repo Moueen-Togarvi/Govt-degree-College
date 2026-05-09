@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowRight, Quote, ShieldCheck, ArrowDown, FileText, CreditCard, Calendar } from 'lucide-svelte';
+	import { ArrowRight, ArrowDown } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
 	const staticPrefix = "We are dedicated to";
@@ -9,11 +9,13 @@
 		"A Brighter Future.",
 		"Student Success."
 	];
+	const accentColors = ["#f68b1f", "#ffb85c", "#f4a646", "#ffd39a"];
 
 	let currentSuffixIndex = $state(0);
 	let displayedSuffix = $state("");
 	let isDeleting = $state(false);
 	let typingSpeed = $state(100);
+	const currentAccentColor = $derived(accentColors[currentSuffixIndex]);
 
 	function type() {
 		const currentFullSuffix = suffixes[currentSuffixIndex];
@@ -68,6 +70,7 @@
 		<!-- Top Center: Main Title -->
 		<div class="space-y-4 animate-in fade-in slide-in-from-top-8 duration-1000 delay-200">
 			<h2 class="text-white/50 font-bold uppercase tracking-[0.5em] text-xs lg:text-sm">Our Institution</h2>
+			<p class="text-secondary font-black uppercase tracking-[0.45em] text-[0.65rem] lg:text-xs">Legacy 1945</p>
 			<h1 class="text-2xl lg:text-4xl xl:text-5xl font-black text-white leading-tight drop-shadow-2xl">
 				Govt Graduate College <br /> <span class="text-secondary">Bahawalnagar</span>
 			</h1>
@@ -75,16 +78,57 @@
 
 		<!-- Bottom Center: Typewriter Quote -->
 		<div class="max-w-4xl mx-auto space-y-8">
-			<div class="flex flex-col items-center gap-4">
-				<Quote size={32} class="text-secondary opacity-50" />
-				<div class="min-h-[4rem] w-full max-w-4xl mx-auto flex items-center justify-center">
-					<h2 class="text-xl lg:text-3xl font-black italic tracking-tight grid grid-cols-2 gap-3 w-full items-center">
-						<span class="text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-right">{staticPrefix}</span>
-						<span class="text-secondary drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-left flex items-center">
-							{displayedSuffix}
-							<span class="inline-block w-1 h-6 lg:h-8 bg-secondary ml-1 animate-pulse shrink-0"></span>
-						</span>
-					</h2>
+			<div class="flex flex-col items-center gap-5">
+				<div class="relative flex w-full max-w-4xl justify-center">
+					<div class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 items-center gap-4 rounded-[1.6rem] border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-xl shadow-2xl shadow-primary/20">
+						<div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10">
+							<img
+								src="/images/logos/image.png"
+								alt="Government of Punjab logo"
+								class="h-full w-full object-contain"
+							/>
+						</div>
+						<div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10">
+							<img
+								src="/images/logos/degree4k-removebg-preview.png"
+								alt="GPGC Bahawalnagar logo"
+								class="h-full w-full object-contain"
+							/>
+						</div>
+					</div>
+
+					<div class="w-full pt-16">
+						<svg viewBox="0 0 900 240" class="w-full overflow-visible">
+							<path
+								id="heroQuoteCurve"
+								d="M 120 86 Q 450 190 780 86"
+								fill="transparent"
+							/>
+							<path
+								id="heroQuoteCurveAccent"
+								d="M 170 138 Q 450 214 730 138"
+								fill="transparent"
+							/>
+							<text
+								class="fill-white text-[28px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] lg:text-[34px]"
+								text-anchor="middle"
+							>
+								<textPath href="#heroQuoteCurve" startOffset="50%">
+									{staticPrefix}
+								</textPath>
+							</text>
+							<text
+								class="text-[26px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-all duration-500 lg:text-[32px]"
+								text-anchor="middle"
+								style={`fill: ${currentAccentColor};`}
+							>
+								<textPath href="#heroQuoteCurveAccent" startOffset="50%">
+									{displayedSuffix || " "}
+								</textPath>
+							</text>
+						</svg>
+
+					</div>
 				</div>
 			</div>
 
@@ -92,11 +136,11 @@
 
 
 				<div class="flex flex-wrap justify-center gap-6">
-					<a href="/admissions" class="flex items-center gap-3 px-10 py-5 bg-secondary text-white rounded-2xl font-black text-lg hover:bg-secondary/90 hover:scale-105 transition-all shadow-2xl shadow-secondary/30 active:scale-95 group">
+					<a href="/admissions/how-to-apply" class="flex items-center gap-3 px-10 py-5 bg-secondary text-white rounded-2xl font-black text-lg hover:bg-secondary/90 hover:scale-105 transition-all shadow-2xl shadow-secondary/30 active:scale-95 group">
 						Start Your Journey
 						<ArrowRight size={22} class="transition-transform group-hover:translate-x-2" />
 					</a>
-					<a href="/about" class="flex items-center gap-3 px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-2xl font-black text-lg hover:bg-white/10 transition-all active:scale-95">
+					<a href="/about/overview" class="flex items-center gap-3 px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-2xl font-black text-lg hover:bg-white/10 transition-all active:scale-95">
 						Discover More
 					</a>
 				</div>

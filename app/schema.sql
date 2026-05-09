@@ -8,6 +8,30 @@ CREATE TABLE IF NOT EXISTS announcements (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Notice Board Table
+CREATE TABLE IF NOT EXISTS notice_board_items (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    tag TEXT NOT NULL,
+    notice_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    expiry_date TIMESTAMP WITH TIME ZONE,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE notice_board_items
+ADD COLUMN IF NOT EXISTS expiry_date TIMESTAMP WITH TIME ZONE;
+
+-- Latest News Ticker Table
+CREATE TABLE IF NOT EXISTS latest_news_items (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    href TEXT DEFAULT '/news/announcements',
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Events Table
 CREATE TABLE IF NOT EXISTS events (
     id SERIAL PRIMARY KEY,

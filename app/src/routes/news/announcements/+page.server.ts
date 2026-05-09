@@ -1,5 +1,6 @@
 import { fallbackAnnouncements } from '$lib/content/fallback';
 import { listAnnouncements } from '$lib/server/database/content';
+import { logDatabaseLoadError } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -9,7 +10,7 @@ export const load: PageServerLoad = async () => {
 			databaseConnected: true
 		};
 	} catch (error) {
-		console.error('Announcements Neon load failed:', error);
+		logDatabaseLoadError('Announcements page load', error);
 
 		return {
 			announcements: fallbackAnnouncements,

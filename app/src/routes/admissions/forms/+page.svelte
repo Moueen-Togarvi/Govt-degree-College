@@ -12,8 +12,7 @@
 		{ name: "BS Admission Form", size: "1.2 MB", format: "PDF" },
 		{ name: "Intermediate Admission Form", size: "800 KB", format: "PDF" },
 		{ name: "Scholarship Application Form", size: "500 KB", format: "PDF" },
-		{ name: "Character Certificate Request", size: "300 KB", format: "DOCX" },
-		{ name: "Hostel Allotment Form", size: "450 KB", format: "PDF" }
+		{ name: "Character Certificate Request", size: "300 KB", format: "DOCX" }
 	];
 </script>
 

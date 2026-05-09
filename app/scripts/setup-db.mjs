@@ -96,6 +96,63 @@ async function main() {
 		console.log('Announcements table already has data, skipping seed.');
 	}
 
+	const existingNoticeBoard = await sql.query('SELECT COUNT(*)::int AS count FROM notice_board_items');
+	if (Number(existingNoticeBoard[0]?.count ?? 0) === 0) {
+		await sql.query(
+			`INSERT INTO notice_board_items (title, message, tag, notice_date, expiry_date, sort_order) VALUES
+			($1, $2, $3, $4, $5, $6),
+			($7, $8, $9, $10, $11, $12),
+			($13, $14, $15, $16, $17, $18)`,
+			[
+				'11th Admissions Open',
+				'Admissions for 11th class are now open. Submit your documents at the college admission office.',
+				'Admissions',
+				'2026-05-08T00:00:00.000Z',
+				null,
+				1,
+				'BS Morning & Evening Admissions',
+				'BS admissions are open in both morning and evening shifts under KFUEIT affiliation.',
+				'BS Notice',
+				'2026-05-06T00:00:00.000Z',
+				null,
+				2,
+				'Bring Required Documents',
+				'Intermediate applicants should bring previous result cards, photographs, and B-Form copy during admission.',
+				'Important',
+				'2026-05-03T00:00:00.000Z',
+				null,
+				3
+			]
+		);
+		console.log('Seeded notice_board_items table.');
+	} else {
+		console.log('Notice board table already has data, skipping seed.');
+	}
+
+	const existingLatestNews = await sql.query('SELECT COUNT(*)::int AS count FROM latest_news_items');
+	if (Number(existingLatestNews[0]?.count ?? 0) === 0) {
+		await sql.query(
+			`INSERT INTO latest_news_items (title, href, sort_order) VALUES
+			($1, $2, $3),
+			($4, $5, $6),
+			($7, $8, $9)`,
+			[
+				'11th Class admissions are now open',
+				'/news/announcements',
+				1,
+				'BS morning and evening admissions notice',
+				'/news/announcements',
+				2,
+				'Intermediate applicants should submit required documents',
+				'/news/announcements',
+				3
+			]
+		);
+		console.log('Seeded latest_news_items table.');
+	} else {
+		console.log('Latest news table already has data, skipping seed.');
+	}
+
 	const existingEvents = await sql.query('SELECT COUNT(*)::int AS count FROM events');
 	if (Number(existingEvents[0]?.count ?? 0) === 0) {
 		await sql.query(

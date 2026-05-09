@@ -1,5 +1,6 @@
 import { fallbackEvents } from '$lib/content/fallback';
 import { listEvents } from '$lib/server/database/content';
+import { logDatabaseLoadError } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -9,7 +10,7 @@ export const load: PageServerLoad = async () => {
 			databaseConnected: true
 		};
 	} catch (error) {
-		console.error('Events Neon load failed:', error);
+		logDatabaseLoadError('Events page load', error);
 
 		return {
 			events: fallbackEvents,

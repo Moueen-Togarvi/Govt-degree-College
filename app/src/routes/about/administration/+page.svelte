@@ -11,8 +11,8 @@
 	const admin = [
 		{
 			role: "Principal",
-			name: "Prof. Dr. Muhammad Ahmed",
-			photo: "/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg",
+			name: "Prof. Wajahat Majeed",
+			photo: "/images/logos/image copy 2.png",
 			email: "principal@gpgcbwn.edu.pk",
 			phone: "+92 63 9240123"
 		},

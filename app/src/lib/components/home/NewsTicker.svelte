@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { BellRing } from 'lucide-svelte';
 	import { fallbackTickerAnnouncements } from '$lib/content/fallback';
-	import type { TickerAnnouncement } from '$lib/types/content';
+	import type { LatestNewsItem } from '$lib/types/content';
 
-	let { announcements = fallbackTickerAnnouncements }: { announcements?: TickerAnnouncement[] } = $props();
+	let { announcements = fallbackTickerAnnouncements }: { announcements?: LatestNewsItem[] } = $props();
 </script>
 
 <div class="bg-secondary/10 border-y border-secondary/20 py-2 overflow-hidden flex items-center">

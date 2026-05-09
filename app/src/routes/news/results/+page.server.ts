@@ -1,5 +1,6 @@
 import { fallbackResults } from '$lib/content/fallback';
 import { listExamResults } from '$lib/server/database/content';
+import { logDatabaseLoadError } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
 function filterFallbackResults(search: string) {
@@ -22,7 +23,7 @@ export const load: PageServerLoad = async ({ url }) => {
 			databaseConnected: true
 		};
 	} catch (error) {
-		console.error('Exam results Neon load failed:', error);
+		logDatabaseLoadError('Exam results page load', error);
 
 		return {
 			results: filterFallbackResults(search),

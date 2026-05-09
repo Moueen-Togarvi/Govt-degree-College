@@ -1,4 +1,11 @@
-import { fallbackAnnouncements, fallbackEvents, fallbackQuickLinks, fallbackResults } from '$lib/content/fallback';
+import {
+	fallbackAnnouncements,
+	fallbackEvents,
+	fallbackTickerAnnouncements,
+	fallbackNoticeBoardItems,
+	fallbackQuickLinks,
+	fallbackResults
+} from '$lib/content/fallback';
 import { getSql } from '$lib/server/db';
 
 type DatabaseClient = ReturnType<typeof getSql>;
@@ -10,6 +17,25 @@ const schemaStatements = [
 		description TEXT NOT NULL,
 		category TEXT NOT NULL,
 		date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE TABLE IF NOT EXISTS notice_board_items (
+		id SERIAL PRIMARY KEY,
+		title TEXT NOT NULL,
+		message TEXT NOT NULL,
+		tag TEXT NOT NULL,
+		notice_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+		expiry_date TIMESTAMP WITH TIME ZONE,
+		sort_order INTEGER DEFAULT 0,
+		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`ALTER TABLE notice_board_items
+		ADD COLUMN IF NOT EXISTS expiry_date TIMESTAMP WITH TIME ZONE`,
+	`CREATE TABLE IF NOT EXISTS latest_news_items (
+		id SERIAL PRIMARY KEY,
+		title TEXT NOT NULL,
+		href TEXT DEFAULT '/news/announcements',
+		sort_order INTEGER DEFAULT 0,
 		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 	)`,
 	`CREATE TABLE IF NOT EXISTS events (
@@ -54,6 +80,21 @@ const eventSeeds = fallbackEvents.map((item) => [
 	item.location,
 	item.imageUrl,
 	item.status
+]);
+
+const noticeBoardSeeds = fallbackNoticeBoardItems.map((item) => [
+	item.title,
+	item.message,
+	item.tag,
+	item.isoDate,
+	item.expiryIsoDate,
+	item.sortOrder
+]);
+
+const latestNewsSeeds = fallbackTickerAnnouncements.map((item) => [
+	item.title,
+	item.href,
+	item.sortOrder
 ]);
 
 const resultSeeds = fallbackResults.map((item) => [
@@ -110,6 +151,42 @@ async function seedEvents(db: DatabaseClient) {
 	}
 
 	return eventSeeds.length;
+}
+
+async function seedNoticeBoard(db: DatabaseClient) {
+	const rows = (await db.query('SELECT COUNT(*)::int AS count FROM notice_board_items')) as Array<{
+		count: number | string;
+	}>;
+	const count = Number(rows[0]?.count ?? 0);
+
+	if (count > 0) return 0;
+
+	for (const [title, message, tag, isoDate, expiryIsoDate, sortOrder] of noticeBoardSeeds) {
+		await db.query(
+			'INSERT INTO notice_board_items (title, message, tag, notice_date, expiry_date, sort_order) VALUES ($1, $2, $3, $4, $5, $6)',
+			[title, message, tag, isoDate, expiryIsoDate, sortOrder]
+		);
+	}
+
+	return noticeBoardSeeds.length;
+}
+
+async function seedLatestNews(db: DatabaseClient) {
+	const rows = (await db.query('SELECT COUNT(*)::int AS count FROM latest_news_items')) as Array<{
+		count: number | string;
+	}>;
+	const count = Number(rows[0]?.count ?? 0);
+
+	if (count > 0) return 0;
+
+	for (const [title, href, sortOrder] of latestNewsSeeds) {
+		await db.query(
+			'INSERT INTO latest_news_items (title, href, sort_order) VALUES ($1, $2, $3)',
+			[title, href, sortOrder]
+		);
+	}
+
+	return latestNewsSeeds.length;
 }
 
 async function seedResults(db: DatabaseClient) {
@@ -169,6 +246,8 @@ export async function initializeDatabase({
 	}
 
 	const seededAnnouncements = await seedAnnouncements(db);
+	const seededNoticeBoard = await seedNoticeBoard(db);
+	const seededLatestNews = await seedLatestNews(db);
 	const seededEvents = await seedEvents(db);
 	const seededResults = await seedResults(db);
 	const seededQuickLinks = await seedQuickLinks(db);
@@ -177,6 +256,8 @@ export async function initializeDatabase({
 		tablesCreated: schemaStatements.length,
 		seeded: {
 			announcements: seededAnnouncements,
+			noticeBoard: seededNoticeBoard,
+			latestNews: seededLatestNews,
 			events: seededEvents,
 			examResults: seededResults,
 			quickLinks: seededQuickLinks

@@ -34,3 +34,83 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.motion-rise {
+  animation: motion-rise 0.85s ease-out both;
+}
+
+.motion-slide {
+  animation: motion-slide 0.95s ease-out both;
+}
+
+.motion-float {
+  animation: gentle-float 5s ease-in-out infinite;
+}
+
+.motion-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.motion-glow::after {
+  content: "";
+  position: absolute;
+  inset: -120% auto auto -30%;
+  width: 45%;
+  height: 280%;
+  transform: rotate(22deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 35%,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent 100%
+  );
+  animation: surface-sheen 7s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes motion-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes motion-slide {
+  0% {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes gentle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes surface-sheen {
+  0% {
+    transform: translate3d(-160%, 0, 0) rotate(22deg);
+  }
+
+  100% {
+    transform: translate3d(360%, 0, 0) rotate(22deg);
+  }
+}

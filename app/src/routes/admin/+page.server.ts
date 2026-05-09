@@ -2,23 +2,37 @@ import {
 	createAnnouncement,
 	createEvent,
 	createExamResult,
-	createQuickLink,
+	createLatestNewsItem,
+	createNoticeBoardItem,
 	deleteAnnouncement,
 	deleteEvent,
 	deleteExamResult,
-	deleteQuickLink,
+	deleteLatestNewsItem,
+	deleteNoticeBoardItem,
 	listAnnouncements,
 	listEvents,
 	listExamResults,
-	listQuickLinks,
+	listLatestNewsItems,
+	listNoticeBoardItems,
 	updateAnnouncement,
 	updateEvent,
 	updateExamResult,
-	updateQuickLink
+	updateLatestNewsItem,
+	updateNoticeBoardItem
 } from '$lib/server/database/content';
+import { logDatabaseLoadError } from '$lib/server/db';
 import { deleteUploadedMedia, listUploadedMedia, saveUploadedFile } from '$lib/server/uploads';
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+
+const validSections = new Set([
+	'announcements',
+	'noticeBoard',
+	'latestNews',
+	'events',
+	'results',
+	'media'
+]);
 
 function stringValue(formData: FormData, key: string) {
 	return String(formData.get(key) ?? '').trim();
@@ -41,33 +55,42 @@ function actionError(status: number, message: string, section: string) {
 	return fail(status, { success: false, message, section });
 }
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
+	const requestedSection = url.searchParams.get('section');
+	const activeSection =
+		requestedSection && validSections.has(requestedSection) ? requestedSection : null;
+
 	try {
-		const [announcements, events, results, quickLinks, media] = await Promise.all([
+		const [announcements, noticeBoardItems, latestNewsItems, events, results, media] = await Promise.all([
 			listAnnouncements(100),
+			listNoticeBoardItems(100, { includeExpired: true }),
+			listLatestNewsItems(100),
 			listEvents(100),
 			listExamResults({ limit: 100 }),
-			listQuickLinks(50),
 			listUploadedMedia()
 		]);
 
 		return {
 			announcements,
+			noticeBoardItems,
+			latestNewsItems,
 			events,
 			results,
-			quickLinks,
 			media,
+			activeSection,
 			databaseConnected: true
 		};
 	} catch (error) {
-		console.error('Admin dashboard load failed:', error);
+		logDatabaseLoadError('Admin dashboard load', error);
 
 		return {
 			announcements: [],
+			noticeBoardItems: [],
+			latestNewsItems: [],
 			events: [],
 			results: [],
-			quickLinks: [],
 			media: [],
+			activeSection,
 			databaseConnected: false
 		};
 	}
@@ -114,6 +137,90 @@ export const actions: Actions = {
 
 		await deleteAnnouncement(id);
 		return success('Announcement delete ho gaya.', 'announcements');
+	},
+
+	createNoticeBoard: async ({ request }) => {
+		const formData = await request.formData();
+		const title = stringValue(formData, 'title');
+		const message = stringValue(formData, 'message');
+		const tag = stringValue(formData, 'tag');
+		const date = stringValue(formData, 'date');
+		const expiryDate = stringValue(formData, 'expiryDate');
+		const sortOrder = numberValue(formData, 'sortOrder');
+
+		if (!title || !message || !tag) {
+			return actionError(400, 'Notice board ke required fields missing hain.', 'noticeBoard');
+		}
+
+		await createNoticeBoardItem({ title, message, tag, date, expiryDate, sortOrder });
+		return success('Notice board item create ho gaya.', 'noticeBoard');
+	},
+
+	updateNoticeBoard: async ({ request }) => {
+		const formData = await request.formData();
+		const id = numberValue(formData, 'id');
+		const title = stringValue(formData, 'title');
+		const message = stringValue(formData, 'message');
+		const tag = stringValue(formData, 'tag');
+		const date = stringValue(formData, 'date');
+		const expiryDate = stringValue(formData, 'expiryDate');
+		const sortOrder = numberValue(formData, 'sortOrder');
+
+		if (!id || !title || !message || !tag || !date) {
+			return actionError(400, 'Notice board update ke fields incomplete hain.', 'noticeBoard');
+		}
+
+		await updateNoticeBoardItem({ id, title, message, tag, date, expiryDate, sortOrder });
+		return success('Notice board item update ho gaya.', 'noticeBoard');
+	},
+
+	deleteNoticeBoard: async ({ request }) => {
+		const formData = await request.formData();
+		const id = numberValue(formData, 'id');
+		if (!id) {
+			return actionError(400, 'Notice board ID missing hai.', 'noticeBoard');
+		}
+
+		await deleteNoticeBoardItem(id);
+		return success('Notice board item delete ho gaya.', 'noticeBoard');
+	},
+
+	createLatestNews: async ({ request }) => {
+		const formData = await request.formData();
+		const title = stringValue(formData, 'title');
+		const sortOrder = numberValue(formData, 'sortOrder');
+
+		if (!title) {
+			return actionError(400, 'Latest news ke liye title required hai.', 'latestNews');
+		}
+
+		await createLatestNewsItem({ title, sortOrder });
+		return success('Latest news item create ho gaya.', 'latestNews');
+	},
+
+	updateLatestNews: async ({ request }) => {
+		const formData = await request.formData();
+		const id = numberValue(formData, 'id');
+		const title = stringValue(formData, 'title');
+		const sortOrder = numberValue(formData, 'sortOrder');
+
+		if (!id || !title) {
+			return actionError(400, 'Latest news update ke fields incomplete hain.', 'latestNews');
+		}
+
+		await updateLatestNewsItem({ id, title, sortOrder });
+		return success('Latest news item update ho gaya.', 'latestNews');
+	},
+
+	deleteLatestNews: async ({ request }) => {
+		const formData = await request.formData();
+		const id = numberValue(formData, 'id');
+		if (!id) {
+			return actionError(400, 'Latest news ID missing hai.', 'latestNews');
+		}
+
+		await deleteLatestNewsItem(id);
+		return success('Latest news item delete ho gaya.', 'latestNews');
 	},
 
 	createEvent: async ({ request }) => {
@@ -226,48 +333,6 @@ export const actions: Actions = {
 
 		await deleteExamResult(id);
 		return success('Result delete ho gaya.', 'results');
-	},
-
-	createQuickLink: async ({ request }) => {
-		const formData = await request.formData();
-		const title = stringValue(formData, 'title');
-		const description = stringValue(formData, 'description');
-		const href = stringValue(formData, 'href');
-		const iconName = stringValue(formData, 'iconName') || 'graduation-cap';
-
-		if (!title || !description || !href) {
-			return actionError(400, 'Quick link ke required fields missing hain.', 'quickLinks');
-		}
-
-		await createQuickLink({ title, description, href, iconName });
-		return success('Quick link create ho gaya.', 'quickLinks');
-	},
-
-	updateQuickLink: async ({ request }) => {
-		const formData = await request.formData();
-		const id = numberValue(formData, 'id');
-		const title = stringValue(formData, 'title');
-		const description = stringValue(formData, 'description');
-		const href = stringValue(formData, 'href');
-		const iconName = stringValue(formData, 'iconName') || 'graduation-cap';
-
-		if (!id || !title || !description || !href) {
-			return actionError(400, 'Quick link update ke fields incomplete hain.', 'quickLinks');
-		}
-
-		await updateQuickLink({ id, title, description, href, iconName });
-		return success('Quick link update ho gaya.', 'quickLinks');
-	},
-
-	deleteQuickLink: async ({ request }) => {
-		const formData = await request.formData();
-		const id = numberValue(formData, 'id');
-		if (!id) {
-			return actionError(400, 'Quick link ID missing hai.', 'quickLinks');
-		}
-
-		await deleteQuickLink(id);
-		return success('Quick link delete ho gaya.', 'quickLinks');
 	},
 
 	uploadMedia: async ({ request }) => {
