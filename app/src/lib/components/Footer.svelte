@@ -71,7 +71,7 @@
 				<div class="space-y-4">
 					<div class="flex items-start gap-4 text-white/70">
 						<MapPin size={20} class="text-secondary flex-shrink-0" />
-						<p class="text-sm">Govt Post Graduate College, Minchinabad Road, Bahawalnagar, Punjab, Pakistan</p>
+						<p class="text-sm">Govt Post Graduate College, College Road, Bahawalnagar, Punjab, Pakistan</p>
 					</div>
 					<div class="flex items-center gap-4 text-white/70">
 						<Phone size={20} class="text-secondary flex-shrink-0" />
