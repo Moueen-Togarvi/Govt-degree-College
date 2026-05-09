@@ -1,25 +1,35 @@
 <script lang="ts">
 	import Hero from '$lib/components/home/Hero.svelte';
 	import NewsTicker from '$lib/components/home/NewsTicker.svelte';
-	import QuickLinks from '$lib/components/home/QuickLinks.svelte';
+	import HomeLogos from '$lib/components/home/HomeLogos.svelte';
+	import ImportantNotices from '$lib/components/home/ImportantNotices.svelte';
 	import PrincipalMessage from '$lib/components/home/PrincipalMessage.svelte';
 	import Stats from '$lib/components/home/Stats.svelte';
+	import FeaturedPrograms from '$lib/components/home/FeaturedPrograms.svelte';
+	import GalleryPreview from '$lib/components/home/GalleryPreview.svelte';
+	import AdmissionsJourney from '$lib/components/home/AdmissionsJourney.svelte';
+	import FinalCta from '$lib/components/home/FinalCta.svelte';
+	import LightBeamDivider from '$lib/components/home/LightBeamDivider.svelte';
+
+	let { data } = $props();
 </script>
 
 <svelte:head>
 	<title>Home | Govt Post Graduate College Bahawalnagar</title>
-	<meta name="description" content="Welcome to the official portal of Govt Post Graduate College Bahawalnagar. Explore our BS programs affiliated with KFUEIT." />
+	<meta
+		name="description"
+		content="Govt Post Graduate College Bahawalnagar offers free 11th and 12th classes under the Government of Punjab and BS programs affiliated with KFUEIT."
+	/>
 </svelte:head>
 
-<NewsTicker />
+<NewsTicker announcements={data.tickerAnnouncements} />
 <Hero />
-<QuickLinks />
-<PrincipalMessage />
 <Stats />
-
-<section class="py-24 bg-white">
-	<div class="container mx-auto px-4 text-center space-y-8">
-		<h2 class="text-4xl font-black text-primary italic">"Quality Education, Affordable for All"</h2>
-		<p class="text-xl text-primary/60 font-medium">Affiliated with Khawaja Fareed University of Engineering & IT (KFUEIT)</p>
-	</div>
-</section>
+<FeaturedPrograms />
+<HomeLogos />
+<ImportantNotices notices={data.noticeBoardItems} />
+<PrincipalMessage />
+<GalleryPreview />
+<AdmissionsJourney />
+<LightBeamDivider />
+<FinalCta />

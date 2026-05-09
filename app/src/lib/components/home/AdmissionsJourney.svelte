@@ -1,0 +1,70 @@
+<script lang="ts">
+	import { ArrowRight, BadgeCheck, ClipboardCheck, FileText, GraduationCap } from 'lucide-svelte';
+
+	const steps = [
+		{
+			title: 'Choose Your Program',
+			description: 'Select 11th, 12th, BS Morning, or BS Evening according to your academic path.',
+			icon: GraduationCap
+		},
+		{
+			title: 'Prepare Documents',
+			description: 'Collect the required certificates, records, and application materials.',
+			icon: FileText
+		},
+		{
+			title: 'Verification and Guidance',
+			description: 'Follow the admission procedure, eligibility checks, and merit-related steps.',
+			icon: ClipboardCheck
+		},
+		{
+			title: 'Start Classes',
+			description: 'Begin free intermediate studies or move into KFUEIT-affiliated BS classes.',
+			icon: BadgeCheck
+		}
+	];
+</script>
+
+<section class="relative overflow-hidden bg-white py-24">
+	<div class="absolute inset-0 bg-[linear-gradient(180deg,_rgba(247,148,29,0.03),_transparent_30%,_rgba(13,93,86,0.05))]"></div>
+
+	<div class="container relative z-10 mx-auto px-4 lg:px-8">
+		<div class="mx-auto mb-14 max-w-3xl text-center motion-rise">
+			<p class="mb-4 text-sm font-black uppercase tracking-[0.35em] text-secondary">Admissions Journey</p>
+			<h2 class="text-4xl font-black text-primary lg:text-5xl">A clear path from interest to enrollment.</h2>
+			<p class="mt-5 text-base font-medium leading-8 text-primary/65 lg:text-lg">
+				Keep the process easy to understand: 11th and 12th classes are free, while BS programs are the ones affiliated with KFUEIT.
+			</p>
+		</div>
+
+		<div class="relative">
+			<div class="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-transparent via-secondary/35 to-transparent xl:block"></div>
+
+			<div class="grid gap-6 xl:grid-cols-4">
+				{#each steps as step, index}
+					<div class="relative rounded-[2rem] border border-border-soft bg-neutral-soft/80 p-7 shadow-[0_20px_60px_rgba(13,93,86,0.08)] motion-rise" style={`animation-delay: ${index * 120}ms`}>
+						<div class="mb-6 flex items-center justify-between">
+							<div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white motion-float">
+								<step.icon size={24} />
+							</div>
+							<span class="text-xs font-black uppercase tracking-[0.24em] text-secondary">Step {index + 1}</span>
+						</div>
+						<h3 class="text-xl font-black text-primary">{step.title}</h3>
+						<p class="mt-3 text-sm font-medium leading-7 text-primary/65">{step.description}</p>
+					</div>
+				{/each}
+			</div>
+		</div>
+
+		<div class="mt-10 flex flex-col gap-4 rounded-[2rem] border border-secondary/20 bg-secondary/10 p-6 text-primary lg:flex-row lg:items-center lg:justify-between motion-rise">
+			<div>
+				<p class="text-sm font-black uppercase tracking-[0.28em] text-secondary">Important Note</p>
+				<p class="mt-2 text-lg font-black">11th and 12th classes are free. KFUEIT affiliation applies to BS classes only.</p>
+			</div>
+			<a href="/admissions/how-to-apply" class="inline-flex items-center gap-3 self-start rounded-full bg-primary px-6 py-3 font-black text-white transition-all hover:-translate-y-1 hover:bg-accent">
+				Read Admission Guide
+				<ArrowRight size={18} />
+			</a>
+		</div>
+	</div>
+</section>

@@ -104,7 +104,7 @@
 				</div>
 				<div class="flex items-center gap-2">
 					<MapPin size={14} class="text-secondary" />
-					<span>Minchinabad Road, Bahawalnagar</span>
+					<span>College Road, Bahawalnagar</span>
 				</div>
 			</div>
 			<div class="flex items-center gap-3">
@@ -126,15 +126,17 @@
 	</div>
 
 	<!-- Main Navbar -->
-	<div class="{scrolled ? 'bg-white/95 shadow-lg backdrop-blur-md py-2' : 'bg-white py-4'} transition-all duration-300">
+	<div class="{scrolled ? 'bg-white/95 shadow-lg backdrop-blur-md py-0.5' : 'bg-white py-1'} transition-all duration-300">
 		<div class="container mx-auto px-4 lg:px-8">
 			<div class="flex items-center justify-between">
 				<!-- Logo Section -->
-				<a href="/" class="flex items-center gap-3 group">
-					<img src="/images/logos/degree4k.png" alt="GPGC Logo" class="h-12 w-auto transition-transform duration-300 group-hover:scale-110" />
+				<a href="/" class="flex items-center gap-4 group">
+					<div class="bg-white p-1 rounded-lg shadow-sm border border-neutral-100 group-hover:border-secondary transition-colors">
+						<img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-14 w-auto transition-transform duration-300 group-hover:scale-105" />
+					</div>
 					<div class="hidden md:block">
-						<h1 class="text-lg font-bold leading-tight tracking-tight text-primary">GPGC</h1>
-						<p class="text-[10px] font-medium tracking-widest text-secondary uppercase font-bold">Bahawalnagar</p>
+						<h1 class="text-xl font-black leading-tight tracking-tight text-primary">GPGC</h1>
+						<p class="text-[11px] font-bold tracking-[0.2em] text-secondary uppercase">Bahawalnagar</p>
 					</div>
 				</a>
 
@@ -202,7 +204,7 @@
 
 	<!-- Mobile Navigation Drawer -->
 	{#if isMenuOpen}
-		<div class="lg:hidden fixed inset-0 top-[72px] bg-white z-40 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
+		<div class="lg:hidden fixed inset-0 top-[68px] bg-white z-40 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
 			<div class="flex flex-col p-6 gap-2">
 				{#each navLinks as link}
 					<div>
