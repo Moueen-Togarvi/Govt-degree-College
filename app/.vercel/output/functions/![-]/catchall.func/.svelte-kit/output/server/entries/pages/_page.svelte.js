@@ -317,12 +317,12 @@ function Hero($$renderer, $$props) {
 			}
 			setTimeout(type, typingSpeed);
 		}
-		$$renderer.push(`<section class="relative min-h-[105vh] flex flex-col items-center justify-center overflow-hidden bg-primary"><div class="absolute inset-0 z-0"><img src="/images/logos/hero%20section%20bg.png" alt="College Campus" class="w-full h-full object-fill opacity-80"/> <div class="absolute inset-0 bg-primary/50"></div></div> <div class="absolute top-12 left-8 lg:left-16 z-30 animate-in fade-in slide-in-from-left-4 duration-1000"><p class="text-secondary font-black uppercase tracking-[0.3em] text-sm lg:text-base">Welcome to</p> <div class="w-12 h-1 bg-secondary mt-2 rounded-full"></div></div> <div class="container relative z-30 mx-auto px-4 pt-16 text-center lg:px-8"><div class="space-y-4 animate-in fade-in slide-in-from-top-8 duration-1000 delay-200"><h2 class="text-white/50 font-bold uppercase tracking-[0.5em] text-xs lg:text-sm">Our Institution</h2> <p class="text-secondary font-black uppercase tracking-[0.45em] text-[0.65rem] lg:text-xs">Legacy 1945</p> <h1 class="text-2xl lg:text-4xl xl:text-5xl font-black text-white leading-tight drop-shadow-2xl">Govt Graduate College <br/> <span class="text-secondary">Bahawalnagar</span></h1></div> <div class="mx-auto mt-6 max-w-4xl"><div class="flex flex-col items-center gap-2"><div class="relative flex w-full max-w-4xl justify-center"><div class="absolute left-1/2 top-1 z-10 flex -translate-x-1/2 items-center gap-4 rounded-[1.6rem] border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-xl shadow-2xl shadow-primary/20"><div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10"><img src="/images/logos/image.png" alt="Government of Punjab logo" class="h-full w-full object-contain"/></div> <div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10"><img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Bahawalnagar logo" class="h-full w-full object-contain"/></div></div> <div class="w-full pt-13"><svg viewBox="0 0 900 220" class="w-full overflow-visible"><path id="heroQuoteCurve" d="M 150 70 Q 450 138 750 70" fill="transparent"></path><path id="heroQuoteCurveAccent" d="M 205 142 Q 450 202 695 142" fill="transparent"></path><text class="fill-white text-[28px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] lg:text-[33px]" text-anchor="middle"><textPath href="#heroQuoteCurve" startOffset="50%">We are dedicated to</textPath></text><text class="text-[24px] font-black italic tracking-[0.02em] drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-all duration-500 lg:text-[30px]" text-anchor="middle"${attr_style(`fill: ${currentAccentColor()};`)}><textPath href="#heroQuoteCurveAccent" startOffset="50%">${escape_html(displayedSuffix || " ")}</textPath></text></svg></div></div></div> <div class="relative mt-2 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500"><div class="flex flex-wrap justify-center gap-6"><a href="/admissions/how-to-apply" class="flex items-center gap-3 px-10 py-5 bg-secondary text-white rounded-2xl font-black text-lg hover:bg-secondary/90 hover:scale-105 transition-all shadow-2xl shadow-secondary/30 active:scale-95 group">Start Your Journey `);
+		$$renderer.push(`<section class="relative min-h-[105vh] flex flex-col items-center justify-center overflow-hidden bg-primary"><div class="absolute inset-0 z-0"><img src="/images/logos/hero section bg.png" alt="College Campus" class="w-full h-full object-cover opacity-90 transition-transform duration-[10s] hover:scale-110"/> <div class="absolute inset-0 bg-gradient-to-b from-primary/30 via-primary/10 to-primary/60 backdrop-brightness-[0.85]"></div></div> <div class="absolute top-12 left-8 lg:left-16 z-30 animate-in fade-in slide-in-from-left-4 duration-1000"><p class="text-secondary font-black uppercase tracking-[0.3em] text-sm lg:text-base">Welcome to</p> <div class="w-12 h-1 bg-secondary mt-2 rounded-full"></div></div> <div class="container relative z-30 mx-auto px-4 text-center lg:px-8 flex flex-col items-center"><div class="space-y-3 animate-in fade-in slide-in-from-bottom-8 duration-1000"><h2 class="text-white/60 font-bold uppercase tracking-[0.35em] text-[10px] lg:text-xs">Our Institution</h2> <p class="text-secondary/90 font-medium uppercase tracking-[0.35em] text-[9px] lg:text-[10px]">Legacy 1945</p> <h1 class="mt-4 text-3xl lg:text-5xl xl:text-7xl font-black text-white leading-tight drop-shadow-2xl tracking-tight">Govt Graduate College <br/> <span class="text-secondary">Bahawalnagar</span></h1></div> <div class="mx-auto mt-10 max-w-4xl"><div class="flex flex-col items-center gap-2"><div class="relative flex w-full max-w-4xl justify-center"><div class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 items-center gap-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-4 backdrop-blur-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300"><div class="flex flex-col items-center group"><div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110"><img src="/images/logos/image.png" alt="Govt Logo" class="h-full w-full object-contain"/></div></div> <div class="h-10 w-px bg-white/10"></div> <div class="flex flex-col items-center group"><div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110"><img src="/images/logos/degree4k-removebg-preview.png" alt="College Logo" class="h-full w-full object-contain"/></div></div></div> <div class="w-full pt-24"><svg viewBox="0 0 900 220" class="w-full overflow-visible"><path id="heroQuoteCurve" d="M 150 70 Q 450 138 750 70" fill="transparent"></path><path id="heroQuoteCurveAccent" d="M 205 142 Q 450 202 695 142" fill="transparent"></path><text class="fill-white text-[28px] font-bold italic tracking-tight drop-shadow-lg lg:text-[36px]" text-anchor="middle"><textPath href="#heroQuoteCurve" startOffset="50%">We are dedicated to</textPath></text><text class="text-[26px] font-black italic tracking-tight drop-shadow-lg transition-all duration-500 lg:text-[34px]" text-anchor="middle"${attr_style(`fill: ${currentAccentColor()};`)}><textPath href="#heroQuoteCurveAccent" startOffset="50%">${escape_html(displayedSuffix || " ")}</textPath></text></svg></div></div></div> <div class="relative mt-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-700"><div class="flex flex-wrap justify-center gap-6"><a href="/admissions/how-to-apply" class="flex items-center gap-4 px-12 py-5 bg-secondary text-white rounded-2xl font-black text-lg hover:bg-secondary/90 hover:scale-105 transition-all shadow-2xl shadow-secondary/40 active:scale-95 group">Start Your Journey `);
 		Arrow_right($$renderer, {
 			size: 22,
 			class: "transition-transform group-hover:translate-x-2"
 		});
-		$$renderer.push(`<!----></a> <a href="/about/overview" class="flex items-center gap-3 px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-2xl font-black text-lg hover:bg-white/10 transition-all active:scale-95">Discover More</a></div></div></div></div> <div class="hidden lg:block absolute bottom-8 right-8 z-30 animate-in fade-in duration-1000 delay-1000"><div class="relative w-32 h-32 flex items-center justify-center group cursor-pointer hover:scale-110 transition-transform"><div class="absolute inset-0 animate-spin-slow svelte-tc3uts"><svg viewBox="0 0 100 100" class="w-full h-full text-white/80 overflow-visible"><path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent"></path><text class="text-[12px] font-black uppercase tracking-[0.15em] fill-current"><textPath href="#circlePath" startOffset="0%">EXPLORE CAMPUS • SCROLL DOWN •</textPath></text></svg></div> <div class="w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center relative z-10 group-hover:-translate-y-2 transition-transform shadow-xl">`);
+		$$renderer.push(`<!----></a> <a href="/about/overview" class="flex items-center gap-4 px-12 py-5 bg-white/10 backdrop-blur-2xl border border-white/20 text-white rounded-2xl font-black text-lg hover:bg-white/20 transition-all active:scale-95 hover:scale-105">Discover More</a></div></div></div></div> <div class="hidden lg:block absolute bottom-8 right-8 z-30 animate-in fade-in duration-1000 delay-1000"><div class="relative w-32 h-32 flex items-center justify-center group cursor-pointer hover:scale-110 transition-transform"><div class="absolute inset-0 animate-spin-slow svelte-tc3uts"><svg viewBox="0 0 100 100" class="w-full h-full text-white/80 overflow-visible"><path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent"></path><text class="text-[12px] font-black uppercase tracking-[0.15em] fill-current"><textPath href="#circlePath" startOffset="0%">EXPLORE CAMPUS • SCROLL DOWN •</textPath></text></svg></div> <div class="w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center relative z-10 group-hover:-translate-y-2 transition-transform shadow-xl">`);
 		Arrow_down($$renderer, {
 			size: 20,
 			class: "animate-bounce"
@@ -622,44 +622,44 @@ function GalleryPreview($$renderer, $$props) {
 	$$renderer.component(($$renderer) => {
 		const galleryItems = [
 			{
-				src: "/images/gallery/543459255_1288642623274041_7370685911892750194_n.jpg",
-				title: "Campus Entrance",
+				src: "/images/gallery/Gemini_Generated_Image_hwtnmyhwtnmyhwtn.png",
+				title: "Open-Air Academic Session",
+				tag: "Campus Life"
+			},
+			{
+				src: "/images/gallery/Gemini_Generated_Image_jec4ltjec4ltjec4.png",
+				title: "Courtyard Garden",
 				tag: "Campus"
 			},
 			{
-				src: "/images/gallery/489290757_1152937760177862_1944043555997507703_n.jpg",
-				title: "Student Community",
-				tag: "Students"
+				src: "/images/gallery/Gemini_Generated_Image_kgigjckgigjckgig.png",
+				title: "Mathematics Weekly Test",
+				tag: "Academics"
 			},
 			{
-				src: "/images/gallery/544756802_1288642559940714_7566178749056628309_n.jpg",
-				title: "Academic Blocks",
-				tag: "Departments"
+				src: "/images/gallery/Gemini_Generated_Image_dcuevidcuevidcue.png",
+				title: "Hockey Team Spirit",
+				tag: "Sports"
 			},
 			{
-				src: "/images/gallery/497498149_1184322940372677_5964474392879878424_n.jpg",
-				title: "Classroom Focus",
-				tag: "Learning"
-			},
-			{
-				src: "/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg",
-				title: "Student Participation",
-				tag: "Classes"
-			},
-			{
-				src: "/images/gallery/474603261_1114315973721488_3688329175050708929_n.jpg",
-				title: "Campus Events",
+				src: "/images/gallery/Gemini_Generated_Image_v7frg0v7frg0v7fr.png",
+				title: "Promotion Award Ceremony",
 				tag: "Events"
 			},
 			{
-				src: "/images/gallery/543406756_1287667523371551_8002641646226004304_n.jpg",
-				title: "College Sessions",
-				tag: "Activities"
+				src: "/images/gallery/Gemini_Generated_Image_kbyw6zkbyw6zkbyw.png",
+				title: "Football Team Gathering",
+				tag: "Students"
 			},
 			{
-				src: "/images/gallery/474603631_1113700027116416_3753317337439731517_n.jpg",
-				title: "Faculty Presence",
-				tag: "Faculty"
+				src: "/images/gallery/Gemini_Generated_Image_5tkvlb5tkvlb5tkv.png",
+				title: "Achievement Recognition",
+				tag: "Honours"
+			},
+			{
+				src: "/images/gallery/opst1.png",
+				title: "Sports Week Participation",
+				tag: "Activities"
 			}
 		];
 		let activeIndex = 0;
@@ -667,13 +667,13 @@ function GalleryPreview($$renderer, $$props) {
 		$$renderer.push(`<section class="relative overflow-hidden bg-neutral-soft py-24"><div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(247,148,29,0.10),_transparent_26%)]"></div> <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(13,93,86,0.08),_transparent_26%)]"></div> <div class="container relative z-10 mx-auto px-4 lg:px-8"><div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"><div class="max-w-3xl motion-rise"><p class="mb-4 text-sm font-black uppercase tracking-[0.35em] text-secondary">Campus Life</p> <h2 class="text-4xl font-black text-primary lg:text-5xl">A premium grid shaped around real moments from campus.</h2> <p class="mt-5 text-base font-medium leading-8 text-primary/65 lg:text-lg">Images now rotate every 5 seconds with smooth transitions, while the layout keeps one large campus frame and compact square highlights.</p></div> <a href="/news/gallery" class="inline-flex items-center gap-3 self-start rounded-full border border-primary/15 bg-white px-6 py-3 font-black text-primary shadow-sm transition-all hover:-translate-y-1 hover:text-secondary motion-rise">View Full Gallery `);
 		Arrow_right($$renderer, { size: 18 });
 		$$renderer.push(`<!----></a></div> <div class="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-stretch"><div class="group relative isolate h-[420px] overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_24px_70px_rgba(13,93,86,0.10)] lg:h-[470px]"><!---->`);
-		$$renderer.push(`<div class="absolute inset-0"><img${attr("src", visibleItems()[0].src)}${attr("alt", visibleItems()[0].title)} class="absolute inset-0 h-full w-full object-cover object-center"/> <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/18 to-transparent"></div> <div class="absolute inset-x-0 bottom-0 p-8 text-white"><p class="text-xs font-black uppercase tracking-[0.28em] text-secondary">${escape_html(visibleItems()[0].tag)}</p> <h3 class="mt-3 text-3xl font-black lg:text-4xl">${escape_html(visibleItems()[0].title)}</h3></div></div>`);
+		$$renderer.push(`<div class="absolute inset-0"><img${attr("src", visibleItems()[0].src)}${attr("alt", visibleItems()[0].title)} class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]" fetchpriority="high"/> <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/18 to-transparent"></div> <div class="absolute inset-x-0 bottom-0 p-8 text-white"><p class="text-xs font-black uppercase tracking-[0.28em] text-secondary">${escape_html(visibleItems()[0].tag)}</p> <h3 class="mt-3 text-3xl font-black lg:text-4xl">${escape_html(visibleItems()[0].title)}</h3></div></div>`);
 		$$renderer.push(`<!----></div> <div class="grid gap-5 sm:grid-cols-2 lg:h-[470px] lg:grid-cols-2 lg:grid-rows-2"><!--[-->`);
 		const each_array = ensure_array_like(visibleItems().slice(1));
 		for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
 			let item = each_array[$$index];
 			$$renderer.push(`<div class="group relative isolate aspect-square overflow-hidden rounded-[1.7rem] border border-white/60 bg-white shadow-[0_18px_50px_rgba(13,93,86,0.08)] lg:h-full"><!---->`);
-			$$renderer.push(`<div class="absolute inset-0"><img${attr("src", item.src)}${attr("alt", item.title)} class="absolute inset-0 h-full w-full object-cover object-center"/> <div class="absolute inset-0 bg-gradient-to-t from-primary/88 via-primary/8 to-transparent"></div> <div class="absolute inset-x-0 bottom-0 p-4 text-white"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-secondary">${escape_html(item.tag)}</p> <h3 class="mt-2 text-lg font-black leading-tight lg:text-xl">${escape_html(item.title)}</h3></div></div>`);
+			$$renderer.push(`<div class="absolute inset-0"><img${attr("src", item.src)}${attr("alt", item.title)} class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]" loading="lazy" decoding="async"/> <div class="absolute inset-0 bg-gradient-to-t from-primary/88 via-primary/8 to-transparent"></div> <div class="absolute inset-x-0 bottom-0 p-4 text-white"><p class="text-[11px] font-black uppercase tracking-[0.22em] text-secondary">${escape_html(item.tag)}</p> <h3 class="mt-2 text-lg font-black leading-tight lg:text-xl">${escape_html(item.title)}</h3></div></div>`);
 			$$renderer.push(`<!----></div>`);
 		}
 		$$renderer.push(`<!--]--></div></div></div></section>`);

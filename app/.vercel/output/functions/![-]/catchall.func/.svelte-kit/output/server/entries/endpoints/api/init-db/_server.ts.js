@@ -1,5 +1,7 @@
+import { r as isAdminAuthenticated } from "../../../../chunks/admin-auth.js";
 import { n as fallbackFacultyDepartments, r as getSql } from "../../../../chunks/faculty-fallback.js";
 import { a as fallbackResults, i as fallbackQuickLinks, n as fallbackEvents, o as fallbackTickerAnnouncements, r as fallbackNoticeBoardItems, t as fallbackAnnouncements } from "../../../../chunks/fallback.js";
+import { error, json } from "@sveltejs/kit";
 //#region src/lib/server/database/setup.ts
 var schemaStatements = [
 	`CREATE TABLE IF NOT EXISTS announcements (
@@ -271,26 +273,20 @@ async function initializeDatabase({ seed = true, db = getSql() } = {}) {
 }
 //#endregion
 //#region src/routes/api/init-db/+server.ts
-async function handleInit() {
+async function handleInit(cookies) {
+	if (!isAdminAuthenticated(cookies)) throw error(401, "Unauthorized");
 	try {
-		const result = await initializeDatabase();
-		return new Response(JSON.stringify({
+		return json({
 			success: true,
 			message: "Database initialized successfully",
-			result
-		}), { headers: { "Content-Type": "application/json" } });
-	} catch (error) {
-		console.error("DB Init Error:", error);
-		return new Response(JSON.stringify({
-			success: false,
-			error: String(error)
-		}), {
-			status: 500,
-			headers: { "Content-Type": "application/json" }
+			result: await initializeDatabase()
 		});
+	} catch (err) {
+		console.error("DB Init Error:", err);
+		throw error(500, String(err));
 	}
 }
-var GET = async () => handleInit();
-var POST = async () => handleInit();
+var GET = async ({ cookies }) => handleInit(cookies);
+var POST = async ({ cookies }) => handleInit(cookies);
 //#endregion
 export { GET, POST };

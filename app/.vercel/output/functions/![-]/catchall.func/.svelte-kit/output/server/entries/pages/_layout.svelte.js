@@ -318,7 +318,7 @@ function Navbar($$renderer, $$props) {
 				]
 			}
 		];
-		$$renderer.push(`<nav class="fixed top-0 z-50 w-full transition-all duration-300"><div class="hidden lg:block bg-primary text-white/90 py-2 border-b border-white/10"><div class="container mx-auto px-4 lg:px-8 flex justify-between items-center text-xs font-medium"><div class="flex items-center gap-6"><div class="flex items-center gap-2">`);
+		$$renderer.push(`<nav${attr_class(`fixed top-0 z-50 w-full transition-all duration-500 ${stringify("")}`)}><div class="hidden lg:block bg-primary text-white/90 py-2 border-b border-white/10"><div class="container mx-auto px-4 lg:px-8 flex justify-between items-center text-xs font-medium"><div class="flex items-center gap-6"><div class="flex items-center gap-2">`);
 		Phone_call($$renderer, {
 			size: 14,
 			class: "text-secondary"
@@ -333,19 +333,19 @@ function Navbar($$renderer, $$props) {
 			size: 14,
 			class: "text-secondary"
 		});
-		$$renderer.push(`<!----> <span>Minchinabad Road, Bahawalnagar</span></div></div> <div class="flex items-center gap-3"><span class="text-white/50 text-xs">Follow us:</span> <a href="/" aria-label="Facebook" class="hover:text-secondary transition-colors"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a> <a href="/" aria-label="Twitter" class="hover:text-secondary transition-colors"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg></a> <a href="/" aria-label="Instagram" class="hover:text-secondary transition-colors"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a></div></div></div> <div${attr_class(`${stringify("bg-white py-1")} transition-all duration-300`)}><div class="container mx-auto px-4 lg:px-8"><div class="flex items-center justify-between"><a href="/" class="flex items-center gap-4 group"><div class="bg-white p-1 rounded-lg shadow-sm border border-neutral-100 group-hover:border-secondary transition-colors"><img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-14 w-auto transition-transform duration-300 group-hover:scale-105"/></div> <div class="hidden md:block"><h1 class="text-xl font-black leading-tight tracking-tight text-primary">GPGC</h1> <p class="text-[11px] font-bold tracking-[0.2em] text-secondary uppercase">Bahawalnagar</p></div></a> <div class="hidden lg:flex items-center gap-1"><!--[-->`);
+		$$renderer.push(`<!----> <span>College Road, Bahawalnagar</span></div></div> <div class="flex items-center gap-3"><span class="text-white/50 text-xs">Follow us:</span> <a href="/" aria-label="Facebook" class="hover:text-secondary transition-colors"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a> <a href="/" aria-label="Twitter" class="hover:text-secondary transition-colors"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg></a> <a href="/" aria-label="Instagram" class="hover:text-secondary transition-colors"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a></div></div></div> <div${attr_class(`${stringify("bg-white py-1")} transition-all duration-300`)}><div class="container mx-auto px-4 lg:px-8"><div class="flex items-center justify-between"><a href="/" class="flex items-center gap-4 group"><div class="bg-white p-1 rounded-lg shadow-sm border border-neutral-100 group-hover:border-secondary transition-colors"><img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-14 w-auto transition-transform duration-300 group-hover:scale-105"/></div> <div class="hidden md:block"><h1 class="text-xl font-black leading-tight tracking-tight text-primary">GPGC</h1> <p class="text-[11px] font-bold tracking-[0.2em] text-secondary uppercase">Bahawalnagar</p></div></a> <div class="hidden lg:flex items-center gap-1"><!--[-->`);
 		const each_array = ensure_array_like(navLinks);
 		for (let $$index_1 = 0, $$length = each_array.length; $$index_1 < $$length; $$index_1++) {
 			let link = each_array[$$index_1];
-			$$renderer.push(`<div class="relative group" role="none"><a${attr("href", link.href)}${attr_class(`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${stringify(store_get($$store_subs ??= {}, "$page", page).url.pathname === link.href ? "text-secondary" : "text-primary hover:text-secondary")}`)}>${escape_html(link.name)} `);
+			$$renderer.push(`<div class="relative group" role="none"><a${attr("href", link.href)}${attr_class(`relative flex items-center gap-1.5 px-5 py-3 text-sm font-bold tracking-wide transition-all duration-300 ${stringify(store_get($$store_subs ??= {}, "$page", page).url.pathname === link.href ? "text-secondary" : "text-primary hover:text-secondary")} group/link`)}>${escape_html(link.name)} `);
 			if (link.subLinks) {
 				$$renderer.push("<!--[0-->");
 				Chevron_down($$renderer, {
 					size: 14,
-					class: "transition-transform duration-200 group-hover:rotate-180"
+					class: "transition-transform duration-300 group-hover:rotate-180 opacity-70"
 				});
 			} else $$renderer.push("<!--[-1-->");
-			$$renderer.push(`<!--]--></a> `);
+			$$renderer.push(`<!--]--> <span${attr_class(`absolute bottom-1 left-5 right-5 h-[2px] bg-secondary scale-x-0 transition-transform duration-300 origin-left group-hover/link:scale-x-100 ${stringify(store_get($$store_subs ??= {}, "$page", page).url.pathname === link.href ? "scale-x-100" : "")}`)}></span></a> `);
 			if (link.subLinks) {
 				$$renderer.push("<!--[0-->");
 				$$renderer.push(`<div class="absolute left-0 top-full pt-2 opacity-0 invisible translate-y-2 transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0"><div class="bg-white border-t-4 border-secondary shadow-2xl rounded-b-xl overflow-hidden min-w-[240px]"><!--[-->`);
@@ -358,7 +358,7 @@ function Navbar($$renderer, $$props) {
 			} else $$renderer.push("<!--[-1-->");
 			$$renderer.push(`<!--]--></div>`);
 		}
-		$$renderer.push(`<!--]--> <div class="ml-4 flex items-center gap-3 pl-6 border-l border-neutral-200"><a href="/student-portal" class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-black text-white bg-secondary hover:bg-secondary/90 transition-all shadow-md active:scale-95 uppercase tracking-wider">`);
+		$$renderer.push(`<!--]--> <div class="ml-6 flex items-center gap-3 pl-8 border-l border-neutral-200"><a href="/student-portal" class="flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-black text-white bg-secondary hover:bg-secondary/90 hover:scale-105 hover:shadow-lg hover:shadow-secondary/20 transition-all active:scale-95 uppercase tracking-widest">`);
 		Log_in($$renderer, { size: 16 });
 		$$renderer.push(`<!----> Portal</a></div></div> <button class="lg:hidden p-2 rounded-xl text-primary hover:bg-primary/5 transition-colors" aria-label="Toggle Menu">`);
 		$$renderer.push("<!--[-1-->");
