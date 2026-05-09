@@ -12,13 +12,15 @@ export type UploadedMedia = {
 	modifiedAt: string;
 };
 
-const allowedMimeTypes = new Set([
-	'image/jpeg',
-	'image/png',
-	'image/webp',
-	'image/gif',
-	'application/pdf'
-]);
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+const allowedExtensions: Record<string, string[]> = {
+	'image/jpeg': ['.jpg', '.jpeg'],
+	'image/png': ['.png'],
+	'image/webp': ['.webp'],
+	'image/gif': ['.gif'],
+	'application/pdf': ['.pdf']
+};
 
 export async function ensureUploadDirectory() {
 	await mkdir(uploadDirectory, { recursive: true });
@@ -29,15 +31,24 @@ export async function saveUploadedFile(file: File) {
 		return null;
 	}
 
-	if (!allowedMimeTypes.has(file.type)) {
+	if (file.size > MAX_FILE_SIZE) {
+		throw new Error('File size exceeds the 5MB limit.');
+	}
+
+	const allowedExts = allowedExtensions[file.type];
+	if (!allowedExts) {
 		throw new Error('Only JPG, PNG, WEBP, GIF, and PDF files are allowed.');
+	}
+
+	const extension = extname(file.name).toLowerCase();
+	if (!allowedExts.includes(extension)) {
+		throw new Error(`Invalid extension for ${file.type}. Expected ${allowedExts.join(' or ')}.`);
 	}
 
 	await ensureUploadDirectory();
 
-	const extension = extname(file.name) || '.bin';
 	const safeBaseName = basename(file.name, extension).replace(/[^a-zA-Z0-9-_]/g, '-').slice(0, 40) || 'file';
-	const fileName = `${safeBaseName}-${randomUUID()}${extension.toLowerCase()}`;
+	const fileName = `${safeBaseName}-${randomUUID()}${extension}`;
 	const filePath = resolve(uploadDirectory, fileName);
 	const arrayBuffer = await file.arrayBuffer();
 

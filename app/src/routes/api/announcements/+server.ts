@@ -1,13 +1,18 @@
+import { isAdminAuthenticated } from '$lib/server/admin-auth';
 import { listAnnouncements } from '$lib/server/database/content';
 import { getSql } from '$lib/server/db';
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
 	return json(await listAnnouncements());
 };
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, cookies }) => {
+	if (!isAdminAuthenticated(cookies)) {
+		throw error(401, 'Unauthorized');
+	}
+
 	const sql = getSql();
 	const { title, description, category } = await request.json();
 	if (!title || !description || !category) {
@@ -21,7 +26,11 @@ export const POST: RequestHandler = async ({ request }) => {
 	return json((rows as Array<Record<string, unknown>>)[0], { status: 201 });
 };
 
-export const DELETE: RequestHandler = async ({ url }) => {
+export const DELETE: RequestHandler = async ({ url, cookies }) => {
+	if (!isAdminAuthenticated(cookies)) {
+		throw error(401, 'Unauthorized');
+	}
+
 	const sql = getSql();
 	const id = url.searchParams.get('id');
 	if (!id) return json({ error: 'Missing id' }, { status: 400 });

@@ -1,21 +1,21 @@
+import { isAdminAuthenticated } from '$lib/server/admin-auth';
 import { initializeDatabase } from '$lib/server/database/setup';
+import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-async function handleInit() {
+async function handleInit(cookies: any) {
+	if (!isAdminAuthenticated(cookies)) {
+		throw error(401, 'Unauthorized');
+	}
+
 	try {
 		const result = await initializeDatabase();
-		return new Response(JSON.stringify({ success: true, message: 'Database initialized successfully', result }), {
-			headers: { 'Content-Type': 'application/json' }
-		});
-	} catch (error) {
-		console.error('DB Init Error:', error);
-		return new Response(JSON.stringify({ success: false, error: String(error) }), {
-			status: 500,
-			headers: { 'Content-Type': 'application/json' }
-		});
+		return json({ success: true, message: 'Database initialized successfully', result });
+	} catch (err) {
+		console.error('DB Init Error:', err);
+		throw error(500, String(err));
 	}
 }
 
-export const GET: RequestHandler = async () => handleInit();
-
-export const POST: RequestHandler = async () => handleInit();
+export const GET: RequestHandler = async ({ cookies }) => handleInit(cookies);
+export const POST: RequestHandler = async ({ cookies }) => handleInit(cookies);
