@@ -2,12 +2,15 @@
 	import {
 		ArrowLeft,
 		BellRing,
+		Building2,
 		Calendar,
 		FileText,
+		GraduationCap,
 		Image,
 		Megaphone,
 		Pencil,
 		Plus,
+		School,
 		ScrollText,
 		Trash2,
 		Upload,
@@ -22,7 +25,9 @@
 		| 'latestNews'
 		| 'events'
 		| 'results'
-		| 'media';
+		| 'media'
+		| 'departments'
+		| 'faculty';
 
 	const sections = [
 		{
@@ -66,8 +71,38 @@
 			singular: 'Media File',
 			description: 'Uploaded images and documents',
 			icon: Image
+		},
+		{
+			key: 'departments',
+			label: 'Departments',
+			singular: 'Department',
+			description: 'Faculty departments and their slugs',
+			icon: Building2
+		},
+		{
+			key: 'faculty',
+			label: 'Faculty Teachers',
+			singular: 'Teacher',
+			description: 'Teachers shown on the faculty page',
+			icon: GraduationCap
 		}
 	] as const;
+
+	const facultySubjects = [
+		'Computer Science',
+		'Artificial Intelligence',
+		'English',
+		'English Literature',
+		'Urdu',
+		'Mathematics',
+		'Physics',
+		'Chemistry',
+		'Zoology',
+		'Botany',
+		'Islamiyat',
+		'Pakistan Studies',
+		'Economics'
+	];
 
 	let showComposer = $state(false);
 
@@ -127,6 +162,10 @@
 				return data.results.length;
 			case 'media':
 				return data.media.length;
+			case 'departments':
+				return data.departments.length;
+			case 'faculty':
+				return data.facultyMembers.length;
 		}
 	}
 
@@ -148,6 +187,10 @@
 				return 'No results yet';
 			case 'media':
 				return 'No media uploads yet';
+			case 'departments':
+				return 'No departments yet';
+			case 'faculty':
+				return 'No teachers yet';
 		}
 	}
 
@@ -165,7 +208,23 @@
 				return 'Publish result records and attached files from this section.';
 			case 'media':
 				return 'Upload images and documents for reuse across the site.';
+			case 'departments':
+				return 'Create departments first so teachers can be assigned properly.';
+			case 'faculty':
+				return 'Add teachers here and they will feed the public faculty page.';
 		}
+	}
+
+	function summarizeFacultyRoles(member: {
+		isHod: boolean;
+		isCoordinator: boolean;
+		isTeachingStaff: boolean;
+	}) {
+		const roles = [];
+		if (member.isHod) roles.push('HOD');
+		if (member.isCoordinator) roles.push('Coordinator');
+		if (member.isTeachingStaff) roles.push('Teaching Staff');
+		return roles.join(' • ') || 'No role selected';
 	}
 
 	const currentSection = $derived.by(() => {
@@ -180,6 +239,12 @@
 </script>
 
 <section class="mx-auto max-w-7xl px-6 py-10">
+	<datalist id="faculty-subjects">
+		{#each facultySubjects as subject}
+			<option value={subject}></option>
+		{/each}
+	</datalist>
+
 	<div class="space-y-8">
 		<div>
 			<p class="text-sm font-black uppercase tracking-[0.32em] text-secondary">Admin Workspace</p>
@@ -350,6 +415,56 @@
 									Upload Media
 								</button>
 							</form>
+						{:else if currentSection === 'departments'}
+							<form method="POST" action="?/createDepartment" class="grid gap-3">
+								<input type="hidden" name="section" value="departments" />
+								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_220px_auto]">
+									<input name="name" placeholder="Department name" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									<input name="urduName" placeholder="Urdu name (optional)" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									<input name="slug" placeholder="computer-science" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									<button class="w-fit rounded-xl bg-primary px-5 py-3 text-sm font-black text-white hover:bg-secondary">Add Department</button>
+								</div>
+							</form>
+						{:else if currentSection === 'faculty'}
+							{#if data.departments.length === 0}
+								<div class="rounded-[1.25rem] border border-amber-200 bg-amber-50 px-5 py-4 text-sm font-bold text-amber-900">
+									Teachers add karne se pehle ek department create karein.
+								</div>
+							{:else}
+								<form method="POST" action="?/createFaculty" enctype="multipart/form-data" class="grid gap-3">
+									<input type="hidden" name="section" value="faculty" />
+									<div class="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_220px_220px]">
+										<input name="name" placeholder="Teacher name" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+										<input name="education" placeholder="Education / qualification" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+										<select name="departmentId" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold">
+											<option value="">Select department</option>
+											{#each data.departments as department}
+												<option value={department.id}>{department.name}</option>
+											{/each}
+										</select>
+										<input name="subject" list="faculty-subjects" placeholder="Subject / teaching area" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									</div>
+									<div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_260px_auto]">
+										<input name="imageUrl" placeholder="/uploads/admin/teacher.jpg or full URL" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+										<input name="imageFile" type="file" accept="image/*" class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 font-semibold" />
+										<button class="w-fit rounded-xl bg-primary px-5 py-3 text-sm font-black text-white hover:bg-secondary">Add Teacher</button>
+									</div>
+									<div class="flex flex-wrap gap-5 rounded-xl border border-slate-200 bg-white px-4 py-3">
+										<label class="inline-flex items-center gap-3 text-sm font-black text-primary">
+											<input name="isHod" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+											Is HOD
+										</label>
+										<label class="inline-flex items-center gap-3 text-sm font-black text-primary">
+											<input name="isCoordinator" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+											Is Coordinator
+										</label>
+										<label class="inline-flex items-center gap-3 text-sm font-black text-primary">
+											<input name="isTeachingStaff" type="checkbox" checked class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+											Teaching Staff
+										</label>
+									</div>
+								</form>
+							{/if}
 						{/if}
 					</div>
 				{/if}
@@ -505,6 +620,89 @@
 									</form>
 								</div>
 							</div>
+						{/each}
+					{:else if currentSection === 'departments'}
+						{#each data.departments as department}
+							<form method="POST" action="?/updateDepartment" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+								<input type="hidden" name="id" value={department.id} />
+								<input type="hidden" name="section" value="departments" />
+								<div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+									<div class="flex items-center gap-2">
+										<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-slate-600">
+											{department.slug}
+										</span>
+										<span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-primary">
+											{data.facultyMembers.filter((member) => member.departmentId === department.id).length} teachers
+										</span>
+									</div>
+									<div class="flex flex-wrap gap-2">
+										<button class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-white hover:bg-secondary"><Pencil size={16} /> Save</button>
+										<button formaction="?/deleteDepartment" class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-3 text-sm font-black text-white hover:bg-rose-700"><Trash2 size={16} /> Delete</button>
+									</div>
+								</div>
+								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_220px]">
+									<input name="name" value={department.name} class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									<input name="urduName" value={department.urduName} class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									<input name="slug" value={department.slug} class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+								</div>
+							</form>
+						{/each}
+					{:else if currentSection === 'faculty'}
+						{#each data.facultyMembers as member}
+							<form method="POST" action="?/updateFaculty" enctype="multipart/form-data" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+								<input type="hidden" name="id" value={member.id} />
+								<input type="hidden" name="section" value="faculty" />
+								<div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+									<div class="flex items-center gap-3">
+										<div class="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
+											{#if isImage(member.imageUrl)}
+												<img src={member.imageUrl} alt={member.name} class="h-full w-full object-cover" />
+											{:else}
+												<School size={20} class="text-slate-500" />
+											{/if}
+										</div>
+										<div>
+											<p class="text-base font-black text-primary">{member.name}</p>
+											<p class="mt-1 text-sm font-medium text-slate-500">{member.departmentName} • {member.subject}</p>
+											<p class="mt-1 text-xs font-black uppercase tracking-[0.18em] text-secondary">
+												{summarizeFacultyRoles(member)}
+											</p>
+										</div>
+									</div>
+									<div class="flex flex-wrap gap-2">
+										<button class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-white hover:bg-secondary"><Pencil size={16} /> Save</button>
+										<button formaction="?/deleteFaculty" class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-3 text-sm font-black text-white hover:bg-rose-700"><Trash2 size={16} /> Delete</button>
+									</div>
+								</div>
+								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_220px_220px]">
+									<input name="name" value={member.name} class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									<input name="education" value={member.education} class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									<select name="departmentId" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold">
+										{#each data.departments as department}
+											<option value={department.id} selected={department.id === member.departmentId}>
+												{department.name}
+											</option>
+										{/each}
+									</select>
+									<input name="subject" value={member.subject} list="faculty-subjects" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
+									<input name="imageUrl" value={member.imageUrl} class="rounded-xl border border-slate-200 px-4 py-3 font-semibold xl:col-span-2" />
+									<input name="imageFile" type="file" accept="image/*" class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 font-semibold" />
+									<div class="flex flex-wrap gap-5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+										<label class="inline-flex items-center gap-3 text-sm font-black text-primary">
+											<input name="isHod" type="checkbox" checked={member.isHod} class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+											Is HOD
+										</label>
+										<label class="inline-flex items-center gap-3 text-sm font-black text-primary">
+											<input name="isCoordinator" type="checkbox" checked={member.isCoordinator} class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+											Is Coordinator
+										</label>
+										<label class="inline-flex items-center gap-3 text-sm font-black text-primary">
+											<input name="isTeachingStaff" type="checkbox" checked={member.isTeachingStaff} class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary" />
+											Teaching Staff
+										</label>
+									</div>
+								</div>
+							</form>
 						{/each}
 					{/if}
 				</div>

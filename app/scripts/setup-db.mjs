@@ -242,6 +242,101 @@ async function main() {
 	} else {
 		console.log('Quick links table already has data, skipping seed.');
 	}
+
+	const existingDepartments = await sql.query('SELECT COUNT(*)::int AS count FROM departments');
+	if (Number(existingDepartments[0]?.count ?? 0) === 0) {
+		await sql.query(
+			`INSERT INTO departments (name, slug, urdu_name) VALUES
+			($1, $2, $3),
+			($4, $5, $6),
+			($7, $8, $9)`,
+			[
+				'Computer Science',
+				'computer-science',
+				'کمپیوٹر سائنس',
+				'English',
+				'english',
+				'انگلش',
+				'Urdu',
+				'urdu',
+				'اردو'
+			]
+		);
+		console.log('Seeded departments table.');
+	} else {
+		console.log('Departments table already has data, skipping seed.');
+	}
+
+	const existingFacultyMembers = await sql.query('SELECT COUNT(*)::int AS count FROM faculty_members');
+	if (Number(existingFacultyMembers[0]?.count ?? 0) === 0) {
+		const departments = await sql.query('SELECT id, slug FROM departments');
+		const departmentMap = new Map(departments.map((department) => [department.slug, department.id]));
+
+		await sql.query(
+			`INSERT INTO faculty_members
+				(department_id, name, education, subject, image_url, is_hod, is_coordinator, is_teaching_staff)
+			 VALUES
+				($1, $2, $3, $4, $5, $6, $7, $8),
+				($9, $10, $11, $12, $13, $14, $15, $16),
+				($17, $18, $19, $20, $21, $22, $23, $24),
+				($25, $26, $27, $28, $29, $30, $31, $32),
+				($33, $34, $35, $36, $37, $38, $39, $40),
+				($41, $42, $43, $44, $45, $46, $47, $48)`,
+			[
+				departmentMap.get('computer-science'),
+				'Prof. Muhammad Zahid',
+				'MS Computer Science',
+				'Computer Science',
+				'/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg',
+				true,
+				false,
+				true,
+				departmentMap.get('computer-science'),
+				'Dr. Ahmed Hassan',
+				'PhD AI',
+				'Artificial Intelligence',
+				'/images/gallery/474603631_1113700027116416_3753317337439731517_n.jpg',
+				false,
+				true,
+				true,
+				departmentMap.get('english'),
+				'Prof. Sajjad Haider',
+				'MA English Literature',
+				'English Literature',
+				'/images/gallery/497498149_1184322940372677_5964474392879878424_n.jpg',
+				true,
+				false,
+				true,
+				departmentMap.get('english'),
+				'Ms. Amna Bibi',
+				'M.Phil Linguistics',
+				'English',
+				'/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg',
+				false,
+				true,
+				true,
+				departmentMap.get('urdu'),
+				'Prof. Khalid Mahmood',
+				'MA Urdu',
+				'Urdu',
+				'/images/gallery/547755271_1299324492205854_5011253499358894922_n.jpg',
+				true,
+				false,
+				true,
+				departmentMap.get('urdu'),
+				'Ms. Naila Ashraf',
+				'M.Phil Urdu',
+				'Urdu',
+				'/images/gallery/488936577_1152937786844526_8441555087243500544_n.jpg',
+				false,
+				true,
+				true
+			]
+		);
+		console.log('Seeded faculty_members table.');
+	} else {
+		console.log('Faculty members table already has data, skipping seed.');
+	}
 }
 
 main().catch((error) => {

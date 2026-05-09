@@ -20,6 +20,17 @@ import {
 	updateLatestNewsItem,
 	updateNoticeBoardItem
 } from '$lib/server/database/content';
+import {
+	countFacultyMembersByDepartment,
+	createDepartment,
+	createFacultyMember,
+	deleteDepartment,
+	deleteFacultyMember,
+	listDepartments,
+	listFacultyMembers,
+	updateDepartment,
+	updateFacultyMember
+} from '$lib/server/database/faculty';
 import { logDatabaseLoadError } from '$lib/server/db';
 import { deleteUploadedMedia, listUploadedMedia, saveUploadedFile } from '$lib/server/uploads';
 import { fail } from '@sveltejs/kit';
@@ -31,7 +42,9 @@ const validSections = new Set([
 	'latestNews',
 	'events',
 	'results',
-	'media'
+	'media',
+	'departments',
+	'faculty'
 ]);
 
 function stringValue(formData: FormData, key: string) {
@@ -40,6 +53,10 @@ function stringValue(formData: FormData, key: string) {
 
 function numberValue(formData: FormData, key: string) {
 	return Number(stringValue(formData, key));
+}
+
+function booleanValue(formData: FormData, key: string) {
+	return formData.get(key) === 'on';
 }
 
 function fileValue(formData: FormData, key: string) {
@@ -61,13 +78,24 @@ export const load: PageServerLoad = async ({ url }) => {
 		requestedSection && validSections.has(requestedSection) ? requestedSection : null;
 
 	try {
-		const [announcements, noticeBoardItems, latestNewsItems, events, results, media] = await Promise.all([
+		const [
+			announcements,
+			noticeBoardItems,
+			latestNewsItems,
+			events,
+			results,
+			media,
+			departments,
+			facultyMembers
+		] = await Promise.all([
 			listAnnouncements(100),
 			listNoticeBoardItems(100, { includeExpired: true }),
 			listLatestNewsItems(100),
 			listEvents(100),
 			listExamResults({ limit: 100 }),
-			listUploadedMedia()
+			listUploadedMedia(),
+			listDepartments(),
+			listFacultyMembers()
 		]);
 
 		return {
@@ -77,6 +105,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			events,
 			results,
 			media,
+			departments,
+			facultyMembers,
 			activeSection,
 			databaseConnected: true
 		};
@@ -90,6 +120,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			events: [],
 			results: [],
 			media: [],
+			departments: [],
+			facultyMembers: [],
 			activeSection,
 			databaseConnected: false
 		};
@@ -333,6 +365,153 @@ export const actions: Actions = {
 
 		await deleteExamResult(id);
 		return success('Result delete ho gaya.', 'results');
+	},
+
+	createDepartment: async ({ request }) => {
+		const formData = await request.formData();
+		const name = stringValue(formData, 'name');
+		const urduName = stringValue(formData, 'urduName');
+		const slug = stringValue(formData, 'slug');
+
+		if (!name) {
+			return actionError(400, 'Department ka name required hai.', 'departments');
+		}
+
+		await createDepartment({ name, urduName, slug });
+		return success('Department create ho gaya.', 'departments');
+	},
+
+	updateDepartment: async ({ request }) => {
+		const formData = await request.formData();
+		const id = numberValue(formData, 'id');
+		const name = stringValue(formData, 'name');
+		const urduName = stringValue(formData, 'urduName');
+		const slug = stringValue(formData, 'slug');
+
+		if (!id || !name) {
+			return actionError(400, 'Department update ke fields incomplete hain.', 'departments');
+		}
+
+		await updateDepartment({ id, name, urduName, slug });
+		return success('Department update ho gaya.', 'departments');
+	},
+
+	deleteDepartment: async ({ request }) => {
+		const formData = await request.formData();
+		const id = numberValue(formData, 'id');
+
+		if (!id) {
+			return actionError(400, 'Department ID missing hai.', 'departments');
+		}
+
+		const assignedFacultyCount = await countFacultyMembersByDepartment(id);
+		if (assignedFacultyCount > 0) {
+			return actionError(
+				400,
+				'Is department me teachers maujood hain. Delete se pehle unko move ya delete karein.',
+				'departments'
+			);
+		}
+
+		await deleteDepartment(id);
+		return success('Department delete ho gaya.', 'departments');
+	},
+
+	createFaculty: async ({ request }) => {
+		const formData = await request.formData();
+		const departmentId = numberValue(formData, 'departmentId');
+		const name = stringValue(formData, 'name');
+		const education = stringValue(formData, 'education');
+		const subject = stringValue(formData, 'subject');
+		const isHod = booleanValue(formData, 'isHod');
+		const isCoordinator = booleanValue(formData, 'isCoordinator');
+		const isTeachingStaff = booleanValue(formData, 'isTeachingStaff');
+		const imageUrlInput = stringValue(formData, 'imageUrl');
+		const imageFile = fileValue(formData, 'imageFile');
+
+		if (!departmentId || !name || !education || !subject) {
+			return actionError(400, 'Teacher ke required fields missing hain.', 'faculty');
+		}
+
+		if (!isHod && !isCoordinator && !isTeachingStaff) {
+			return actionError(
+				400,
+				'Teacher ke liye kam az kam ek role select karein: HOD, coordinator, ya teaching staff.',
+				'faculty'
+			);
+		}
+
+		let imageUrl = imageUrlInput || null;
+		if (imageFile && imageFile.size > 0) {
+			imageUrl = await saveUploadedFile(imageFile);
+		}
+
+		await createFacultyMember({
+			departmentId,
+			name,
+			education,
+			subject,
+			imageUrl,
+			isHod,
+			isCoordinator,
+			isTeachingStaff
+		});
+		return success('Teacher create ho gaya.', 'faculty');
+	},
+
+	updateFaculty: async ({ request }) => {
+		const formData = await request.formData();
+		const id = numberValue(formData, 'id');
+		const departmentId = numberValue(formData, 'departmentId');
+		const name = stringValue(formData, 'name');
+		const education = stringValue(formData, 'education');
+		const subject = stringValue(formData, 'subject');
+		const isHod = booleanValue(formData, 'isHod');
+		const isCoordinator = booleanValue(formData, 'isCoordinator');
+		const isTeachingStaff = booleanValue(formData, 'isTeachingStaff');
+		const imageUrlInput = stringValue(formData, 'imageUrl');
+		const imageFile = fileValue(formData, 'imageFile');
+
+		if (!id || !departmentId || !name || !education || !subject) {
+			return actionError(400, 'Teacher update ke fields incomplete hain.', 'faculty');
+		}
+
+		if (!isHod && !isCoordinator && !isTeachingStaff) {
+			return actionError(
+				400,
+				'Teacher ke liye kam az kam ek role select karein: HOD, coordinator, ya teaching staff.',
+				'faculty'
+			);
+		}
+
+		let imageUrl = imageUrlInput || null;
+		if (imageFile && imageFile.size > 0) {
+			imageUrl = await saveUploadedFile(imageFile);
+		}
+
+		await updateFacultyMember({
+			id,
+			departmentId,
+			name,
+			education,
+			subject,
+			imageUrl,
+			isHod,
+			isCoordinator,
+			isTeachingStaff
+		});
+		return success('Teacher update ho gaya.', 'faculty');
+	},
+
+	deleteFaculty: async ({ request }) => {
+		const formData = await request.formData();
+		const id = numberValue(formData, 'id');
+		if (!id) {
+			return actionError(400, 'Teacher ID missing hai.', 'faculty');
+		}
+
+		await deleteFacultyMember(id);
+		return success('Teacher delete ho gaya.', 'faculty');
 	},
 
 	uploadMedia: async ({ request }) => {

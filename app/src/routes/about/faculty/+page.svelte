@@ -1,116 +1,15 @@
 <script lang="ts">
 	import PageHero from '$lib/components/shared/PageHero.svelte';
+	import type { FacultyDirectoryDepartment, FacultyDirectoryMember } from '$lib/types/faculty';
+
+	let { data } = $props();
 	
 	const breadcrumbs = [
 		{ label: 'Home', href: '/' },
 		{ label: 'About', href: '/about/overview' },
 		{ label: 'Faculty', href: '/about/faculty' }
 	];
-
-	const departments = [
-		{
-			id: 'computer-science',
-			name: "Computer Science",
-			urduName: "کمپیوٹر سائنس",
-			coordinator: {
-				name: "Dr. Ahmed Hassan",
-				urduName: "ڈاکٹر احمد حسن",
-				role: "Department Coordinator",
-				urduRole: "ڈیپارٹمنٹ کوآرڈینیٹر",
-				qualification: "PhD AI",
-				urduQualification: "پی ایچ ڈی آرٹیفیشل انٹیلیجنس",
-				photo: "/images/gallery/474603631_1113700027116416_3753317337439731517_n.jpg"
-			},
-			staff: [
-				{
-					name: "Prof. Muhammad Zahid",
-					urduName: "پروفیسر محمد زاہد",
-					role: "HOD",
-					urduRole: "شعبہ سربراہ",
-					qualification: "MS Computer Science",
-					urduQualification: "ایم ایس کمپیوٹر سائنس",
-					photo: "/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg"
-				},
-				{
-					name: "Dr. Ahmed Hassan",
-					urduName: "ڈاکٹر احمد حسن",
-					role: "Associate Professor",
-					urduRole: "ایسوسی ایٹ پروفیسر",
-					qualification: "PhD AI",
-					urduQualification: "پی ایچ ڈی آرٹیفیشل انٹیلیجنس",
-					photo: "/images/gallery/474603631_1113700027116416_3753317337439731517_n.jpg"
-				}
-			]
-		},
-		{
-			id: 'english',
-			name: "English",
-			urduName: "انگلش",
-			coordinator: {
-				name: "Ms. Amna Bibi",
-				urduName: "مس آمنہ بی بی",
-				role: "Department Coordinator",
-				urduRole: "ڈیپارٹمنٹ کوآرڈینیٹر",
-				qualification: "M.Phil Linguistics",
-				urduQualification: "ایم فل لسانیات",
-				photo: "/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg"
-			},
-			staff: [
-				{
-					name: "Prof. Sajjad Haider",
-					urduName: "پروفیسر سجاد حیدر",
-					role: "HOD",
-					urduRole: "شعبہ سربراہ",
-					qualification: "MA English Literature",
-					urduQualification: "ایم اے انگلش لٹریچر",
-					photo: "/images/gallery/497498149_1184322940372677_5964474392879878424_n.jpg"
-				},
-				{
-					name: "Ms. Amna Bibi",
-					urduName: "مس آمنہ بی بی",
-					role: "Lecturer",
-					urduRole: "لیکچرار",
-					qualification: "M.Phil Linguistics",
-					urduQualification: "ایم فل لسانیات",
-					photo: "/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg"
-				}
-			]
-		},
-		{
-			id: 'urdu',
-			name: "Urdu",
-			urduName: "اردو",
-			coordinator: {
-				name: "Ms. Naila Ashraf",
-				urduName: "مس نائلہ اشرف",
-				role: "Department Coordinator",
-				urduRole: "ڈیپارٹمنٹ کوآرڈینیٹر",
-				qualification: "M.Phil Urdu",
-				urduQualification: "ایم فل اردو",
-				photo: "/images/gallery/488936577_1152937786844526_8441555087243500544_n.jpg"
-			},
-			staff: [
-				{
-					name: "Prof. Khalid Mahmood",
-					urduName: "پروفیسر خالد محمود",
-					role: "HOD",
-					urduRole: "شعبہ سربراہ",
-					qualification: "MA Urdu",
-					urduQualification: "ایم اے اردو",
-					photo: "/images/gallery/547755271_1299324492205854_5011253499358894922_n.jpg"
-				},
-				{
-					name: "Ms. Naila Ashraf",
-					urduName: "مس نائلہ اشرف",
-					role: "Lecturer",
-					urduRole: "لیکچرار",
-					qualification: "M.Phil Urdu",
-					urduQualification: "ایم فل اردو",
-					photo: "/images/gallery/488936577_1152937786844526_8441555087243500544_n.jpg"
-				}
-			]
-		}
-	];
+	const departments = $derived(data.departments as FacultyDirectoryDepartment[]);
 
 	type Language = 'english' | 'urdu';
 
@@ -123,15 +22,33 @@
 			: departments.filter((department) => department.id === activeDepartment)
 	);
 
-	function getDepartmentHead(department: (typeof departments)[number]) {
-		return department.staff.find((member) => member.role === 'HOD') ?? department.staff[0];
+	function getDepartmentHead(department: FacultyDirectoryDepartment): FacultyDirectoryMember | null {
+		return department.staff.find((member) => member.isHod) ?? department.staff[0] ?? null;
 	}
 
-	function getDepartmentFaculty(department: (typeof departments)[number]) {
+	function getDepartmentCoordinator(department: FacultyDirectoryDepartment): FacultyDirectoryMember | null {
+		return department.coordinator ?? department.staff.find((member) => member.isCoordinator) ?? null;
+	}
+
+	function getDepartmentFaculty(department: FacultyDirectoryDepartment) {
+		const head = getDepartmentHead(department);
+		const coordinator = getDepartmentCoordinator(department);
+
 		return department.staff.filter(
 			(member) =>
-				member.name !== getDepartmentHead(department).name && member.name !== department.coordinator.name
+				member.id !== head?.id &&
+				member.id !== coordinator?.id &&
+				member.isTeachingStaff
 		);
+	}
+
+	function getDepartmentLeadRoleCount(department: FacultyDirectoryDepartment) {
+		const ids = new Set<number>();
+		const head = getDepartmentHead(department);
+		const coordinator = getDepartmentCoordinator(department);
+		if (head) ids.add(head.id);
+		if (coordinator) ids.add(coordinator.id);
+		return ids.size;
 	}
 </script>
 
@@ -215,7 +132,22 @@
 				</div>
 			</div>
 
+			{#if visibleDepartments.length === 0}
+				<div class="rounded-[2.5rem] border border-dashed border-primary/20 bg-neutral-soft/70 p-10 text-center text-primary/55">
+					<p class="text-sm font-black uppercase tracking-[0.3em] text-secondary">
+						{activeLanguage === 'english' ? 'Faculty Directory' : 'فیکلٹی ڈائریکٹری'}
+					</p>
+					<p class="mt-4 text-base font-semibold">
+						{activeLanguage === 'english'
+							? 'Departments and teachers added from admin will appear here.'
+							: 'ایڈمن سے شامل کیے گئے شعبے اور اساتذہ یہاں ظاہر ہوں گے۔'}
+					</p>
+				</div>
+			{/if}
+
 			{#each visibleDepartments as dept}
+				{@const head = getDepartmentHead(dept)}
+				{@const coordinator = getDepartmentCoordinator(dept)}
 				<div class="overflow-hidden rounded-[2.5rem] border border-primary/10 bg-[linear-gradient(150deg,rgba(255,255,255,1),rgba(248,249,250,0.94))] p-6 shadow-[0_28px_90px_rgba(13,93,86,0.08)] lg:p-8">
 					<div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
 						<div>
@@ -240,23 +172,39 @@
 										{activeLanguage === 'english' ? 'Head of Department' : 'شعبہ سربراہ'}
 									</div>
 									<div class="overflow-hidden rounded-[1.8rem] border border-white/80 bg-white shadow-lg">
-										<img
-											src={getDepartmentHead(dept).photo}
-											alt={activeLanguage === 'english' ? getDepartmentHead(dept).name : getDepartmentHead(dept).urduName}
-											class="h-72 w-full object-cover object-center"
-										/>
+										{#if head}
+											<img
+												src={head.photo}
+												alt={activeLanguage === 'english' ? head.name : head.urduName}
+												class="h-72 w-full object-cover object-center"
+											/>
+										{:else}
+											<div class="flex h-72 items-center justify-center bg-neutral-soft text-center text-sm font-bold text-primary/45">
+												{activeLanguage === 'english' ? 'HOD will be added soon' : 'HOD جلد شامل کیا جائے گا'}
+											</div>
+										{/if}
 									</div>
 									<div class="space-y-2">
 										<h3 class="text-2xl font-black text-primary">
-											{activeLanguage === 'english' ? getDepartmentHead(dept).name : getDepartmentHead(dept).urduName}
+											{head
+												? activeLanguage === 'english'
+													? head.name
+													: head.urduName
+												: activeLanguage === 'english'
+													? 'Pending Assignment'
+													: 'جلد مقرر ہوگا'}
 										</h3>
 										<p class="text-sm font-black uppercase tracking-[0.2em] text-primary/45">
 											{activeLanguage === 'english' ? 'Department Leadership' : 'شعبہ قیادت'}
 										</p>
 										<p class="text-base font-semibold leading-7 text-primary/70">
-											{activeLanguage === 'english'
-												? getDepartmentHead(dept).qualification
-												: getDepartmentHead(dept).urduQualification}
+											{head
+												? activeLanguage === 'english'
+													? head.qualification
+													: head.urduQualification
+												: activeLanguage === 'english'
+													? 'Add a teacher in admin and mark them as HOD.'
+													: 'ایڈمن میں استاد شامل کر کے انہیں HOD مارک کریں۔'}
 										</p>
 									</div>
 								</div>
@@ -269,23 +217,41 @@
 										{activeLanguage === 'english' ? 'Department Coordinator' : 'ڈیپارٹمنٹ کوآرڈینیٹر'}
 									</div>
 									<div class="overflow-hidden rounded-[1.8rem] border border-white/80 bg-white shadow-lg">
-										<img
-											src={dept.coordinator.photo}
-											alt={activeLanguage === 'english' ? dept.coordinator.name : dept.coordinator.urduName}
-											class="h-72 w-full object-cover object-center"
-										/>
+										{#if coordinator}
+											<img
+												src={coordinator.photo}
+												alt={activeLanguage === 'english' ? coordinator.name : coordinator.urduName}
+												class="h-72 w-full object-cover object-center"
+											/>
+										{:else}
+											<div class="flex h-72 items-center justify-center bg-neutral-soft text-center text-sm font-bold text-primary/45">
+												{activeLanguage === 'english'
+													? 'Coordinator will be added soon'
+													: 'Coordinator جلد شامل کیا جائے گا'}
+											</div>
+										{/if}
 									</div>
 									<div class="space-y-2">
 										<h3 class="text-2xl font-black text-primary">
-											{activeLanguage === 'english' ? dept.coordinator.name : dept.coordinator.urduName}
+											{coordinator
+												? activeLanguage === 'english'
+													? coordinator.name
+													: coordinator.urduName
+												: activeLanguage === 'english'
+													? 'Pending Assignment'
+													: 'جلد مقرر ہوگا'}
 										</h3>
 										<p class="text-sm font-black uppercase tracking-[0.2em] text-primary/45">
 											{activeLanguage === 'english' ? 'Academic Coordination' : 'تعلیمی کوآرڈینیشن'}
 										</p>
 										<p class="text-base font-semibold leading-7 text-primary/70">
-											{activeLanguage === 'english'
-												? dept.coordinator.qualification
-												: dept.coordinator.urduQualification}
+											{coordinator
+												? activeLanguage === 'english'
+													? coordinator.qualification
+													: coordinator.urduQualification
+												: activeLanguage === 'english'
+													? 'Add a teacher in admin and mark them as coordinator.'
+													: 'ایڈمن میں استاد شامل کر کے انہیں coordinator مارک کریں۔'}
 										</p>
 									</div>
 								</div>
@@ -315,7 +281,7 @@
 									<p class="text-[11px] font-black uppercase tracking-[0.24em] text-secondary">
 										{activeLanguage === 'english' ? 'Lead Roles' : 'اہم عہدے'}
 									</p>
-									<p class="mt-3 text-3xl font-black">2</p>
+									<p class="mt-3 text-3xl font-black">{getDepartmentLeadRoleCount(dept)}</p>
 								</div>
 							</div>
 						</div>

@@ -6,6 +6,7 @@ import {
 	fallbackQuickLinks,
 	fallbackResults
 } from '$lib/content/fallback';
+import { fallbackFacultyDepartments } from '$lib/content/faculty-fallback';
 import { getSql } from '$lib/server/db';
 
 type DatabaseClient = ReturnType<typeof getSql>;
@@ -63,7 +64,27 @@ const schemaStatements = [
 		href TEXT NOT NULL,
 		icon_name TEXT,
 		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-	)`
+	)`,
+	`CREATE TABLE IF NOT EXISTS departments (
+		id SERIAL PRIMARY KEY,
+		name TEXT NOT NULL,
+		slug TEXT NOT NULL UNIQUE,
+		urdu_name TEXT,
+		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE TABLE IF NOT EXISTS faculty_members (
+		id SERIAL PRIMARY KEY,
+		department_id INTEGER NOT NULL REFERENCES departments(id) ON DELETE RESTRICT,
+		name TEXT NOT NULL,
+		education TEXT NOT NULL,
+		subject TEXT NOT NULL,
+		image_url TEXT,
+		is_hod BOOLEAN DEFAULT FALSE,
+		is_coordinator BOOLEAN DEFAULT FALSE,
+		is_teaching_staff BOOLEAN DEFAULT TRUE,
+		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE INDEX IF NOT EXISTS faculty_members_department_idx ON faculty_members (department_id)`
 ];
 
 const announcementSeeds = fallbackAnnouncements.map((item) => [
@@ -110,6 +131,25 @@ const quickLinkSeeds = fallbackQuickLinks.map((item) => [
 	item.href,
 	item.iconName
 ]);
+
+const departmentSeeds = fallbackFacultyDepartments.map((department) => [
+	department.name,
+	department.id,
+	department.urduName
+]);
+
+const facultyMemberSeeds = fallbackFacultyDepartments.flatMap((department) =>
+	department.staff.map((member) => ({
+		departmentSlug: department.id,
+		name: member.name,
+		education: member.qualification,
+		subject: member.subject,
+		imageUrl: member.photo,
+		isHod: member.isHod,
+		isCoordinator: member.isCoordinator,
+		isTeachingStaff: member.isTeachingStaff
+	}))
+);
 
 async function createTables(db: DatabaseClient) {
 	for (const statement of schemaStatements) {
@@ -225,6 +265,64 @@ async function seedQuickLinks(db: DatabaseClient) {
 	return quickLinkSeeds.length;
 }
 
+async function seedDepartments(db: DatabaseClient) {
+	const rows = (await db.query('SELECT COUNT(*)::int AS count FROM departments')) as Array<{
+		count: number | string;
+	}>;
+	const count = Number(rows[0]?.count ?? 0);
+
+	if (count > 0) return 0;
+
+	for (const [name, slug, urduName] of departmentSeeds) {
+		await db.query(
+			'INSERT INTO departments (name, slug, urdu_name) VALUES ($1, $2, $3)',
+			[name, slug, urduName]
+		);
+	}
+
+	return departmentSeeds.length;
+}
+
+async function seedFacultyMembers(db: DatabaseClient) {
+	const rows = (await db.query('SELECT COUNT(*)::int AS count FROM faculty_members')) as Array<{
+		count: number | string;
+	}>;
+	const count = Number(rows[0]?.count ?? 0);
+
+	if (count > 0) return 0;
+
+	const departments = (await db.query(
+		'SELECT id, slug FROM departments ORDER BY id ASC'
+	)) as Array<{ id: number | string; slug: string }>;
+	const departmentMap = new Map(departments.map((department) => [department.slug, Number(department.id)]));
+
+	let inserted = 0;
+
+	for (const member of facultyMemberSeeds) {
+		const departmentId = departmentMap.get(member.departmentSlug);
+		if (!departmentId) continue;
+
+		await db.query(
+			`INSERT INTO faculty_members
+				(department_id, name, education, subject, image_url, is_hod, is_coordinator, is_teaching_staff)
+			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+			[
+				departmentId,
+				member.name,
+				member.education,
+				member.subject,
+				member.imageUrl,
+				member.isHod,
+				member.isCoordinator,
+				member.isTeachingStaff
+			]
+		);
+		inserted += 1;
+	}
+
+	return inserted;
+}
+
 export async function initializeDatabase({
 	seed = true,
 	db = getSql()
@@ -251,6 +349,8 @@ export async function initializeDatabase({
 	const seededEvents = await seedEvents(db);
 	const seededResults = await seedResults(db);
 	const seededQuickLinks = await seedQuickLinks(db);
+	const seededDepartments = await seedDepartments(db);
+	const seededFacultyMembers = await seedFacultyMembers(db);
 
 	return {
 		tablesCreated: schemaStatements.length,
@@ -260,7 +360,9 @@ export async function initializeDatabase({
 			latestNews: seededLatestNews,
 			events: seededEvents,
 			examResults: seededResults,
-			quickLinks: seededQuickLinks
+			quickLinks: seededQuickLinks,
+			departments: seededDepartments,
+			facultyMembers: seededFacultyMembers
 		}
 	};
 }

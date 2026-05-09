@@ -46,7 +46,7 @@
 	});
 </script>
 
-<section class="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-primary">
+<section class="relative min-h-[105vh] flex flex-col items-center justify-center overflow-hidden bg-primary">
 	<!-- Background Image (Forced Fill) -->
 	<div class="absolute inset-0 z-0">
 		<img 
@@ -80,15 +80,15 @@
 		<div class="mx-auto mt-6 max-w-4xl">
 			<div class="flex flex-col items-center gap-2">
 				<div class="relative flex w-full max-w-4xl justify-center">
-					<div class="absolute left-1/2 top-1 z-10 flex -translate-x-1/2 items-center gap-3 rounded-[1.6rem] border border-white/10 bg-white/10 px-3.5 py-2.5 backdrop-blur-xl shadow-2xl shadow-primary/20">
-						<div class="flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white/90 p-2.5 shadow-lg shadow-black/10">
+					<div class="absolute left-1/2 top-1 z-10 flex -translate-x-1/2 items-center gap-4 rounded-[1.6rem] border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-xl shadow-2xl shadow-primary/20">
+						<div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10">
 							<img
 								src="/images/logos/image.png"
 								alt="Government of Punjab logo"
 								class="h-full w-full object-contain"
 							/>
 						</div>
-						<div class="flex h-14 w-14 items-center justify-center rounded-[1.15rem] bg-white/90 p-2.5 shadow-lg shadow-black/10">
+						<div class="flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-white/90 p-3 shadow-lg shadow-black/10">
 							<img
 								src="/images/logos/degree4k-removebg-preview.png"
 								alt="GPGC Bahawalnagar logo"
@@ -97,8 +97,8 @@
 						</div>
 					</div>
 
-					<div class="w-full pt-12">
-						<svg viewBox="0 0 900 200" class="w-full overflow-visible">
+					<div class="w-full pt-13">
+						<svg viewBox="0 0 900 220" class="w-full overflow-visible">
 							<path
 								id="heroQuoteCurve"
 								d="M 150 70 Q 450 138 750 70"
@@ -106,7 +106,7 @@
 							/>
 							<path
 								id="heroQuoteCurveAccent"
-								d="M 205 122 Q 450 172 695 122"
+								d="M 205 142 Q 450 202 695 142"
 								fill="transparent"
 							/>
 							<text
@@ -165,6 +165,14 @@
 			<!-- Center Arrow -->
 			<div class="w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center relative z-10 group-hover:-translate-y-2 transition-transform shadow-xl">
 				<ArrowDown size={20} class="animate-bounce" />
+			</div>
+		</div>
+	</div>
+
+	<div class="pointer-events-none absolute inset-x-0 bottom-0 z-30 px-4 lg:px-8">
+		<div class="container mx-auto">
+			<div class="relative mx-auto h-16 max-w-6xl overflow-hidden rounded-full">
+				<div class="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent"></div>
 			</div>
 		</div>
 	</div>

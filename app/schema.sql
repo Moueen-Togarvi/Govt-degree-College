@@ -63,3 +63,28 @@ CREATE TABLE IF NOT EXISTS quick_links (
     icon_name TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Departments Table
+CREATE TABLE IF NOT EXISTS departments (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    urdu_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Faculty Members Table
+CREATE TABLE IF NOT EXISTS faculty_members (
+    id SERIAL PRIMARY KEY,
+    department_id INTEGER NOT NULL REFERENCES departments(id) ON DELETE RESTRICT,
+    name TEXT NOT NULL,
+    education TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    image_url TEXT,
+    is_hod BOOLEAN DEFAULT FALSE,
+    is_coordinator BOOLEAN DEFAULT FALSE,
+    is_teaching_staff BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS faculty_members_department_idx ON faculty_members (department_id);
