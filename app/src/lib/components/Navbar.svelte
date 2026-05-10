@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Menu, X, ChevronDown, GraduationCap, Users, BookOpen, Newspaper, LogIn, PhoneCall, Home, Mail, MapPin } from 'lucide-svelte';
-	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import ScrollTrigger from 'gsap/ScrollTrigger';
 	import { page } from '$app/stores';
 	import { onMount, tick } from 'svelte';
 	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
