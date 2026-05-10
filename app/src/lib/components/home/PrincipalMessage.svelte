@@ -15,6 +15,8 @@
 					<img
 						src="/images/logos/image%20copy%202.png"
 						alt="Prof. Wajahat Majeed"
+						loading="lazy"
+						decoding="async"
 						class="h-full w-full rounded-[1.5rem] object-cover"
 					/>
 				</div>

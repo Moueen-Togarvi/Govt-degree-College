@@ -30,6 +30,8 @@
 					<img
 						src={logo.image}
 						alt={logo.alt}
+						loading="lazy"
+						decoding="async"
 						class="max-h-16 w-auto object-contain opacity-75 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 lg:max-h-20"
 					/>
 				</div>

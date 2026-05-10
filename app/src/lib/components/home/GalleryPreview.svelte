@@ -96,6 +96,7 @@
 							alt={item.title}
 							class="absolute inset-0 h-full w-full object-cover object-center [image-rendering:auto]"
 							fetchpriority="high"
+							decoding="async"
 						/>
 						<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/18 to-transparent"></div>
 						<div class="absolute inset-x-0 bottom-0 p-8 text-white">

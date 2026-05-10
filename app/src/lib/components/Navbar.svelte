@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Menu, X, ChevronDown, GraduationCap, Users, BookOpen, Newspaper, LogIn, PhoneCall, Home, Mail, MapPin } from 'lucide-svelte';
+	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount, tick } from 'svelte';
 	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
@@ -206,119 +207,37 @@
 	}
 
 	onMount(() => {
-		let cleanupAnimation = () => {};
-
 		const handleScroll = () => {
 			scrolled = window.scrollY > 20;
 		};
 
 		handleScroll();
-		window.addEventListener('scroll', handleScroll);
-
-		if (navElement && !prefersReducedMotion()) {
-			void (async () => {
-				const runtime = await ensureGsap();
-				if (!runtime || !navElement) return;
-
-				const { gsap, ScrollTrigger } = runtime;
-				const context = gsap.context(() => {
-					try {
-						const navItems = gsap.utils.toArray<HTMLElement>('[data-nav-item]');
-						const topBar = document.querySelector('[data-nav-topbar]');
-						const mainNav = document.querySelector('[data-nav-shell]');
-
-						gsap
-							.timeline({
-								defaults: {
-									ease: 'power3.out'
-								}
-							})
-							.from('[data-nav-shell]', {
-								autoAlpha: 0,
-								y: -36,
-								duration: 0.38
-							})
-							.from(
-								'[data-nav-logo]',
-								{
-									autoAlpha: 0,
-									x: -28,
-									skewY: 5,
-									duration: 0.32
-								},
-								'-=0.12'
-							)
-							.from(
-								navItems,
-								{
-									autoAlpha: 0,
-									y: -20,
-									skewY: 5,
-									duration: 0.26,
-									stagger: 0.035
-								},
-								'-=0.12'
-							)
-							.from(
-								'[data-nav-cta]',
-								{
-									autoAlpha: 0,
-									scale: 0.88,
-									filter: 'blur(8px)',
-									immediateRender: false,
-									duration: 0.28
-								},
-								'-=0.1'
-							);
-
-						ScrollTrigger.create({
-							start: 'top -50',
-							onToggle: (self: { isActive?: boolean }) => {
-								const isScrolled = Boolean(self && typeof self === 'object' && 'isActive' in self && self.isActive);
-								if (topBar) {
-									gsap.to(topBar, {
-										height: isScrolled ? 0 : 'auto',
-										autoAlpha: isScrolled ? 0 : 1,
-										duration: 0.4,
-										ease: 'power2.inOut'
-									});
-								}
-								if (mainNav) {
-									gsap.to(mainNav, {
-										paddingTop: isScrolled ? '4px' : '8px',
-										paddingBottom: isScrolled ? '4px' : '8px',
-										backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 1)',
-										boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.08)' : '0 0 0 rgba(0,0,0,0)',
-										duration: 0.4,
-										ease: 'power2.inOut'
-									});
-								}
-							}
-						});
-					} catch (error) {
-						console.error('Navbar GSAP animation failed:', error);
-						gsap.set('[data-nav-shell]', { clearProps: 'all', autoAlpha: 1 });
-						gsap.set('[data-nav-cta]', { clearProps: 'all', autoAlpha: 1 });
-					}
-				}, navElement);
-
-				cleanupAnimation = () => context.revert();
-			})();
-		}
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		afterNavigate(() => {
+			activeDropdown = null;
+			menuVisible = false;
+			isMenuOpen = false;
+			handleScroll();
+		});
 
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
-			cleanupAnimation();
 		};
 	});
 </script>
 
 <nav
 	bind:this={navElement}
-	class="fixed top-0 z-50 w-full transition-all duration-500 {scrolled ? 'shadow-[0_10px_30px_rgba(0,0,0,0.08)]' : ''}"
+	data-sveltekit-preload-data="hover"
+	data-sveltekit-preload-code="viewport"
+	class="fixed top-0 z-50 w-full transition-shadow duration-200 {scrolled ? 'shadow-[0_10px_30px_rgba(0,0,0,0.08)]' : ''}"
 >
 	<!-- Top Bar (Inspiration from Eduka) -->
-	<div data-nav-topbar class="hidden lg:block bg-primary text-white/90 py-2 border-b border-white/10 overflow-hidden">
+	<div
+		data-nav-topbar
+		class:hidden={scrolled}
+		class="hidden lg:block overflow-hidden border-b border-white/10 bg-primary py-2 text-white/90 transition-all duration-200"
+	>
 		<div class="container mx-auto px-4 lg:px-8 flex justify-between items-center text-xs font-medium">
 			<div class="flex items-center gap-6">
 				<div class="flex items-center gap-2">
@@ -355,14 +274,14 @@
 	<!-- Main Navbar -->
 	<div
 		data-nav-shell
-		class="{scrolled ? 'bg-white/95 shadow-lg backdrop-blur-md py-0.5' : 'bg-white py-1'} transition-all duration-300"
+		class="{scrolled ? 'bg-white/95 py-0.5 shadow-lg backdrop-blur-md' : 'bg-white py-1'} transition-all duration-200"
 	>
 		<div class="container mx-auto px-4 lg:px-8">
 			<div class="flex items-center justify-between">
 				<!-- Logo Section -->
-				<a data-nav-logo href="/" class="flex items-center gap-4 group">
+				<a data-nav-logo href="/" class="group flex items-center gap-4">
 					<div class="bg-white p-1 rounded-lg shadow-sm border border-neutral-100 group-hover:border-secondary transition-colors">
-						<img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-14 w-auto transition-transform duration-300 group-hover:scale-105" />
+						<img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-14 w-auto transition-transform duration-300 group-hover:scale-105" loading="eager" decoding="async" fetchpriority="high" />
 					</div>
 					<div class="hidden md:block">
 						<h1 class="text-xl font-black leading-tight tracking-tight text-primary">GPGC</h1>

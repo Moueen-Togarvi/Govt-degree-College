@@ -1,5 +1,6 @@
 <script lang="ts">
 	import './layout.css';
+	import { afterNavigate } from '$app/navigation';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { page } from '$app/stores';
@@ -27,13 +28,12 @@
 
 		void applyStack();
 
-		const unsubscribe = page.subscribe(() => {
+		afterNavigate(() => {
 			void applyStack();
 		});
 
 		return () => {
 			cleanup();
-			unsubscribe();
 		};
 	});
 </script>

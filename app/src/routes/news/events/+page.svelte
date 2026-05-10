@@ -28,7 +28,7 @@
 			{#each data.events as event}
 				<div class="flex flex-col bg-neutral-soft rounded-3xl border border-border-soft overflow-hidden hover:shadow-2xl transition-all group">
 					<div class="relative h-64 overflow-hidden">
-						<img src={event.imageUrl} alt={event.title} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+						<img src={event.imageUrl} alt={event.title} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" decoding="async" />
 						<div class="absolute top-6 left-6 bg-secondary text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
 							{event.status}
 						</div>
