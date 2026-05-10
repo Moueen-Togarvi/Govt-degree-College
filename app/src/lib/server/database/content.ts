@@ -11,9 +11,7 @@ import { isExpectedDatabaseError, withDatabase } from '$lib/server/db';
 import { readLocalContentStore, updateLocalContentStore } from '$lib/server/local-content-store';
 
 const defaultEventImage = '/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg';
-const preferLocalStore =
-	process.env.CONTENT_STORE_MODE === 'local' ||
-	(process.env.NODE_ENV !== 'production' && process.env.CONTENT_STORE_MODE !== 'database');
+const preferLocalStore = process.env.CONTENT_STORE_MODE === 'local';
 
 type AnnouncementRow = {
 	id: number | string;

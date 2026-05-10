@@ -52,9 +52,7 @@ const facultySchemaStatements = [
 	`CREATE INDEX IF NOT EXISTS faculty_members_department_idx ON faculty_members (department_id)`
 ];
 
-const preferLocalStore =
-	process.env.CONTENT_STORE_MODE === 'local' ||
-	(process.env.NODE_ENV !== 'production' && process.env.CONTENT_STORE_MODE !== 'database');
+const preferLocalStore = process.env.CONTENT_STORE_MODE === 'local';
 
 let facultySchemaPromise: Promise<void> | null = null;
 

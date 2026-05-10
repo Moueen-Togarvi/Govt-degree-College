@@ -2,7 +2,7 @@ import { i as isExpectedDatabaseError, o as withDatabase } from "./faculty-fallb
 import { n as updateLocalContentStore, t as readLocalContentStore } from "./local-content-store.js";
 //#region src/lib/server/database/content.ts
 var defaultEventImage = "/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg";
-var preferLocalStore = process.env.CONTENT_STORE_MODE === "local" || process.env.NODE_ENV !== "production" && process.env.CONTENT_STORE_MODE !== "database";
+var preferLocalStore = process.env.CONTENT_STORE_MODE === "local";
 var dateFormatter = new Intl.DateTimeFormat("en-US", {
 	month: "short",
 	day: "2-digit",

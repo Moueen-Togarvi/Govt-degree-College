@@ -6,6 +6,7 @@ node_modules/
 # Build/Output
 /app/build/
 /app/.svelte-kit/
+/app/.vercel/
 /app/package/
 /dist/
 /.output

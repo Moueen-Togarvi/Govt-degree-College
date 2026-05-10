@@ -23,7 +23,7 @@ var facultySchemaStatements = [
 	)`,
 	`CREATE INDEX IF NOT EXISTS faculty_members_department_idx ON faculty_members (department_id)`
 ];
-var preferLocalStore = process.env.CONTENT_STORE_MODE === "local" || process.env.NODE_ENV !== "production" && process.env.CONTENT_STORE_MODE !== "database";
+var preferLocalStore = process.env.CONTENT_STORE_MODE === "local";
 var facultySchemaPromise = null;
 function slugifyDepartmentName(value) {
 	return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "department";
