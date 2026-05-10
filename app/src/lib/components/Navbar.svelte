@@ -236,24 +236,24 @@
 	<div
 		data-nav-topbar
 		class:hidden={scrolled}
-		class="hidden lg:block overflow-hidden border-b border-white/10 bg-primary py-2 text-white/90 transition-all duration-200"
+		class="overflow-hidden border-b border-white/10 bg-primary py-1.5 text-white/90 transition-all duration-200 lg:py-2"
 	>
-		<div class="container mx-auto px-4 lg:px-8 flex justify-between items-center text-xs font-medium">
-			<div class="flex items-center gap-6">
-				<div class="flex items-center gap-2">
-					<PhoneCall size={14} class="text-secondary" />
+		<div class="container mx-auto flex items-center justify-between px-3 text-[11px] font-medium lg:px-8 lg:text-xs">
+			<div class="topbar-scroll flex min-w-0 flex-1 items-center gap-4 overflow-x-auto whitespace-nowrap pr-2 lg:gap-6">
+				<div class="flex shrink-0 items-center gap-1.5">
+					<PhoneCall size={12} class="text-secondary lg:size-[14px]" />
 					<span>+92 (63) 9240123</span>
 				</div>
-				<div class="flex items-center gap-2">
-					<Mail size={14} class="text-secondary" />
+				<div class="flex shrink-0 items-center gap-1.5">
+					<Mail size={12} class="text-secondary lg:size-[14px]" />
 					<span>info@gpgcbwn.edu.pk</span>
 				</div>
-				<div class="flex items-center gap-2">
-					<MapPin size={14} class="text-secondary" />
+				<div class="flex shrink-0 items-center gap-1.5">
+					<MapPin size={12} class="text-secondary lg:size-[14px]" />
 					<span>College Road, Bahawalnagar</span>
 				</div>
 			</div>
-			<div class="flex items-center gap-3">
+			<div class="hidden items-center gap-3 lg:flex">
 				<span class="text-white/50 text-xs">Follow us:</span>
 				<!-- Facebook -->
 				<a href="/" aria-label="Facebook" class="hover:text-secondary transition-colors">
@@ -279,11 +279,11 @@
 		<div class="container mx-auto px-4 lg:px-8">
 			<div class="flex items-center justify-between">
 				<!-- Logo Section -->
-				<a data-nav-logo href="/" class="group flex items-center gap-4">
+				<a data-nav-logo href="/" class="group flex items-center gap-2.5 sm:gap-4">
 					<div class="bg-white p-1 rounded-lg shadow-sm border border-neutral-100 group-hover:border-secondary transition-colors">
-						<img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-14 w-auto transition-transform duration-300 group-hover:scale-105" loading="eager" decoding="async" fetchpriority="high" />
+						<img src="/images/logos/degree4k-removebg-preview.png" alt="GPGC Logo" class="h-11 w-auto transition-transform duration-300 group-hover:scale-105 sm:h-14" loading="eager" decoding="async" fetchpriority="high" />
 					</div>
-					<div class="hidden md:block">
+					<div class="hidden sm:block md:block">
 						<h1 class="text-xl font-black leading-tight tracking-tight text-primary">GPGC</h1>
 						<p class="text-[11px] font-bold tracking-[0.2em] text-secondary uppercase">Bahawalnagar</p>
 					</div>
@@ -345,7 +345,7 @@
 
 				<!-- Mobile Menu Toggle -->
 				<button 
-					class="lg:hidden p-2 rounded-xl text-primary hover:bg-primary/5 transition-colors"
+					class="rounded-xl p-2 text-primary transition-colors hover:bg-primary/5 lg:hidden"
 					onclick={toggleMenu}
 					aria-label="Toggle Menu"
 				>
@@ -417,5 +417,14 @@
 	.mobile-drawer {
 		clip-path: inset(0 0 100% 0);
 		will-change: clip-path, opacity, transform;
+	}
+
+	.topbar-scroll {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	.topbar-scroll::-webkit-scrollbar {
+		display: none;
 	}
 </style>
