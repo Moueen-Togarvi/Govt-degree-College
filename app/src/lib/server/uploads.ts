@@ -1,9 +1,15 @@
 import { mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { basename, extname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 
-const uploadDirectory = resolve(fileURLToPath(new URL('../../../static/uploads/admin', import.meta.url)));
+const staticUploadDirectory = resolve(
+	fileURLToPath(new URL('../../../static/uploads/admin', import.meta.url))
+);
+const uploadDirectory = isServerlessRuntime()
+	? resolve(tmpdir(), 'gpgc-runtime', 'uploads', 'admin')
+	: staticUploadDirectory;
 
 export type UploadedMedia = {
 	name: string;
@@ -21,6 +27,25 @@ const allowedExtensions: Record<string, string[]> = {
 	'image/gif': ['.gif'],
 	'application/pdf': ['.pdf']
 };
+
+function isServerlessRuntime() {
+	return Boolean(
+		process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT
+	);
+}
+
+function toPublicUploadUrl(fileName: string) {
+	return `/uploads/admin/${fileName}`;
+}
+
+export function getUploadedFilePath(fileName: string) {
+	const safeFileName = basename(fileName);
+	if (!safeFileName) {
+		throw new Error('Invalid file name.');
+	}
+
+	return resolve(uploadDirectory, safeFileName);
+}
 
 export async function ensureUploadDirectory() {
 	await mkdir(uploadDirectory, { recursive: true });
@@ -54,7 +79,7 @@ export async function saveUploadedFile(file: File) {
 
 	await writeFile(filePath, Buffer.from(arrayBuffer));
 
-	return `/uploads/admin/${fileName}`;
+	return toPublicUploadUrl(fileName);
 }
 
 export async function listUploadedMedia(): Promise<UploadedMedia[]> {
@@ -68,7 +93,7 @@ export async function listUploadedMedia(): Promise<UploadedMedia[]> {
 
 			return {
 				name: fileName,
-				url: `/uploads/admin/${fileName}`,
+				url: toPublicUploadUrl(fileName),
 				size: fileStat.size,
 				modifiedAt: fileStat.mtime.toISOString()
 			};
@@ -79,11 +104,6 @@ export async function listUploadedMedia(): Promise<UploadedMedia[]> {
 }
 
 export async function deleteUploadedMedia(fileName: string) {
-	const safeFileName = basename(fileName);
-	if (!safeFileName) {
-		throw new Error('Invalid file name.');
-	}
-
-	const filePath = resolve(uploadDirectory, safeFileName);
+	const filePath = getUploadedFilePath(fileName);
 	await rm(filePath, { force: true });
 }

@@ -115,7 +115,7 @@
 					timeline
 						.to(mobileDrawer, {
 							clipPath: 'inset(0 0 0% 0)',
-							duration: 0.52
+							duration: 0.34
 						})
 						.to(
 							rows,
@@ -124,10 +124,10 @@
 								y: 0,
 								skewY: 0,
 								filter: 'blur(0px)',
-								duration: 0.48,
-								stagger: 0.06
+								duration: 0.3,
+								stagger: 0.04
 							},
-							'-=0.32'
+							'-=0.2'
 						)
 						.to(
 							portal,
@@ -136,9 +136,9 @@
 								y: 0,
 								skewY: 0,
 								filter: 'blur(0px)',
-								duration: 0.42
+								duration: 0.28
 							},
-							'-=0.18'
+							'-=0.12'
 						);
 				} else {
 					timeline
@@ -149,9 +149,9 @@
 								y: 24,
 								skewY: 4,
 								filter: 'blur(8px)',
-								duration: 0.2,
+								duration: 0.16,
 								stagger: {
-									each: 0.03,
+									each: 0.02,
 									from: 'end'
 								}
 							}
@@ -161,9 +161,9 @@
 							{
 								autoAlpha: 0,
 								clipPath: 'inset(0 0 100% 0)',
-								duration: 0.34
+								duration: 0.22
 							},
-							'-=0.08'
+							'-=0.04'
 						);
 				}
 			});
@@ -236,7 +236,7 @@
 							.from('[data-nav-shell]', {
 								autoAlpha: 0,
 								y: -36,
-								duration: 0.6
+								duration: 0.38
 							})
 							.from(
 								'[data-nav-logo]',
@@ -244,9 +244,9 @@
 									autoAlpha: 0,
 									x: -28,
 									skewY: 5,
-									duration: 0.55
+									duration: 0.32
 								},
-								'-=0.25'
+								'-=0.12'
 							)
 							.from(
 								navItems,
@@ -254,10 +254,10 @@
 									autoAlpha: 0,
 									y: -20,
 									skewY: 5,
-									duration: 0.4,
-									stagger: 0.06
+									duration: 0.26,
+									stagger: 0.035
 								},
-								'-=0.26'
+								'-=0.12'
 							)
 							.from(
 								'[data-nav-cta]',
@@ -266,14 +266,14 @@
 									scale: 0.88,
 									filter: 'blur(8px)',
 									immediateRender: false,
-									duration: 0.45
+									duration: 0.28
 								},
-								'-=0.18'
+								'-=0.1'
 							);
 
 						ScrollTrigger.create({
 							start: 'top -50',
-							onToggle: (self) => {
+							onToggle: (self: { isActive?: boolean }) => {
 								const isScrolled = Boolean(self && typeof self === 'object' && 'isActive' in self && self.isActive);
 								if (topBar) {
 									gsap.to(topBar, {

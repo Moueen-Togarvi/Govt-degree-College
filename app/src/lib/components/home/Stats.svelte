@@ -89,14 +89,14 @@
 						{ value: 0 },
 						{
 							value: stats[index].target,
-							duration: index === stats.length - 1 ? 2 : 1.5,
+							duration: index === stats.length - 1 ? 1.15 : 0.9,
 							ease: 'power2.out',
 							scrollTrigger: {
 								trigger: sectionEl,
 								start: 'top 72%',
 								once: true
 							},
-							onUpdate() {
+							onUpdate(this: any) {
 								element.textContent = formatStatValue(index, this.targets()[0].value);
 							}
 						}

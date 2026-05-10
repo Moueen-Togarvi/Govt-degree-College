@@ -4,13 +4,10 @@ type GsapInstance = {
 	registerPlugin: (...plugins: unknown[]) => void;
 	context: (scope: () => void, element?: Element | null) => { revert: () => void };
 	set: (target: unknown, vars: Record<string, unknown>) => void;
-	to: (...args: unknown[]) => unknown;
-	from: (...args: unknown[]) => unknown;
-	fromTo: (...args: unknown[]) => unknown;
-	timeline: (vars?: Record<string, unknown>) => {
-		to: (...args: unknown[]) => unknown;
-		from: (...args: unknown[]) => unknown;
-	};
+	to: (...args: unknown[]) => any;
+	from: (...args: unknown[]) => any;
+	fromTo: (...args: unknown[]) => any;
+	timeline: (vars?: Record<string, unknown>) => any;
 	utils: {
 		toArray: <T>(selector: string) => T[];
 	};
@@ -54,7 +51,7 @@ export function prefersReducedMotion() {
 
 function isStackCandidate(element: HTMLElement, minPanelHeight: number) {
 	if (element.dataset.stackSkip === 'true') return false;
-	if (element.dataset.stackPanel === 'true') return true;
+	if (element.dataset.stackPanel !== 'true') return false;
 	if (element.tagName !== 'SECTION') return false;
 	return element.offsetHeight >= minPanelHeight;
 }

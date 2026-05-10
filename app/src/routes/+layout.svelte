@@ -5,20 +5,19 @@
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
 	import { onMount, tick } from 'svelte';
-	import { ensureGsap, setupStickyStack } from '$lib/gsap';
+	import { setupStickyStack } from '$lib/gsap';
 
 	let { children } = $props();
 	let mainElement = $state<HTMLElement | null>(null);
 
 	onMount(() => {
-		void ensureGsap();
-
 		let cleanup = () => {};
 
 		const applyStack = async () => {
 			cleanup();
 
-			if (!mainElement || get(page).url.pathname.startsWith('/admin')) {
+			const pathname = get(page).url.pathname;
+			if (!mainElement || pathname.startsWith('/admin') || pathname !== '/') {
 				return;
 			}
 

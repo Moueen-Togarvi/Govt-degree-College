@@ -31,7 +31,7 @@ import {
 	updateDepartment,
 	updateFacultyMember
 } from '$lib/server/database/faculty';
-import { logDatabaseLoadError } from '$lib/server/db';
+import { isExpectedDatabaseError, logDatabaseLoadError } from '$lib/server/db';
 import { deleteUploadedMedia, listUploadedMedia, saveUploadedFile } from '$lib/server/uploads';
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
@@ -72,30 +72,94 @@ function actionError(status: number, message: string, section: string) {
 	return fail(status, { success: false, message, section });
 }
 
+function getErrorCode(error: unknown) {
+	return typeof error === 'object' &&
+		error !== null &&
+		'code' in error &&
+		typeof error.code === 'string'
+		? error.code
+		: '';
+}
+
+function getActionErrorStatus(error: unknown) {
+	if (isExpectedDatabaseError(error)) return 503;
+
+	const code = getErrorCode(error);
+	if (['23505', '23503', '22P02'].includes(code)) {
+		return 400;
+	}
+
+	return 500;
+}
+
+function getActionErrorMessage(error: unknown) {
+	if (isExpectedDatabaseError(error)) {
+		return 'Production database abhi connect nahi ho rahi. DATABASE_URL aur Neon access verify karein, phir dobara try karein.';
+	}
+
+	const code = getErrorCode(error);
+	if (code === '23505') {
+		return 'Ye record duplicate lag raha hai. Unique value change karke dobara try karein.';
+	}
+
+	if (code === '23503') {
+		return 'Related record nahi mila ya abhi tak create nahi hua. Pehle required parent item create karein.';
+	}
+
+	if (code === '22P02') {
+		return 'Submitted value ka format sahi nahi tha. Required fields aur dates dobara check karein.';
+	}
+
+	if (error instanceof Error && error.message) {
+		return error.message;
+	}
+
+	return 'Server par request process nahi ho saki. Thori dair baad dobara try karein.';
+}
+
+async function runMutationAction(
+	section: string,
+	successMessage: string,
+	operation: () => Promise<void>
+) {
+	try {
+		await operation();
+		return success(successMessage, section);
+	} catch (error) {
+		console.error(`Admin action failed for ${section}:`, error);
+		return actionError(getActionErrorStatus(error), getActionErrorMessage(error), section);
+	}
+}
+
 export const load: PageServerLoad = async ({ url }) => {
 	const requestedSection = url.searchParams.get('section');
 	const activeSection =
 		requestedSection && validSections.has(requestedSection) ? requestedSection : null;
 
 	try {
+		const mediaPromise = listUploadedMedia().catch((error) => {
+			console.error('Admin media load failed:', error);
+			return [];
+		});
+
 		const [
 			announcements,
 			noticeBoardItems,
 			latestNewsItems,
 			events,
 			results,
-			media,
 			departments,
-			facultyMembers
+			facultyMembers,
+			media
 		] = await Promise.all([
 			listAnnouncements(100),
 			listNoticeBoardItems(100, { includeExpired: true }),
 			listLatestNewsItems(100),
 			listEvents(100),
 			listExamResults({ limit: 100 }),
-			listUploadedMedia(),
 			listDepartments(),
-			listFacultyMembers()
+			listFacultyMembers(),
+			mediaPromise
 		]);
 
 		return {
@@ -140,8 +204,9 @@ export const actions: Actions = {
 			return actionError(400, 'Announcement ke required fields missing hain.', 'announcements');
 		}
 
-		await createAnnouncement({ title, description, category, date });
-		return success('Announcement create ho gaya.', 'announcements');
+		return runMutationAction('announcements', 'Announcement create ho gaya.', async () => {
+			await createAnnouncement({ title, description, category, date });
+		});
 	},
 
 	updateAnnouncement: async ({ request }) => {
@@ -156,8 +221,9 @@ export const actions: Actions = {
 			return actionError(400, 'Announcement update ke fields incomplete hain.', 'announcements');
 		}
 
-		await updateAnnouncement({ id, title, description, category, date });
-		return success('Announcement update ho gaya.', 'announcements');
+		return runMutationAction('announcements', 'Announcement update ho gaya.', async () => {
+			await updateAnnouncement({ id, title, description, category, date });
+		});
 	},
 
 	deleteAnnouncement: async ({ request }) => {
@@ -167,8 +233,9 @@ export const actions: Actions = {
 			return actionError(400, 'Announcement ID missing hai.', 'announcements');
 		}
 
-		await deleteAnnouncement(id);
-		return success('Announcement delete ho gaya.', 'announcements');
+		return runMutationAction('announcements', 'Announcement delete ho gaya.', async () => {
+			await deleteAnnouncement(id);
+		});
 	},
 
 	createNoticeBoard: async ({ request }) => {
@@ -184,8 +251,9 @@ export const actions: Actions = {
 			return actionError(400, 'Notice board ke required fields missing hain.', 'noticeBoard');
 		}
 
-		await createNoticeBoardItem({ title, message, tag, date, expiryDate, sortOrder });
-		return success('Notice board item create ho gaya.', 'noticeBoard');
+		return runMutationAction('noticeBoard', 'Notice board item create ho gaya.', async () => {
+			await createNoticeBoardItem({ title, message, tag, date, expiryDate, sortOrder });
+		});
 	},
 
 	updateNoticeBoard: async ({ request }) => {
@@ -202,8 +270,9 @@ export const actions: Actions = {
 			return actionError(400, 'Notice board update ke fields incomplete hain.', 'noticeBoard');
 		}
 
-		await updateNoticeBoardItem({ id, title, message, tag, date, expiryDate, sortOrder });
-		return success('Notice board item update ho gaya.', 'noticeBoard');
+		return runMutationAction('noticeBoard', 'Notice board item update ho gaya.', async () => {
+			await updateNoticeBoardItem({ id, title, message, tag, date, expiryDate, sortOrder });
+		});
 	},
 
 	deleteNoticeBoard: async ({ request }) => {
@@ -213,8 +282,9 @@ export const actions: Actions = {
 			return actionError(400, 'Notice board ID missing hai.', 'noticeBoard');
 		}
 
-		await deleteNoticeBoardItem(id);
-		return success('Notice board item delete ho gaya.', 'noticeBoard');
+		return runMutationAction('noticeBoard', 'Notice board item delete ho gaya.', async () => {
+			await deleteNoticeBoardItem(id);
+		});
 	},
 
 	createLatestNews: async ({ request }) => {
@@ -226,8 +296,9 @@ export const actions: Actions = {
 			return actionError(400, 'Latest news ke liye title required hai.', 'latestNews');
 		}
 
-		await createLatestNewsItem({ title, sortOrder });
-		return success('Latest news item create ho gaya.', 'latestNews');
+		return runMutationAction('latestNews', 'Latest news item create ho gaya.', async () => {
+			await createLatestNewsItem({ title, sortOrder });
+		});
 	},
 
 	updateLatestNews: async ({ request }) => {
@@ -240,8 +311,9 @@ export const actions: Actions = {
 			return actionError(400, 'Latest news update ke fields incomplete hain.', 'latestNews');
 		}
 
-		await updateLatestNewsItem({ id, title, sortOrder });
-		return success('Latest news item update ho gaya.', 'latestNews');
+		return runMutationAction('latestNews', 'Latest news item update ho gaya.', async () => {
+			await updateLatestNewsItem({ id, title, sortOrder });
+		});
 	},
 
 	deleteLatestNews: async ({ request }) => {
@@ -251,8 +323,9 @@ export const actions: Actions = {
 			return actionError(400, 'Latest news ID missing hai.', 'latestNews');
 		}
 
-		await deleteLatestNewsItem(id);
-		return success('Latest news item delete ho gaya.', 'latestNews');
+		return runMutationAction('latestNews', 'Latest news item delete ho gaya.', async () => {
+			await deleteLatestNewsItem(id);
+		});
 	},
 
 	createEvent: async ({ request }) => {
@@ -269,13 +342,14 @@ export const actions: Actions = {
 			return actionError(400, 'Event ke required fields missing hain.', 'events');
 		}
 
-		let imageUrl = imageUrlInput || null;
-		if (imageFile && imageFile.size > 0) {
-			imageUrl = await saveUploadedFile(imageFile);
-		}
+		return runMutationAction('events', 'Event create ho gaya.', async () => {
+			let imageUrl = imageUrlInput || null;
+			if (imageFile && imageFile.size > 0) {
+				imageUrl = await saveUploadedFile(imageFile);
+			}
 
-		await createEvent({ title, date, time, location, status, imageUrl });
-		return success('Event create ho gaya.', 'events');
+			await createEvent({ title, date, time, location, status, imageUrl });
+		});
 	},
 
 	updateEvent: async ({ request }) => {
@@ -293,13 +367,14 @@ export const actions: Actions = {
 			return actionError(400, 'Event update ke fields incomplete hain.', 'events');
 		}
 
-		let imageUrl = imageUrlInput || null;
-		if (imageFile && imageFile.size > 0) {
-			imageUrl = await saveUploadedFile(imageFile);
-		}
+		return runMutationAction('events', 'Event update ho gaya.', async () => {
+			let imageUrl = imageUrlInput || null;
+			if (imageFile && imageFile.size > 0) {
+				imageUrl = await saveUploadedFile(imageFile);
+			}
 
-		await updateEvent({ id, title, date, time, location, status, imageUrl });
-		return success('Event update ho gaya.', 'events');
+			await updateEvent({ id, title, date, time, location, status, imageUrl });
+		});
 	},
 
 	deleteEvent: async ({ request }) => {
@@ -309,8 +384,9 @@ export const actions: Actions = {
 			return actionError(400, 'Event ID missing hai.', 'events');
 		}
 
-		await deleteEvent(id);
-		return success('Event delete ho gaya.', 'events');
+		return runMutationAction('events', 'Event delete ho gaya.', async () => {
+			await deleteEvent(id);
+		});
 	},
 
 	createResult: async ({ request }) => {
@@ -325,13 +401,14 @@ export const actions: Actions = {
 			return actionError(400, 'Result ke required fields missing hain.', 'results');
 		}
 
-		let fileUrl = fileUrlInput || null;
-		if (fileUpload && fileUpload.size > 0) {
-			fileUrl = await saveUploadedFile(fileUpload);
-		}
+		return runMutationAction('results', 'Result create ho gaya.', async () => {
+			let fileUrl = fileUrlInput || null;
+			if (fileUpload && fileUpload.size > 0) {
+				fileUrl = await saveUploadedFile(fileUpload);
+			}
 
-		await createExamResult({ title, publishDate, resultType, fileUrl });
-		return success('Result create ho gaya.', 'results');
+			await createExamResult({ title, publishDate, resultType, fileUrl });
+		});
 	},
 
 	updateResult: async ({ request }) => {
@@ -347,13 +424,14 @@ export const actions: Actions = {
 			return actionError(400, 'Result update ke fields incomplete hain.', 'results');
 		}
 
-		let fileUrl = fileUrlInput || null;
-		if (fileUpload && fileUpload.size > 0) {
-			fileUrl = await saveUploadedFile(fileUpload);
-		}
+		return runMutationAction('results', 'Result update ho gaya.', async () => {
+			let fileUrl = fileUrlInput || null;
+			if (fileUpload && fileUpload.size > 0) {
+				fileUrl = await saveUploadedFile(fileUpload);
+			}
 
-		await updateExamResult({ id, title, publishDate, resultType, fileUrl });
-		return success('Result update ho gaya.', 'results');
+			await updateExamResult({ id, title, publishDate, resultType, fileUrl });
+		});
 	},
 
 	deleteResult: async ({ request }) => {
@@ -363,8 +441,9 @@ export const actions: Actions = {
 			return actionError(400, 'Result ID missing hai.', 'results');
 		}
 
-		await deleteExamResult(id);
-		return success('Result delete ho gaya.', 'results');
+		return runMutationAction('results', 'Result delete ho gaya.', async () => {
+			await deleteExamResult(id);
+		});
 	},
 
 	createDepartment: async ({ request }) => {
@@ -377,8 +456,9 @@ export const actions: Actions = {
 			return actionError(400, 'Department ka name required hai.', 'departments');
 		}
 
-		await createDepartment({ name, urduName, slug });
-		return success('Department create ho gaya.', 'departments');
+		return runMutationAction('departments', 'Department create ho gaya.', async () => {
+			await createDepartment({ name, urduName, slug });
+		});
 	},
 
 	updateDepartment: async ({ request }) => {
@@ -392,8 +472,9 @@ export const actions: Actions = {
 			return actionError(400, 'Department update ke fields incomplete hain.', 'departments');
 		}
 
-		await updateDepartment({ id, name, urduName, slug });
-		return success('Department update ho gaya.', 'departments');
+		return runMutationAction('departments', 'Department update ho gaya.', async () => {
+			await updateDepartment({ id, name, urduName, slug });
+		});
 	},
 
 	deleteDepartment: async ({ request }) => {
@@ -404,17 +485,22 @@ export const actions: Actions = {
 			return actionError(400, 'Department ID missing hai.', 'departments');
 		}
 
-		const assignedFacultyCount = await countFacultyMembersByDepartment(id);
-		if (assignedFacultyCount > 0) {
-			return actionError(
-				400,
-				'Is department me teachers maujood hain. Delete se pehle unko move ya delete karein.',
-				'departments'
-			);
-		}
+		try {
+			const assignedFacultyCount = await countFacultyMembersByDepartment(id);
+			if (assignedFacultyCount > 0) {
+				return actionError(
+					400,
+					'Is department me teachers maujood hain. Delete se pehle unko move ya delete karein.',
+					'departments'
+				);
+			}
 
-		await deleteDepartment(id);
-		return success('Department delete ho gaya.', 'departments');
+			await deleteDepartment(id);
+			return success('Department delete ho gaya.', 'departments');
+		} catch (error) {
+			console.error('Admin action failed for departments:', error);
+			return actionError(getActionErrorStatus(error), getActionErrorMessage(error), 'departments');
+		}
 	},
 
 	createFaculty: async ({ request }) => {
@@ -441,22 +527,23 @@ export const actions: Actions = {
 			);
 		}
 
-		let imageUrl = imageUrlInput || null;
-		if (imageFile && imageFile.size > 0) {
-			imageUrl = await saveUploadedFile(imageFile);
-		}
+		return runMutationAction('faculty', 'Teacher create ho gaya.', async () => {
+			let imageUrl = imageUrlInput || null;
+			if (imageFile && imageFile.size > 0) {
+				imageUrl = await saveUploadedFile(imageFile);
+			}
 
-		await createFacultyMember({
-			departmentId,
-			name,
-			education,
-			subject,
-			imageUrl,
-			isHod,
-			isCoordinator,
-			isTeachingStaff
+			await createFacultyMember({
+				departmentId,
+				name,
+				education,
+				subject,
+				imageUrl,
+				isHod,
+				isCoordinator,
+				isTeachingStaff
+			});
 		});
-		return success('Teacher create ho gaya.', 'faculty');
 	},
 
 	updateFaculty: async ({ request }) => {
@@ -484,23 +571,24 @@ export const actions: Actions = {
 			);
 		}
 
-		let imageUrl = imageUrlInput || null;
-		if (imageFile && imageFile.size > 0) {
-			imageUrl = await saveUploadedFile(imageFile);
-		}
+		return runMutationAction('faculty', 'Teacher update ho gaya.', async () => {
+			let imageUrl = imageUrlInput || null;
+			if (imageFile && imageFile.size > 0) {
+				imageUrl = await saveUploadedFile(imageFile);
+			}
 
-		await updateFacultyMember({
-			id,
-			departmentId,
-			name,
-			education,
-			subject,
-			imageUrl,
-			isHod,
-			isCoordinator,
-			isTeachingStaff
+			await updateFacultyMember({
+				id,
+				departmentId,
+				name,
+				education,
+				subject,
+				imageUrl,
+				isHod,
+				isCoordinator,
+				isTeachingStaff
+			});
 		});
-		return success('Teacher update ho gaya.', 'faculty');
 	},
 
 	deleteFaculty: async ({ request }) => {
@@ -510,8 +598,9 @@ export const actions: Actions = {
 			return actionError(400, 'Teacher ID missing hai.', 'faculty');
 		}
 
-		await deleteFacultyMember(id);
-		return success('Teacher delete ho gaya.', 'faculty');
+		return runMutationAction('faculty', 'Teacher delete ho gaya.', async () => {
+			await deleteFacultyMember(id);
+		});
 	},
 
 	uploadMedia: async ({ request }) => {
@@ -522,8 +611,9 @@ export const actions: Actions = {
 			return actionError(400, 'Upload ke liye file select karein.', 'media');
 		}
 
-		await saveUploadedFile(file);
-		return success('Media upload ho gaya.', 'media');
+		return runMutationAction('media', 'Media upload ho gaya.', async () => {
+			await saveUploadedFile(file);
+		});
 	},
 
 	deleteMedia: async ({ request }) => {
@@ -533,7 +623,8 @@ export const actions: Actions = {
 			return actionError(400, 'File name missing hai.', 'media');
 		}
 
-		await deleteUploadedMedia(fileName);
-		return success('Media delete ho gaya.', 'media');
+		return runMutationAction('media', 'Media delete ho gaya.', async () => {
+			await deleteUploadedMedia(fileName);
+		});
 	}
 };

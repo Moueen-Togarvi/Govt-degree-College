@@ -36,19 +36,19 @@
 		if (!isDeleting) {
 			if (displayedSuffix.length < currentFullSuffix.length) {
 				displayedSuffix = currentFullSuffix.substring(0, displayedSuffix.length + 1);
-				typingSpeed = 100;
+				typingSpeed = 72;
 			} else {
 				isDeleting = true;
-				typingSpeed = 2500; // Wait before deleting
+				typingSpeed = 1600;
 			}
 		} else {
 			if (displayedSuffix.length > 0) {
 				displayedSuffix = currentFullSuffix.substring(0, displayedSuffix.length - 1);
-				typingSpeed = 40;
+				typingSpeed = 28;
 			} else {
 				isDeleting = false;
 				currentSuffixIndex = (currentSuffixIndex + 1) % suffixes.length;
-				typingSpeed = 500;
+				typingSpeed = 280;
 			}
 		}
 
@@ -56,7 +56,7 @@
 	}
 
 	onMount(() => {
-		queueType(1000);
+		queueType(420);
 
 		if (!heroSection || prefersReducedMotion()) return;
 
@@ -81,7 +81,7 @@
 						.timeline({ defaults: { ease: 'power3.out' } })
 						.to('[data-hero-curtain]', {
 							scaleY: 0,
-							duration: 1.1,
+							duration: 0.8,
 							ease: 'power4.inOut'
 						})
 						.from(
@@ -90,9 +90,9 @@
 								autoAlpha: 0,
 								y: 36,
 								skewY: 7,
-								duration: 0.65
+								duration: 0.45
 							},
-							'-=0.5'
+							'-=0.35'
 						)
 						.from(
 							['[data-hero-kicker]', '[data-hero-legacy]'],
@@ -100,10 +100,10 @@
 								autoAlpha: 0,
 								y: 24,
 								letterSpacing: '0.55em',
-								duration: 0.75,
+								duration: 0.5,
 								stagger: 0.1
 							},
-							'-=0.45'
+							'-=0.3'
 						)
 						.from(
 							titleCharacters,
@@ -113,14 +113,14 @@
 								rotateX: -110,
 								skewY: 10,
 								transformOrigin: '50% 100%',
-								duration: 1.2,
+								duration: 0.85,
 								ease: 'back.out(2.2)',
 								stagger: {
-									amount: 1.2,
+									amount: 0.65,
 									from: 'center'
 								}
 							},
-							'-=0.45'
+							'-=0.22'
 						)
 						.from(
 							'[data-hero-logo-ribbon]',
@@ -128,18 +128,18 @@
 								autoAlpha: 0,
 								scale: 0.82,
 								filter: 'blur(16px)',
-								duration: 0.9
+								duration: 0.6
 							},
-							'-=0.75'
+							'-=0.35'
 						)
 						.from(
 							'[data-hero-quote]',
 							{
 								autoAlpha: 0,
 								clipPath: 'inset(0 0 100% 0 round 2rem)',
-								duration: 0.8
+								duration: 0.55
 							},
-							'-=0.45'
+							'-=0.2'
 						)
 						.from(
 							'[data-hero-cta]',
@@ -149,56 +149,58 @@
 								scale: 0.94,
 								filter: 'blur(10px)',
 								immediateRender: false,
-								duration: 0.7,
-								stagger: 0.12
+								duration: 0.48,
+								stagger: 0.08
 							},
-							'-=0.3'
+							'-=0.12'
 						)
 						.from(
 							'[data-hero-indicator]',
 							{
 								autoAlpha: 0,
 								y: 28,
-								duration: 0.55
+								duration: 0.38
 							},
-							'-=0.15'
+							'-=0.05'
 						);
 
-					gsap.fromTo(
-						'[data-parallax-bg]',
-						{
-							scale: 1.04,
-							yPercent: 0
-						},
-						{
-							scale: 1.16,
-							yPercent: 10,
-							ease: 'none',
-							scrollTrigger: {
-								trigger: heroSection,
-								start: 'top top',
-								end: 'bottom top',
-								scrub: true
+					if (window.innerWidth >= 1024) {
+						gsap.fromTo(
+							'[data-parallax-bg]',
+							{
+								scale: 1.02,
+								yPercent: 0
+							},
+							{
+								scale: 1.08,
+								yPercent: 5,
+								ease: 'none',
+								scrollTrigger: {
+									trigger: heroSection,
+									start: 'top top',
+									end: 'bottom top',
+									scrub: 0.4
+								}
 							}
-						}
-					);
+						);
 
-					gsap.fromTo(
-						'[data-parallax-plate]',
-						{
-							yPercent: 0
-						},
-						{
-							yPercent: -16,
-							ease: 'none',
-							scrollTrigger: {
-								trigger: heroSection,
-								start: 'top top',
-								end: 'bottom top',
-								scrub: true
+						gsap.fromTo(
+							'[data-parallax-plate]',
+							{
+								yPercent: 0
+							},
+							{
+								yPercent: -8,
+								ease: 'none',
+								scrollTrigger: {
+									trigger: heroSection,
+									start: 'top top',
+									end: 'bottom top',
+									scrub: 0.4
+								}
 							}
-						}
-					);
+						);
+					}
 				} catch (error) {
 					console.error('Hero GSAP animation failed:', error);
 					gsap.set('[data-hero-curtain]', {

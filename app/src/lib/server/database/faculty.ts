@@ -160,12 +160,13 @@ async function withFacultyMutation(
 	databaseOperation: () => Promise<unknown>,
 	localOperation: () => Promise<void>
 ): Promise<void> {
-	return withFacultyFallback(
-		async () => {
-			await databaseOperation();
-		},
-		localOperation
-	);
+	if (preferLocalStore) {
+		await localOperation();
+		return;
+	}
+
+	await ensureFacultySchema();
+	await databaseOperation();
 }
 
 function mergeFacultyWithDepartments(

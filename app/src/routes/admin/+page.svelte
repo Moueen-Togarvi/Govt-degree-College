@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
+	import { applyAction, enhance } from '$app/forms';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import {
 		ArrowLeft,
 		BellRing,
@@ -125,6 +128,16 @@
 	function closeComposer() {
 		showComposer = false;
 	}
+
+	const enhanceMutation: SubmitFunction = () => {
+		return async ({ result }) => {
+			await applyAction(result);
+
+			if (result.type === 'success') {
+				await invalidateAll();
+			}
+		};
+	};
 
 	function getSectionHref(section: SectionKey) {
 		return `/admin?section=${section}`;
@@ -344,7 +357,7 @@
 						</div>
 
 						{#if currentSection === 'announcements'}
-							<form method="POST" action="?/createAnnouncement" class="grid gap-3">
+							<form use:enhance={enhanceMutation} method="POST" action="?/createAnnouncement" class="grid gap-3">
 								<input type="hidden" name="section" value="announcements" />
 								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_220px_220px]">
 									<input name="title" placeholder="Title" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
@@ -355,7 +368,7 @@
 								<button class="w-fit rounded-xl bg-primary px-5 py-3 text-sm font-black text-white hover:bg-secondary">Add Announcement</button>
 							</form>
 						{:else if currentSection === 'noticeBoard'}
-							<form method="POST" action="?/createNoticeBoard" class="grid gap-3">
+							<form use:enhance={enhanceMutation} method="POST" action="?/createNoticeBoard" class="grid gap-3">
 								<input type="hidden" name="section" value="noticeBoard" />
 								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_180px_120px_220px_220px]">
 									<input name="title" placeholder="Notice title" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
@@ -368,7 +381,7 @@
 								<button class="w-fit rounded-xl bg-primary px-5 py-3 text-sm font-black text-white hover:bg-secondary">Add Notice</button>
 							</form>
 						{:else if currentSection === 'latestNews'}
-							<form method="POST" action="?/createLatestNews" class="grid gap-3">
+							<form use:enhance={enhanceMutation} method="POST" action="?/createLatestNews" class="grid gap-3">
 								<input type="hidden" name="section" value="latestNews" />
 								<div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_140px_auto]">
 									<input name="title" placeholder="Latest news title" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
@@ -377,7 +390,7 @@
 								</div>
 							</form>
 						{:else if currentSection === 'events'}
-							<form method="POST" action="?/createEvent" enctype="multipart/form-data" class="grid gap-3">
+							<form use:enhance={enhanceMutation} method="POST" action="?/createEvent" enctype="multipart/form-data" class="grid gap-3">
 								<input type="hidden" name="section" value="events" />
 								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.4fr)_180px_160px_220px_180px]">
 									<input name="title" placeholder="Event title" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
@@ -393,7 +406,7 @@
 								</div>
 							</form>
 						{:else if currentSection === 'results'}
-							<form method="POST" action="?/createResult" enctype="multipart/form-data" class="grid gap-3">
+							<form use:enhance={enhanceMutation} method="POST" action="?/createResult" enctype="multipart/form-data" class="grid gap-3">
 								<input type="hidden" name="section" value="results" />
 								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_200px_220px]">
 									<input name="title" placeholder="Result title" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
@@ -407,7 +420,7 @@
 								</div>
 							</form>
 						{:else if currentSection === 'media'}
-							<form method="POST" action="?/uploadMedia" enctype="multipart/form-data" class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-center">
+							<form use:enhance={enhanceMutation} method="POST" action="?/uploadMedia" enctype="multipart/form-data" class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-center">
 								<input type="hidden" name="section" value="media" />
 								<input name="mediaFile" type="file" accept="image/*,application/pdf" class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-3 font-semibold" />
 								<button class="inline-flex w-fit items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-black text-white hover:bg-secondary">
@@ -416,7 +429,7 @@
 								</button>
 							</form>
 						{:else if currentSection === 'departments'}
-							<form method="POST" action="?/createDepartment" class="grid gap-3">
+							<form use:enhance={enhanceMutation} method="POST" action="?/createDepartment" class="grid gap-3">
 								<input type="hidden" name="section" value="departments" />
 								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_220px_auto]">
 									<input name="name" placeholder="Department name" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
@@ -431,7 +444,7 @@
 									Teachers add karne se pehle ek department create karein.
 								</div>
 							{:else}
-								<form method="POST" action="?/createFaculty" enctype="multipart/form-data" class="grid gap-3">
+								<form use:enhance={enhanceMutation} method="POST" action="?/createFaculty" enctype="multipart/form-data" class="grid gap-3">
 									<input type="hidden" name="section" value="faculty" />
 									<div class="grid gap-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_220px_220px]">
 										<input name="name" placeholder="Teacher name" class="rounded-xl border border-slate-200 px-4 py-3 font-semibold" />
@@ -492,7 +505,7 @@
 
 					{#if currentSection === 'announcements'}
 						{#each data.announcements as item}
-							<form method="POST" action="?/updateAnnouncement" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+							<form use:enhance={enhanceMutation} method="POST" action="?/updateAnnouncement" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
 								<input type="hidden" name="id" value={item.id} />
 								<input type="hidden" name="section" value="announcements" />
 								<div class="grid gap-3 xl:grid-cols-[minmax(0,1.6fr)_220px_220px_auto] xl:items-start">
@@ -509,7 +522,7 @@
 						{/each}
 					{:else if currentSection === 'noticeBoard'}
 						{#each data.noticeBoardItems as item}
-							<form method="POST" action="?/updateNoticeBoard" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+							<form use:enhance={enhanceMutation} method="POST" action="?/updateNoticeBoard" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
 								<input type="hidden" name="id" value={item.id} />
 								<input type="hidden" name="section" value="noticeBoard" />
 								<div class="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -536,7 +549,7 @@
 						{/each}
 					{:else if currentSection === 'latestNews'}
 						{#each data.latestNewsItems as item}
-							<form method="POST" action="?/updateLatestNews" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+							<form use:enhance={enhanceMutation} method="POST" action="?/updateLatestNews" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
 								<input type="hidden" name="id" value={item.id} />
 								<input type="hidden" name="section" value="latestNews" />
 								<div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_140px_auto] xl:items-start">
@@ -551,7 +564,7 @@
 						{/each}
 					{:else if currentSection === 'events'}
 						{#each data.events as event}
-							<form method="POST" action="?/updateEvent" enctype="multipart/form-data" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+							<form use:enhance={enhanceMutation} method="POST" action="?/updateEvent" enctype="multipart/form-data" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
 								<input type="hidden" name="id" value={event.id} />
 								<input type="hidden" name="section" value="events" />
 								<div class="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -574,7 +587,7 @@
 						{/each}
 					{:else if currentSection === 'results'}
 						{#each data.results as result}
-							<form method="POST" action="?/updateResult" enctype="multipart/form-data" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+							<form use:enhance={enhanceMutation} method="POST" action="?/updateResult" enctype="multipart/form-data" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
 								<input type="hidden" name="id" value={result.id} />
 								<input type="hidden" name="section" value="results" />
 								<div class="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -610,7 +623,7 @@
 									</div>
 									<p class="text-sm font-bold text-slate-500">{formatSize(file.size)}</p>
 									<a href={file.url} target="_blank" class="text-sm font-black uppercase tracking-[0.18em] text-secondary">Open</a>
-									<form method="POST" action="?/deleteMedia" class="flex justify-start xl:justify-end">
+									<form use:enhance={enhanceMutation} method="POST" action="?/deleteMedia" class="flex justify-start xl:justify-end">
 										<input type="hidden" name="fileName" value={file.name} />
 										<input type="hidden" name="section" value="media" />
 										<button class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-3 text-sm font-black text-white hover:bg-rose-700">
@@ -623,7 +636,7 @@
 						{/each}
 					{:else if currentSection === 'departments'}
 						{#each data.departments as department}
-							<form method="POST" action="?/updateDepartment" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+							<form use:enhance={enhanceMutation} method="POST" action="?/updateDepartment" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
 								<input type="hidden" name="id" value={department.id} />
 								<input type="hidden" name="section" value="departments" />
 								<div class="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -649,7 +662,7 @@
 						{/each}
 					{:else if currentSection === 'faculty'}
 						{#each data.facultyMembers as member}
-							<form method="POST" action="?/updateFaculty" enctype="multipart/form-data" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+							<form use:enhance={enhanceMutation} method="POST" action="?/updateFaculty" enctype="multipart/form-data" class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
 								<input type="hidden" name="id" value={member.id} />
 								<input type="hidden" name="section" value="faculty" />
 								<div class="mb-4 flex flex-wrap items-start justify-between gap-3">

@@ -4,7 +4,7 @@ import { env } from '$env/dynamic/private';
 export const DATABASE_CONFIG_ERROR =
 	'DATABASE_URL is not defined. Add your Neon connection string to app/.env.';
 
-const DATABASE_RETRY_COOLDOWN_MS = 30_000;
+const DATABASE_RETRY_COOLDOWN_MS = 8_000;
 
 export type SqlClient = ReturnType<typeof neon>;
 
@@ -98,6 +98,9 @@ function isConnectivityFailure(error: unknown) {
 	return (
 		messages.includes('fetch failed') ||
 		messages.includes('error connecting to database') ||
+		messages.includes('network') ||
+		messages.includes('socket') ||
+		messages.includes('terminated unexpectedly') ||
 		messages.includes('timeout') ||
 		codes.some((code) =>
 			['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN'].includes(code)

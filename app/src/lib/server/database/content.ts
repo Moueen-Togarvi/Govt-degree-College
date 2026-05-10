@@ -9,9 +9,11 @@ import type {
 } from '$lib/types/content';
 import { isExpectedDatabaseError, withDatabase } from '$lib/server/db';
 import { readLocalContentStore, updateLocalContentStore } from '$lib/server/local-content-store';
+import { initializeDatabase } from './setup';
 
 const defaultEventImage = '/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg';
 const preferLocalStore = process.env.CONTENT_STORE_MODE === 'local';
+let contentInitializationPromise: Promise<void> | null = null;
 
 type AnnouncementRow = {
 	id: number | string;
@@ -183,6 +185,7 @@ async function withContentFallback<T>(
 	}
 
 	try {
+		await ensureContentSchema();
 		return await databaseOperation();
 	} catch (error) {
 		if (isExpectedDatabaseError(error)) {
@@ -197,12 +200,28 @@ async function withContentMutation(
 	databaseOperation: () => Promise<unknown>,
 	localOperation: () => Promise<void>
 ): Promise<void> {
-	return withContentFallback(
-		async () => {
-			await databaseOperation();
-		},
-		localOperation
-	);
+	if (preferLocalStore) {
+		await localOperation();
+		return;
+	}
+
+	await ensureContentSchema();
+	await databaseOperation();
+}
+
+async function ensureContentSchema() {
+	if (preferLocalStore) return;
+
+	if (!contentInitializationPromise) {
+		contentInitializationPromise = initializeDatabase({ seed: true })
+			.then(() => undefined)
+			.catch((error) => {
+				contentInitializationPromise = null;
+				throw error;
+			});
+	}
+
+	await contentInitializationPromise;
 }
 
 export async function listAnnouncements(limit = 12): Promise<Announcement[]> {
