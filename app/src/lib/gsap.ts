@@ -1,16 +1,50 @@
 import { browser } from '$app/environment';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
 
-let pluginsRegistered = false;
+type GsapInstance = {
+	registerPlugin: (...plugins: unknown[]) => void;
+	context: (scope: () => void, element?: Element | null) => { revert: () => void };
+	set: (target: unknown, vars: Record<string, unknown>) => void;
+	to: (...args: unknown[]) => unknown;
+	from: (...args: unknown[]) => unknown;
+	fromTo: (...args: unknown[]) => unknown;
+	timeline: (vars?: Record<string, unknown>) => {
+		to: (...args: unknown[]) => unknown;
+		from: (...args: unknown[]) => unknown;
+	};
+	utils: {
+		toArray: <T>(selector: string) => T[];
+	};
+};
+
+type ScrollTriggerInstance = {
+	create: (vars: Record<string, unknown>) => { kill: () => void };
+	refresh: () => void;
+};
+
+type GsapRuntime = {
+	gsap: GsapInstance;
+	ScrollTrigger: ScrollTriggerInstance;
+};
+
+let gsapRuntimePromise: Promise<GsapRuntime | null> | null = null;
 
 export function ensureGsap() {
-	if (browser && !pluginsRegistered) {
-		gsap.registerPlugin(ScrollTrigger);
-		pluginsRegistered = true;
+	if (!browser) {
+		return Promise.resolve(null);
 	}
 
-	return gsap;
+	if (!gsapRuntimePromise) {
+		gsapRuntimePromise = Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(
+			([gsapModule, scrollTriggerModule]) => {
+				const gsap = gsapModule.default as GsapInstance;
+				const ScrollTrigger = scrollTriggerModule.default as ScrollTriggerInstance;
+				gsap.registerPlugin(ScrollTrigger);
+				return { gsap, ScrollTrigger };
+			}
+		);
+	}
+
+	return gsapRuntimePromise;
 }
 
 export function prefersReducedMotion() {
@@ -25,7 +59,7 @@ function isStackCandidate(element: HTMLElement, minPanelHeight: number) {
 	return element.offsetHeight >= minPanelHeight;
 }
 
-export function setupStickyStack(
+export async function setupStickyStack(
 	root: HTMLElement,
 	{
 		topOffset = 108,
@@ -39,7 +73,12 @@ export function setupStickyStack(
 		return () => {};
 	}
 
-	const gsapInstance = ensureGsap();
+	const runtime = await ensureGsap();
+	if (!runtime) {
+		return () => {};
+	}
+
+	const { gsap: gsapInstance, ScrollTrigger } = runtime;
 	const candidates = Array.from(root.children).filter(
 		(child): child is HTMLElement =>
 			child instanceof HTMLElement && isStackCandidate(child, minPanelHeight)

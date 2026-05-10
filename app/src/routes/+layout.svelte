@@ -12,7 +12,7 @@
 	let mainElement = $state<HTMLElement | null>(null);
 
 	onMount(() => {
-		ensureGsap();
+		void ensureGsap();
 
 		let cleanup = () => {};
 
@@ -24,7 +24,7 @@
 			}
 
 			await tick();
-			cleanup = setupStickyStack(mainElement, { topOffset: 116, minPanelHeight: 260 });
+			cleanup = await setupStickyStack(mainElement, { topOffset: 116, minPanelHeight: 260 });
 		};
 
 		void applyStack();

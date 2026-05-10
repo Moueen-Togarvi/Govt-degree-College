@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Menu, X, ChevronDown, GraduationCap, Users, BookOpen, Newspaper, LogIn, PhoneCall, Home, Mail, MapPin } from 'lucide-svelte';
-	import ScrollTrigger from 'gsap/ScrollTrigger';
 	import { page } from '$app/stores';
 	import { onMount, tick } from 'svelte';
 	import { ensureGsap, prefersReducedMotion } from '$lib/gsap';
@@ -85,7 +84,10 @@
 	async function animateMobileMenu(direction: 'in' | 'out') {
 		if (!mobileDrawer || prefersReducedMotion()) return;
 
-		const gsap = ensureGsap();
+		const runtime = await ensureGsap();
+		if (!runtime) return;
+
+		const { gsap } = runtime;
 		const rows = mobileDrawer.querySelectorAll('[data-mobile-row]');
 		const portal = mobileDrawer.querySelector('[data-mobile-portal]');
 
@@ -204,6 +206,8 @@
 	}
 
 	onMount(() => {
+		let cleanupAnimation = () => {};
+
 		const handleScroll = () => {
 			scrolled = window.scrollY > 20;
 		};
@@ -212,95 +216,100 @@
 		window.addEventListener('scroll', handleScroll);
 
 		if (navElement && !prefersReducedMotion()) {
-			const gsap = ensureGsap();
-			const context = gsap.context(() => {
-				try {
-					const navItems = gsap.utils.toArray<HTMLElement>('[data-nav-item]');
-					const topBar = document.querySelector('[data-nav-topbar]');
-					const mainNav = document.querySelector('[data-nav-shell]');
+			void (async () => {
+				const runtime = await ensureGsap();
+				if (!runtime || !navElement) return;
 
-					gsap
-						.timeline({
-							defaults: {
-								ease: 'power3.out'
-							}
-						})
-						.from('[data-nav-shell]', {
-							autoAlpha: 0,
-							y: -36,
-							duration: 0.6
-						})
-						.from(
-							'[data-nav-logo]',
-							{
+				const { gsap, ScrollTrigger } = runtime;
+				const context = gsap.context(() => {
+					try {
+						const navItems = gsap.utils.toArray<HTMLElement>('[data-nav-item]');
+						const topBar = document.querySelector('[data-nav-topbar]');
+						const mainNav = document.querySelector('[data-nav-shell]');
+
+						gsap
+							.timeline({
+								defaults: {
+									ease: 'power3.out'
+								}
+							})
+							.from('[data-nav-shell]', {
 								autoAlpha: 0,
-								x: -28,
-								skewY: 5,
-								duration: 0.55
-							},
-							'-=0.25'
-						)
-						.from(
-							navItems,
-							{
-								autoAlpha: 0,
-								y: -20,
-								skewY: 5,
-								duration: 0.4,
-								stagger: 0.06
-							},
-							'-=0.26'
-						)
-						.from(
-							'[data-nav-cta]',
-							{
-								autoAlpha: 0,
-								scale: 0.88,
-								filter: 'blur(8px)',
-								immediateRender: false,
-								duration: 0.45
-							},
-							'-=0.18'
-						);
+								y: -36,
+								duration: 0.6
+							})
+							.from(
+								'[data-nav-logo]',
+								{
+									autoAlpha: 0,
+									x: -28,
+									skewY: 5,
+									duration: 0.55
+								},
+								'-=0.25'
+							)
+							.from(
+								navItems,
+								{
+									autoAlpha: 0,
+									y: -20,
+									skewY: 5,
+									duration: 0.4,
+									stagger: 0.06
+								},
+								'-=0.26'
+							)
+							.from(
+								'[data-nav-cta]',
+								{
+									autoAlpha: 0,
+									scale: 0.88,
+									filter: 'blur(8px)',
+									immediateRender: false,
+									duration: 0.45
+								},
+								'-=0.18'
+							);
 
 						ScrollTrigger.create({
 							start: 'top -50',
 							onToggle: (self) => {
-							const isScrolled = self.isActive;
-							if (topBar) {
-								gsap.to(topBar, {
-									height: isScrolled ? 0 : 'auto',
-									autoAlpha: isScrolled ? 0 : 1,
-									duration: 0.4,
-									ease: 'power2.inOut'
-								});
+								const isScrolled = Boolean(self && typeof self === 'object' && 'isActive' in self && self.isActive);
+								if (topBar) {
+									gsap.to(topBar, {
+										height: isScrolled ? 0 : 'auto',
+										autoAlpha: isScrolled ? 0 : 1,
+										duration: 0.4,
+										ease: 'power2.inOut'
+									});
+								}
+								if (mainNav) {
+									gsap.to(mainNav, {
+										paddingTop: isScrolled ? '4px' : '8px',
+										paddingBottom: isScrolled ? '4px' : '8px',
+										backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 1)',
+										boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.08)' : '0 0 0 rgba(0,0,0,0)',
+										duration: 0.4,
+										ease: 'power2.inOut'
+									});
+								}
 							}
-							if (mainNav) {
-								gsap.to(mainNav, {
-									paddingTop: isScrolled ? '4px' : '8px',
-									paddingBottom: isScrolled ? '4px' : '8px',
-									backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 1)',
-									boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.08)' : '0 0 0 rgba(0,0,0,0)',
-									duration: 0.4,
-									ease: 'power2.inOut'
-								});
-							}
-						}
-					});
-				} catch (error) {
-					console.error('Navbar GSAP animation failed:', error);
-					gsap.set('[data-nav-shell]', { clearProps: 'all', autoAlpha: 1 });
-					gsap.set('[data-nav-cta]', { clearProps: 'all', autoAlpha: 1 });
-				}
-			}, navElement);
+						});
+					} catch (error) {
+						console.error('Navbar GSAP animation failed:', error);
+						gsap.set('[data-nav-shell]', { clearProps: 'all', autoAlpha: 1 });
+						gsap.set('[data-nav-cta]', { clearProps: 'all', autoAlpha: 1 });
+					}
+				}, navElement);
 
-			return () => {
-				window.removeEventListener('scroll', handleScroll);
-				context.revert();
-			};
+				cleanupAnimation = () => context.revert();
+			})();
 		}
 
-		return () => window.removeEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+			cleanupAnimation();
+		};
 	});
 </script>
 

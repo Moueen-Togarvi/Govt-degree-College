@@ -70,32 +70,43 @@
 	onMount(() => {
 		if (!sectionEl || prefersReducedMotion()) return;
 
-		const gsap = ensureGsap();
-		const values = Array.from(
-			sectionEl.querySelectorAll<HTMLElement>('[data-stat-value]')
-		);
+		let disposed = false;
+		const triggers: Array<{ kill: () => void } | undefined> = [];
 
-		const triggers = values.map((element, index) =>
-			gsap.fromTo(
-				{ value: 0 },
-				{ value: 0 },
-				{
-					value: stats[index].target,
-					duration: index === stats.length - 1 ? 2 : 1.5,
-					ease: 'power2.out',
-					scrollTrigger: {
-						trigger: sectionEl,
-						start: 'top 72%',
-						once: true
-					},
-					onUpdate() {
-						element.textContent = formatStatValue(index, this.targets()[0].value);
-					}
-				}
-			).scrollTrigger
-		);
+		void (async () => {
+			const runtime = await ensureGsap();
+			if (!runtime || !sectionEl || disposed) return;
+
+			const { gsap } = runtime;
+			const values = Array.from(
+				sectionEl.querySelectorAll<HTMLElement>('[data-stat-value]')
+			);
+
+			triggers.push(
+				...values.map((element, index) =>
+					gsap.fromTo(
+						{ value: 0 },
+						{ value: 0 },
+						{
+							value: stats[index].target,
+							duration: index === stats.length - 1 ? 2 : 1.5,
+							ease: 'power2.out',
+							scrollTrigger: {
+								trigger: sectionEl,
+								start: 'top 72%',
+								once: true
+							},
+							onUpdate() {
+								element.textContent = formatStatValue(index, this.targets()[0].value);
+							}
+						}
+					).scrollTrigger as { kill: () => void } | undefined
+				)
+			);
+		})();
 
 		return () => {
+			disposed = true;
 			triggers.forEach((trigger) => trigger?.kill());
 		};
 	});
