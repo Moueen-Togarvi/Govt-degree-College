@@ -351,7 +351,7 @@
 						href="/admissions/how-to-apply"
 						class="group inline-flex min-h-[60px] w-[243px] items-center justify-center gap-3 whitespace-nowrap rounded-2xl bg-secondary px-6 py-4 text-center text-sm font-black text-white shadow-2xl shadow-secondary/40 transition-all hover:scale-105 hover:bg-secondary/90 active:scale-95 sm:w-[213px] sm:text-base lg:w-[233px] lg:py-4"
 					>
-						Apply Admission
+						Apply Now!
 						<ArrowRight size={20} class="transition-transform group-hover:translate-x-2" />
 					</a>
 					<a
