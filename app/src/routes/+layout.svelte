@@ -2,7 +2,6 @@
 	import './layout.css';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
 	import { onMount, tick } from 'svelte';
@@ -41,7 +40,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" type="image/png" href="/images/logos/degree4k-removebg-preview.png" />
 	<title>Govt Post Graduate College Bahawalnagar</title>
 </svelte:head>
 
