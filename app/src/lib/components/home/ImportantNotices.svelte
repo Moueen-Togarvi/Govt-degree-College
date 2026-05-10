@@ -17,13 +17,15 @@
 		<div class="relative mx-auto max-w-6xl rounded-[2.5rem] border border-secondary/25 bg-secondary/20 p-4 shadow-[0_30px_90px_rgba(13,93,86,0.12)] motion-rise lg:p-6">
 			<div class="rounded-[2rem] border border-primary/12 bg-[linear-gradient(135deg,_rgba(255,255,255,0.96),_rgba(247,148,29,0.14))] p-6 lg:p-10">
 				<div class="mb-8 rounded-[1.75rem] border border-primary/10 bg-primary px-5 py-5 text-white shadow-[0_18px_50px_rgba(13,93,86,0.20)]">
-					<div class="flex flex-wrap items-center justify-between gap-4">
-						<div class="flex items-center gap-3">
+					<div class="flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+						<div class="flex flex-col items-center gap-3 sm:flex-row sm:items-center">
+							<div class="flex items-center gap-3">
 							<div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-white">
 								<BellRing size={22} />
 							</div>
 							<div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white">
 								<ScrollText size={22} />
+							</div>
 							</div>
 							<div>
 								<p class="text-xs font-black uppercase tracking-[0.32em] text-secondary">Announcements</p>
@@ -36,7 +38,7 @@
 						</div>
 					</div>
 
-					<p class="mt-4 max-w-3xl text-sm font-medium leading-7 text-white/78 lg:text-base">
+					<p class="mx-auto mt-4 max-w-3xl text-center text-sm font-medium leading-7 text-white/78 lg:text-base">
 						Admissions, class schedule updates, and important instructions are displayed here for students.
 					</p>
 				</div>
