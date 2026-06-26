@@ -11,6 +11,9 @@
 	let { children } = $props();
 	let mainElement = $state<HTMLElement | null>(null);
 
+	const PORTAL_ROUTES = ['/super-admin', '/coordinator', '/faculty', '/student', '/login', '/logout'];
+	const isPortalRoute = (pathname: string) => PORTAL_ROUTES.some((r) => pathname.startsWith(r));
+
 	onMount(() => {
 		let cleanup = () => {};
 
@@ -18,7 +21,7 @@
 			cleanup();
 
 			const pathname = get(page).url.pathname;
-			if (!mainElement || pathname.startsWith('/admin') || pathname !== '/') {
+			if (!mainElement || isPortalRoute(pathname) || pathname !== '/') {
 				return;
 			}
 
@@ -44,18 +47,18 @@
 </svelte:head>
 
 <div class="flex flex-col min-h-screen bg-white">
-	{#if !$page.url.pathname.startsWith('/admin')}
+	{#if !isPortalRoute($page.url.pathname)}
 		<Navbar />
 	{/if}
 	
 	<main
 		bind:this={mainElement}
-		class="flex-grow overflow-x-clip {$page.url.pathname.startsWith('/admin') ? '' : 'pt-[105px]'}"
+		class="flex-grow overflow-x-clip {isPortalRoute($page.url.pathname) ? '' : 'pt-[105px]'}"
 	>
 		{@render children()}
 	</main>
 
-	{#if !$page.url.pathname.startsWith('/admin')}
+	{#if !isPortalRoute($page.url.pathname)}
 		<Footer />
 	{/if}
 </div>

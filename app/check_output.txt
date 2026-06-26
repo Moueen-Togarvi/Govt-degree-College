@@ -1,0 +1,528 @@
+
+> app@0.0.1 check
+> svelte-kit sync && svelte-check --tsconfig ./tsconfig.json
+
+Loading svelte-check in workspace: /home/moueen-togarvi/code/Govt-degree-College/app
+Getting Svelte diagnostics...
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/lib/server/auth.ts:89:13
+Error: Property 'length' does not exist on type 'any[][] | Record<string, any>[] | FullQueryResults<boolean>'.
+  Property 'length' does not exist on type 'FullQueryResults<boolean>'. 
+
+		if (!rows.length) return null;
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/lib/server/auth.ts:91:15
+Error: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'any[][] | Record<string, any>[] | FullQueryResults<boolean>'.
+  Property '0' does not exist on type 'any[][] | Record<string, any>[] | FullQueryResults<boolean>'. 
+
+		const row = rows[0];
+		return {
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/lib/server/auth.ts:130:12
+Error: Property 'length' does not exist on type 'any[][] | Record<string, any>[] | FullQueryResults<boolean>'.
+  Property 'length' does not exist on type 'FullQueryResults<boolean>'. 
+
+	if (!rows.length) {
+		return { error: 'Invalid email or password.' };
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/lib/server/auth.ts:134:15
+Error: Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'any[][] | Record<string, any>[] | FullQueryResults<boolean>'.
+  Property '0' does not exist on type 'any[][] | Record<string, any>[] | FullQueryResults<boolean>'. 
+
+	const user = rows[0];
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/about/faculty/+page.server.ts:2:10
+Error: Module '"$lib/server/database/faculty"' has no exported member 'listFacultyDirectory'. 
+import { fallbackFacultyDepartments } from '$lib/content/faculty-fallback';
+import { listFacultyDirectory } from '$lib/server/database/faculty';
+import { logDatabaseLoadError } from '$lib/server/db';
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:24:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'countFacultyMembersByDepartment'. 
+import {
+	countFacultyMembersByDepartment,
+	createDepartment,
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:25:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'createDepartment'. 
+	countFacultyMembersByDepartment,
+	createDepartment,
+	createFacultyMember,
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:26:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'createFacultyMember'. 
+	createDepartment,
+	createFacultyMember,
+	deleteDepartment,
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:27:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'deleteDepartment'. 
+	createFacultyMember,
+	deleteDepartment,
+	deleteFacultyMember,
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:28:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'deleteFacultyMember'. 
+	deleteDepartment,
+	deleteFacultyMember,
+	listDepartments,
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:29:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'listDepartments'. 
+	deleteFacultyMember,
+	listDepartments,
+	listFacultyMembers,
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:30:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'listFacultyMembers'. 
+	listDepartments,
+	listFacultyMembers,
+	updateDepartment,
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:31:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'updateDepartment'. 
+	listFacultyMembers,
+	updateDepartment,
+	updateFacultyMember
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.server.ts:32:2
+Error: Module '"$lib/server/database/faculty"' has no exported member 'updateFacultyMember'. 
+	updateDepartment,
+	updateFacultyMember
+} from '$lib/server/database/faculty';
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/admin/+page.svelte:648:41
+Error: Parameter 'member' implicitly has an 'any' type. (ts)
+										<span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-primary">
+											{data.facultyMembers.filter((member) => member.departmentId === department.id).length} teachers
+										</span>
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/dashboard/+page.svelte:7:4
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+	const totalUsers =
+		(data.userCounts?.coordinator ?? 0) +
+		(data.userCounts?.faculty ?? 0) +
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/dashboard/+page.svelte:8:4
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+		(data.userCounts?.coordinator ?? 0) +
+		(data.userCounts?.faculty ?? 0) +
+		(data.userCounts?.student ?? 0);
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/dashboard/+page.svelte:9:4
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+		(data.userCounts?.faculty ?? 0) +
+		(data.userCounts?.student ?? 0);
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/dashboard/+page.svelte:15:11
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+			label: 'Departments',
+			value: data.departments?.length ?? 0,
+			color: 'blue',
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/dashboard/+page.svelte:29:11
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+			label: 'Faculty',
+			value: data.userCounts?.faculty ?? 0,
+			color: 'green',
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/dashboard/+page.svelte:36:11
+Warn: This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+			label: 'Students',
+			value: data.userCounts?.student ?? 0,
+			color: 'orange',
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/departments/+page.svelte:141:3
+Warn: Elements with the 'dialog' interactive role must have a tabindex value
+https://svelte.dev/e/a11y_interactive_supports_focus (svelte)
+	<div class="modal-overlay" onclick={closeModal} role="presentation">
+		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+			<div class="modal-header">
+				<h2 class="modal-title">{editingDept ? '✏️ Edit Department' : '+ New Department'}</h2>
+				<button onclick={closeModal} class="modal-close">✕</button>
+			</div>
+
+			<form
+				method="POST"
+				action={editingDept ? '?/update' : '?/create'}
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+					};
+				}}
+				class="modal-form"
+			>
+				{#if editingDept}
+					<input type="hidden" name="id" value={editingDept.id} />
+				{/if}
+
+				<div class="form-row">
+					<div class="form-group">
+						<label for="dept-name" class="form-label">Department Name *</label>
+						<input
+							id="dept-name"
+							type="text"
+							name="name"
+							value={editingDept?.name ?? ''}
+							placeholder="e.g. Computer Science"
+							required
+							class="form-input"
+						/>
+					</div>
+					<div class="form-group">
+						<label for="dept-urdu" class="form-label">Urdu Name</label>
+						<input
+							id="dept-urdu"
+							type="text"
+							name="urdu_name"
+							value={editingDept?.urdu_name ?? ''}
+							placeholder="e.g. کمپیوٹر سائنس"
+							class="form-input"
+							dir="rtl"
+						/>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="dept-desc" class="form-label">Description</label>
+					<textarea
+						id="dept-desc"
+						name="description"
+						rows="3"
+						placeholder="Brief description of the department..."
+						class="form-input form-textarea"
+					>{editingDept?.description ?? ''}</textarea>
+				</div>
+
+				<div class="form-group">
+					<label for="dept-coordinator" class="form-label">Assign Coordinator</label>
+					<select id="dept-coordinator" name="coordinator_id" class="form-input form-select">
+						<option value="">— No Coordinator —</option>
+						{#each data.coordinators as coord}
+							<option value={coord.id} selected={editingDept?.coordinator_id === coord.id}>
+								{coord.name} ({coord.email})
+							</option>
+						{/each}
+					</select>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" onclick={closeModal} class="btn-secondary">Cancel</button>
+					<button type="submit" class="btn-primary" disabled={submitting}>
+						{#if submitting}
+							<span class="btn-spinner"></span>
+						{/if}
+						{editingDept ? 'Save Changes' : 'Create Department'}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/departments/+page.svelte:141:3
+Warn: Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events (svelte)
+	<div class="modal-overlay" onclick={closeModal} role="presentation">
+		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+			<div class="modal-header">
+				<h2 class="modal-title">{editingDept ? '✏️ Edit Department' : '+ New Department'}</h2>
+				<button onclick={closeModal} class="modal-close">✕</button>
+			</div>
+
+			<form
+				method="POST"
+				action={editingDept ? '?/update' : '?/create'}
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+					};
+				}}
+				class="modal-form"
+			>
+				{#if editingDept}
+					<input type="hidden" name="id" value={editingDept.id} />
+				{/if}
+
+				<div class="form-row">
+					<div class="form-group">
+						<label for="dept-name" class="form-label">Department Name *</label>
+						<input
+							id="dept-name"
+							type="text"
+							name="name"
+							value={editingDept?.name ?? ''}
+							placeholder="e.g. Computer Science"
+							required
+							class="form-input"
+						/>
+					</div>
+					<div class="form-group">
+						<label for="dept-urdu" class="form-label">Urdu Name</label>
+						<input
+							id="dept-urdu"
+							type="text"
+							name="urdu_name"
+							value={editingDept?.urdu_name ?? ''}
+							placeholder="e.g. کمپیوٹر سائنس"
+							class="form-input"
+							dir="rtl"
+						/>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="dept-desc" class="form-label">Description</label>
+					<textarea
+						id="dept-desc"
+						name="description"
+						rows="3"
+						placeholder="Brief description of the department..."
+						class="form-input form-textarea"
+					>{editingDept?.description ?? ''}</textarea>
+				</div>
+
+				<div class="form-group">
+					<label for="dept-coordinator" class="form-label">Assign Coordinator</label>
+					<select id="dept-coordinator" name="coordinator_id" class="form-input form-select">
+						<option value="">— No Coordinator —</option>
+						{#each data.coordinators as coord}
+							<option value={coord.id} selected={editingDept?.coordinator_id === coord.id}>
+								{coord.name} ({coord.email})
+							</option>
+						{/each}
+					</select>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" onclick={closeModal} class="btn-secondary">Cancel</button>
+					<button type="submit" class="btn-primary" disabled={submitting}>
+						{#if submitting}
+							<span class="btn-spinner"></span>
+						{/if}
+						{editingDept ? 'Save Changes' : 'Create Department'}
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/users/+page.svelte:175:3
+Warn: Elements with the 'dialog' interactive role must have a tabindex value
+https://svelte.dev/e/a11y_interactive_supports_focus (svelte)
+	<div class="modal-overlay" onclick={() => (showModal = false)} role="presentation">
+		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+			<div class="modal-header">
+				<h2 class="modal-title">+ Add New User</h2>
+				<button onclick={() => (showModal = false)} class="modal-close">✕</button>
+			</div>
+
+			<form
+				method="POST"
+				action="?/create"
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+					};
+				}}
+				class="modal-form"
+			>
+				<div class="form-row">
+					<div class="form-group">
+						<label for="user-name" class="form-label">Full Name *</label>
+						<input id="user-name" type="text" name="name" required placeholder="Muhammad Ali" class="form-input" />
+					</div>
+					<div class="form-group">
+						<label for="user-email" class="form-label">Email *</label>
+						<input id="user-email" type="email" name="email" required placeholder="ali@gpgc.edu.pk" class="form-input" />
+					</div>
+				</div>
+
+				<div class="form-row">
+					<div class="form-group">
+						<label for="user-password" class="form-label">Password *</label>
+						<input id="user-password" type="password" name="password" required minlength="6" placeholder="Min. 6 characters" class="form-input" />
+					</div>
+					<div class="form-group">
+						<label for="user-role" class="form-label">Role *</label>
+						<select
+							id="user-role"
+							name="role"
+							class="form-input form-select"
+							bind:value={selectedRole}
+						>
+							<option value="coordinator">Coordinator</option>
+							<option value="faculty">Faculty</option>
+							<option value="student">Student</option>
+						</select>
+					</div>
+				</div>
+
+				{#if selectedRole === 'faculty' || selectedRole === 'coordinator' || selectedRole === 'student'}
+					<div class="form-group">
+						<label for="user-dept" class="form-label">Department *</label>
+						<select id="user-dept" name="department_id" class="form-input form-select" required>
+							<option value="">— Select Department —</option>
+							{#each data.departments as dept}
+								<option value={dept.id}>{dept.name}</option>
+							{/each}
+						</select>
+					</div>
+				{/if}
+
+				{#if selectedRole === 'faculty'}
+					<div class="form-group">
+						<label for="user-designation" class="form-label">Designation</label>
+						<input id="user-designation" type="text" name="designation" placeholder="Lecturer" class="form-input" />
+					</div>
+				{/if}
+
+				{#if selectedRole === 'student'}
+					<div class="form-row">
+						<div class="form-group">
+							<label for="user-roll" class="form-label">Roll Number *</label>
+							<input id="user-roll" type="text" name="roll_number" required placeholder="CS-2022-001" class="form-input" />
+						</div>
+						<div class="form-group">
+							<label for="user-semester" class="form-label">Semester</label>
+							<select id="user-semester" name="semester" class="form-input form-select">
+								{#each [1,2,3,4,5,6,7,8] as s}
+									<option value={s}>Semester {s}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="user-session" class="form-label">Session *</label>
+						<input id="user-session" type="text" name="session" required placeholder="2022-2026" class="form-input" />
+					</div>
+				{/if}
+
+				<div class="modal-footer">
+					<button type="button" onclick={() => (showModal = false)} class="btn-secondary">Cancel</button>
+					<button type="submit" class="btn-primary" disabled={submitting}>
+						{#if submitting}<span class="btn-spinner"></span>{/if}
+						Create User
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+/home/moueen-togarvi/code/Govt-degree-College/app/src/routes/super-admin/users/+page.svelte:175:3
+Warn: Visible, non-interactive elements with a click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as `<button type="button">` or `<a>` might be more appropriate
+https://svelte.dev/e/a11y_click_events_have_key_events (svelte)
+	<div class="modal-overlay" onclick={() => (showModal = false)} role="presentation">
+		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+			<div class="modal-header">
+				<h2 class="modal-title">+ Add New User</h2>
+				<button onclick={() => (showModal = false)} class="modal-close">✕</button>
+			</div>
+
+			<form
+				method="POST"
+				action="?/create"
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+					};
+				}}
+				class="modal-form"
+			>
+				<div class="form-row">
+					<div class="form-group">
+						<label for="user-name" class="form-label">Full Name *</label>
+						<input id="user-name" type="text" name="name" required placeholder="Muhammad Ali" class="form-input" />
+					</div>
+					<div class="form-group">
+						<label for="user-email" class="form-label">Email *</label>
+						<input id="user-email" type="email" name="email" required placeholder="ali@gpgc.edu.pk" class="form-input" />
+					</div>
+				</div>
+
+				<div class="form-row">
+					<div class="form-group">
+						<label for="user-password" class="form-label">Password *</label>
+						<input id="user-password" type="password" name="password" required minlength="6" placeholder="Min. 6 characters" class="form-input" />
+					</div>
+					<div class="form-group">
+						<label for="user-role" class="form-label">Role *</label>
+						<select
+							id="user-role"
+							name="role"
+							class="form-input form-select"
+							bind:value={selectedRole}
+						>
+							<option value="coordinator">Coordinator</option>
+							<option value="faculty">Faculty</option>
+							<option value="student">Student</option>
+						</select>
+					</div>
+				</div>
+
+				{#if selectedRole === 'faculty' || selectedRole === 'coordinator' || selectedRole === 'student'}
+					<div class="form-group">
+						<label for="user-dept" class="form-label">Department *</label>
+						<select id="user-dept" name="department_id" class="form-input form-select" required>
+							<option value="">— Select Department —</option>
+							{#each data.departments as dept}
+								<option value={dept.id}>{dept.name}</option>
+							{/each}
+						</select>
+					</div>
+				{/if}
+
+				{#if selectedRole === 'faculty'}
+					<div class="form-group">
+						<label for="user-designation" class="form-label">Designation</label>
+						<input id="user-designation" type="text" name="designation" placeholder="Lecturer" class="form-input" />
+					</div>
+				{/if}
+
+				{#if selectedRole === 'student'}
+					<div class="form-row">
+						<div class="form-group">
+							<label for="user-roll" class="form-label">Roll Number *</label>
+							<input id="user-roll" type="text" name="roll_number" required placeholder="CS-2022-001" class="form-input" />
+						</div>
+						<div class="form-group">
+							<label for="user-semester" class="form-label">Semester</label>
+							<select id="user-semester" name="semester" class="form-input form-select">
+								{#each [1,2,3,4,5,6,7,8] as s}
+									<option value={s}>Semester {s}</option>
+								{/each}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="user-session" class="form-label">Session *</label>
+						<input id="user-session" type="text" name="session" required placeholder="2022-2026" class="form-input" />
+					</div>
+				{/if}
+
+				<div class="modal-footer">
+					<button type="button" onclick={() => (showModal = false)} class="btn-secondary">Cancel</button>
+					<button type="submit" class="btn-primary" disabled={submitting}>
+						{#if submitting}<span class="btn-spinner"></span>{/if}
+						Create User
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+====================================
+svelte-check found 15 errors and 10 warnings in 7 files
