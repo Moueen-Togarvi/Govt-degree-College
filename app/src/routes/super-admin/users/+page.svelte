@@ -128,14 +128,16 @@
 							</td>
 							<td>
 								<div class="action-btns">
-									<form method="POST" action="?/toggle_active" use:enhance>
-										<input type="hidden" name="id" value={user.id} />
-										<input type="hidden" name="is_active" value={user.is_active} />
-										<button type="submit" class="btn-sm {user.is_active ? 'btn-warn' : 'btn-success'}">
-											{user.is_active ? 'Deactivate' : 'Activate'}
-										</button>
-									</form>
-									{#if user.role !== 'super_admin'}
+									{#if user.role === 'super_admin'}
+										<span class="badge badge-gray" title="Super admin accounts are always active">🔒 Protected</span>
+									{:else}
+										<form method="POST" action="?/toggle_active" use:enhance>
+											<input type="hidden" name="id" value={user.id} />
+											<input type="hidden" name="is_active" value={user.is_active} />
+											<button type="submit" class="btn-sm {user.is_active ? 'btn-warn' : 'btn-success'}">
+												{user.is_active ? 'Deactivate' : 'Activate'}
+											</button>
+										</form>
 										<form
 											method="POST"
 											action="?/delete"

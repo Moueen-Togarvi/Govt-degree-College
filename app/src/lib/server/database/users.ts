@@ -65,6 +65,17 @@ export async function updateUser(
 ): Promise<User | null> {
 	const sql = getSql();
 
+	// Super admin accounts are protected: they can never be deactivated or demoted.
+	const existing = await getUserById(id);
+	if (existing?.role === 'super_admin') {
+		if (data.is_active === false) {
+			throw new Error('Super admin accounts cannot be deactivated.');
+		}
+		if (data.role && data.role !== 'super_admin') {
+			throw new Error('Super admin role cannot be changed.');
+		}
+	}
+
 	if (data.password) {
 		const hash = hashPassword(data.password);
 		await sql`UPDATE users SET password_hash = ${hash} WHERE id = ${id}`;
@@ -85,6 +96,13 @@ export async function updateUser(
 
 export async function deleteUser(id: number): Promise<void> {
 	const sql = getSql();
+
+	// Super admin accounts can never be deleted.
+	const existing = await getUserById(id);
+	if (existing?.role === 'super_admin') {
+		throw new Error('Super admin accounts cannot be deleted.');
+	}
+
 	await sql`DELETE FROM users WHERE id = ${id}`;
 }
 

@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { getAllUsers, createUser, updateUser, deleteUser } from '$lib/server/database/users';
+import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from '$lib/server/database/users';
 import { getAllDepartments } from '$lib/server/database/departments';
 import { createFacultyProfile } from '$lib/server/database/faculty';
 import { createStudentProfile } from '$lib/server/database/students';
@@ -75,8 +75,18 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const id = Number(data.get('id'));
 		const is_active = data.get('is_active') === 'true';
-		await updateUser(id, { is_active: !is_active });
-		return { success: true, action: 'toggle' };
+
+		const target = await getUserById(id);
+		if (target?.role === 'super_admin') {
+			return fail(400, { error: 'Super admin accounts cannot be deactivated.' });
+		}
+
+		try {
+			await updateUser(id, { is_active: !is_active });
+			return { success: true, action: 'toggle' };
+		} catch (e: any) {
+			return fail(500, { error: e?.message ?? 'Failed to update user.' });
+		}
 	},
 
 	delete: async ({ request, locals }) => {
@@ -85,11 +95,17 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const id = Number(data.get('id'));
 		if (id === locals.user.id) return fail(400, { error: 'Cannot delete your own account.' });
+
+		const target = await getUserById(id);
+		if (target?.role === 'super_admin') {
+			return fail(400, { error: 'Super admin accounts cannot be deleted.' });
+		}
+
 		try {
 			await deleteUser(id);
 			return { success: true, action: 'delete' };
-		} catch {
-			return fail(500, { error: 'Failed to delete user.' });
+		} catch (e: any) {
+			return fail(500, { error: e?.message ?? 'Failed to delete user.' });
 		}
 	}
 };
