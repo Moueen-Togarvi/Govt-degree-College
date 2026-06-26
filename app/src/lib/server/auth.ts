@@ -16,40 +16,72 @@ export const SESSION_DURATION_HOURS = 24 * 7; // 7 days
 export function hashPassword(password: string): string {
 	const salt = randomBytes(16).toString('hex');
 	const secret = env.JWT_SECRET ?? 'fallback-secret';
-	const hash = createHash('sha256')
-		.update(`${salt}:${password}:${secret}`)
-		.digest('hex');
+	const hash = createHash('sha256').update(`${salt}:${password}:${secret}`).digest('hex');
 	return `${salt}:${hash}`;
 }
 
 export function verifyPassword(password: string, storedHash: string): boolean {
 	const [salt, expectedHash] = storedHash.split(':');
 	if (!salt || !expectedHash) {
-		console.log('❌ verifyPassword failed: storedHash format incorrect');
 		return false;
 	}
 	const secret = env.JWT_SECRET ?? 'fallback-secret';
-	const actualHash = createHash('sha256')
-		.update(`${salt}:${password}:${secret}`)
-		.digest('hex');
-	
-	console.log('--- DEBUG verifyPassword ---');
-	console.log('Secret used for verification:', secret);
-	console.log('Salt used:', salt);
-	console.log('Expected Hash:', expectedHash);
-	console.log('Actual Hash:', actualHash);
-	
+	const actualHash = createHash('sha256').update(`${salt}:${password}:${secret}`).digest('hex');
+
+	const expectedBuf = Buffer.from(expectedHash, 'hex');
+	const actualBuf = Buffer.from(actualHash, 'hex');
+	if (expectedBuf.length !== actualBuf.length) {
+		return false;
+	}
+
 	try {
-		const match = timingSafeEqual(Buffer.from(actualHash, 'hex'), Buffer.from(expectedHash, 'hex'));
-		console.log('Password match:', match);
-		return match;
-	} catch (err: any) {
-		console.log('verifyPassword error:', err.message);
+		return timingSafeEqual(actualBuf, expectedBuf);
+	} catch {
 		return false;
 	}
 }
 
 // ─── Session Management ────────────────────────────────────────────────────────
+
+/**
+ * Neon serverless uses per-query HTTP fetches which can intermittently fail with
+ * "fetch failed". Auth is critical, so retry transient connectivity errors a
+ * couple of times before giving up.
+ */
+const MAX_DB_RETRIES = 2;
+function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+function isTransientDbError(err: unknown): boolean {
+	const msg = err instanceof Error ? err.message.toLowerCase() : String(err).toLowerCase();
+	return (
+		msg.includes('fetch failed') ||
+		msg.includes('error connecting to database') ||
+		msg.includes('network') ||
+		msg.includes('terminated unexpectedly') ||
+		msg.includes('timeout') ||
+		msg.includes('econnreset') ||
+		msg.includes('econnrefused') ||
+		msg.includes('enotfound') ||
+		msg.includes('eai_again')
+	);
+}
+async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
+	let lastErr: unknown;
+	for (let attempt = 0; attempt <= MAX_DB_RETRIES; attempt++) {
+		try {
+			return await fn();
+		} catch (err) {
+			lastErr = err;
+			if (attempt < MAX_DB_RETRIES && isTransientDbError(err)) {
+				await sleep(250 * (attempt + 1));
+				continue;
+			}
+			throw err;
+		}
+	}
+	throw lastErr;
+}
 
 export type UserRole = 'super_admin' | 'coordinator' | 'faculty' | 'student';
 
@@ -67,10 +99,13 @@ export async function createSession(userId: number, cookies: Cookies): Promise<s
 	const expiresAt = new Date(Date.now() + SESSION_DURATION_HOURS * 60 * 60 * 1000);
 	const sessionId = randomBytes(32).toString('hex');
 
-	await sql`
-		INSERT INTO sessions (id, user_id, expires_at)
-		VALUES (${sessionId}, ${userId}, ${expiresAt.toISOString()})
-	`;
+	await withRetry(
+		() =>
+			sql`
+			INSERT INTO sessions (id, user_id, expires_at)
+			VALUES (${sessionId}, ${userId}, ${expiresAt.toISOString()})
+		`
+	);
 
 	cookies.set(SESSION_COOKIE, sessionId, {
 		path: '/',
@@ -89,15 +124,18 @@ export async function getSessionUser(cookies: Cookies): Promise<AuthUser | null>
 
 	try {
 		const sql = getSql();
-		const rows = (await sql`
-			SELECT u.id, u.name, u.email, u.role, u.is_active, s.id AS session_id
-			FROM sessions s
-			JOIN users u ON u.id = s.user_id
-			WHERE s.id = ${sessionId}
-			  AND s.expires_at > NOW()
-			  AND u.is_active = TRUE
-			LIMIT 1
-		`) as Record<string, unknown>[];
+		const rows = (await withRetry(
+			() =>
+				sql`
+				SELECT u.id, u.name, u.email, u.role, u.is_active, s.id AS session_id
+				FROM sessions s
+				JOIN users u ON u.id = s.user_id
+				WHERE s.id = ${sessionId}
+				  AND s.expires_at > NOW()
+				  AND u.is_active = TRUE
+				LIMIT 1
+			`
+		)) as Record<string, unknown>[];
 
 		if (!rows.length) return null;
 
@@ -120,7 +158,7 @@ export async function destroySession(cookies: Cookies): Promise<void> {
 	if (sessionId) {
 		try {
 			const sql = getSql();
-			await sql`DELETE FROM sessions WHERE id = ${sessionId}`;
+			await withRetry(() => sql`DELETE FROM sessions WHERE id = ${sessionId}`);
 		} catch {
 			// ignore
 		}
@@ -131,53 +169,56 @@ export async function destroySession(cookies: Cookies): Promise<void> {
 export async function login(
 	email: string,
 	password: string
-): Promise<{ user: { id: number; role: UserRole; name: string; email: string } } | { error: string }> {
+): Promise<
+	{ user: { id: number; role: UserRole; name: string; email: string } } | { error: string }
+> {
 	const sql = getSql();
-	const rows = (await sql`
-		SELECT id, name, email, password_hash, role, is_active
-		FROM users
-		WHERE email = ${email.toLowerCase().trim()}
-		LIMIT 1
-	`) as Record<string, unknown>[];
-
-	console.log('--- DEBUG login ---');
-	console.log('Attempting login for:', email);
-	console.log('Rows found:', rows.length);
-	if (rows.length > 0) {
-		console.log('User role:', rows[0].role);
-		console.log('User status is_active:', rows[0].is_active);
-		console.log('User stored hash:', rows[0].password_hash);
-	}
+	const rows = (await withRetry(
+		() =>
+			sql`
+			SELECT id, name, email, password_hash, role, is_active
+			FROM users
+			WHERE email = ${email.toLowerCase().trim()}
+			LIMIT 1
+		`
+	)) as Record<string, unknown>[];
 
 	if (!rows.length) {
-		console.log('❌ No user found with this email');
 		return { error: 'Invalid email or password.' };
 	}
 
 	const user = rows[0];
 
 	if (!user.is_active) {
-		console.log('❌ User is deactivated');
 		return { error: 'Your account has been deactivated. Contact the administrator.' };
 	}
 
 	const valid = verifyPassword(password, user.password_hash as string);
 	if (!valid) {
-		console.log('❌ Password verification returned false');
 		return { error: 'Invalid email or password.' };
 	}
 
-	console.log('✅ Login successful!');
-	return { user: { id: user.id as number, role: user.role as UserRole, name: user.name as string, email: user.email as string } };
+	return {
+		user: {
+			id: user.id as number,
+			role: user.role as UserRole,
+			name: user.name as string,
+			email: user.email as string
+		}
+	};
 }
 
 // ─── Role-Based Redirect Paths ─────────────────────────────────────────────────
 
 export function getDefaultRedirect(role: UserRole): string {
 	switch (role) {
-		case 'super_admin': return '/super-admin/dashboard';
-		case 'coordinator': return '/coordinator/dashboard';
-		case 'faculty': return '/faculty/dashboard';
-		case 'student': return '/student/dashboard';
+		case 'super_admin':
+			return '/super-admin/dashboard';
+		case 'coordinator':
+			return '/coordinator/dashboard';
+		case 'faculty':
+			return '/faculty/dashboard';
+		case 'student':
+			return '/student/dashboard';
 	}
 }

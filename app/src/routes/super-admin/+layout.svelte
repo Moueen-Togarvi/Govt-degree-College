@@ -1,39 +1,73 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import './admin.css';
 	import type { LayoutData } from './$types';
 
 	let { data, children }: { data: LayoutData; children: import('svelte').Snippet } = $props();
 
 	let sidebarOpen = $state(true);
 
-	const navItems = [
-		{ href: '/super-admin/dashboard', icon: '🏠', label: 'Dashboard' },
-		{ href: '/super-admin/departments', icon: '🏛️', label: 'Departments' },
-		{ href: '/super-admin/users', icon: '👥', label: 'Users' },
-		{ href: '/super-admin/announcements', icon: '📢', label: 'Announcements' },
-		{ href: '/super-admin/notices', icon: '📋', label: 'Notice Board' },
-		{ href: '/super-admin/events', icon: '📅', label: 'Events' },
-		{ href: '/super-admin/news', icon: '📰', label: 'News Ticker' },
-		{ href: '/super-admin/reports', icon: '📊', label: 'Reports' },
-		{ href: '/super-admin/settings', icon: '⚙️', label: 'Settings' }
+	const navGroups = [
+		{
+			label: 'Overview',
+			items: [{ href: '/super-admin/dashboard', icon: '🏠', label: 'Dashboard' }]
+		},
+		{
+			label: 'Structure',
+			items: [
+				{ href: '/super-admin/departments', icon: '🏛️', label: 'Departments' },
+				{ href: '/super-admin/users', icon: '👥', label: 'Users' }
+			]
+		},
+		{
+			label: 'Content',
+			items: [
+				{ href: '/super-admin/announcements', icon: '📢', label: 'Announcements' },
+				{ href: '/super-admin/events', icon: '📅', label: 'Events' },
+				{ href: '/super-admin/notices', icon: '📋', label: 'Notice Board' },
+				{ href: '/super-admin/news', icon: '📰', label: 'News Ticker' },
+				{ href: '/super-admin/results', icon: '🏆', label: 'Results' }
+			]
+		},
+		{
+			label: 'System',
+			items: [{ href: '/super-admin/settings', icon: '⚙️', label: 'Settings' }]
+		}
 	];
+
+	const flatItems = navGroups.flatMap((g) => g.items);
 
 	function isActive(href: string) {
 		return $page.url.pathname.startsWith(href);
+	}
+	function activeLabel() {
+		return flatItems.find((n) => isActive(n.href))?.label ?? 'Dashboard';
 	}
 </script>
 
 <svelte:head>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+		rel="stylesheet"
+	/>
 </svelte:head>
 
-<div class="portal-root">
+<div class="portal-root adm">
+	<!-- Mobile backdrop -->
+	{#if sidebarOpen}
+		<div class="backdrop" onclick={() => (sidebarOpen = false)} role="presentation"></div>
+	{/if}
+
 	<!-- Sidebar -->
 	<aside class="sidebar {sidebarOpen ? 'open' : 'collapsed'}">
 		<div class="sidebar-header">
 			<div class="sidebar-logo">
-				<img src="/images/logos/degree4k-removebg-preview.png" alt="Logo" class="sidebar-logo-img" />
+				<img
+					src="/images/logos/degree4k-removebg-preview.png"
+					alt="Logo"
+					class="sidebar-logo-img"
+				/>
 				{#if sidebarOpen}
 					<div class="sidebar-title-group">
 						<span class="sidebar-title">GPGC Portal</span>
@@ -41,21 +75,31 @@
 					</div>
 				{/if}
 			</div>
-			<button class="sidebar-toggle" onclick={() => (sidebarOpen = !sidebarOpen)} aria-label="Toggle sidebar">
+			<button
+				class="sidebar-toggle"
+				onclick={() => (sidebarOpen = !sidebarOpen)}
+				aria-label="Toggle sidebar"
+				title="Toggle sidebar"
+			>
 				{sidebarOpen ? '◀' : '▶'}
 			</button>
 		</div>
 
 		<nav class="sidebar-nav">
-			{#each navItems as item}
-				<a
-					href={item.href}
-					class="nav-item {isActive(item.href) ? 'active' : ''}"
-					title={!sidebarOpen ? item.label : ''}
-				>
-					<span class="nav-icon">{item.icon}</span>
-					{#if sidebarOpen}<span class="nav-label">{item.label}</span>{/if}
-				</a>
+			{#each navGroups as group}
+				{#if sidebarOpen}
+					<div class="nav-group-label">{group.label}</div>
+				{/if}
+				{#each group.items as item}
+					<a
+						href={item.href}
+						class="nav-item {isActive(item.href) ? 'active' : ''}"
+						title={!sidebarOpen ? item.label : ''}
+					>
+						<span class="nav-icon">{item.icon}</span>
+						{#if sidebarOpen}<span class="nav-label">{item.label}</span>{/if}
+					</a>
+				{/each}
 			{/each}
 		</nav>
 
@@ -80,19 +124,23 @@
 
 	<!-- Main Content -->
 	<div class="main-content">
-		<!-- Top Bar -->
 		<header class="topbar">
 			<div class="topbar-left">
-				<button class="mobile-menu-btn" onclick={() => (sidebarOpen = !sidebarOpen)}>☰</button>
+				<button
+					class="mobile-menu-btn"
+					onclick={() => (sidebarOpen = !sidebarOpen)}
+					aria-label="Menu">☰</button
+				>
 				<nav class="breadcrumb">
 					<span class="breadcrumb-home">Super Admin</span>
 					<span class="breadcrumb-sep">›</span>
-					<span class="breadcrumb-current">
-						{navItems.find(n => isActive(n.href))?.label ?? 'Dashboard'}
-					</span>
+					<span class="breadcrumb-current">{activeLabel()}</span>
 				</nav>
 			</div>
 			<div class="topbar-right">
+				<a href="/" class="topbar-link" target="_blank" rel="noopener" title="Open public site"
+					>↗ View site</a
+				>
 				<div class="topbar-user">
 					<div class="topbar-avatar">{data.user.name.charAt(0).toUpperCase()}</div>
 					<span class="topbar-name">{data.user.name}</span>
@@ -100,7 +148,6 @@
 			</div>
 		</header>
 
-		<!-- Page Content -->
 		<main class="page-content">
 			{@render children()}
 		</main>
@@ -119,6 +166,10 @@
 		min-height: 100vh;
 	}
 
+	.backdrop {
+		display: none;
+	}
+
 	/* ─── Sidebar ─── */
 	.sidebar {
 		width: 260px;
@@ -135,11 +186,11 @@
 	}
 
 	.sidebar.collapsed {
-		width: 72px;
+		width: 76px;
 	}
 
 	.sidebar-header {
-		padding: 1.25rem 1rem;
+		padding: 1.1rem 1rem;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -156,8 +207,8 @@
 	}
 
 	.sidebar-logo-img {
-		width: 36px;
-		height: 36px;
+		width: 38px;
+		height: 38px;
 		object-fit: contain;
 		filter: brightness(0) invert(1);
 		flex-shrink: 0;
@@ -177,15 +228,16 @@
 	}
 
 	.sidebar-role {
-		font-size: 0.68rem;
-		color: #7c3aed;
-		background: rgba(124, 58, 237, 0.2);
-		padding: 0.1rem 0.4rem;
+		font-size: 0.62rem;
+		color: #c4b5fd;
+		background: rgba(124, 58, 237, 0.22);
+		padding: 0.12rem 0.45rem;
 		border-radius: 4px;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		width: fit-content;
+		margin-top: 2px;
 	}
 
 	.sidebar-toggle {
@@ -194,7 +246,7 @@
 		border-radius: 8px;
 		color: #94a3b8;
 		cursor: pointer;
-		font-size: 0.7rem;
+		font-size: 0.68rem;
 		padding: 0.35rem 0.5rem;
 		flex-shrink: 0;
 		transition: background 0.2s;
@@ -204,29 +256,39 @@
 		background: rgba(255, 255, 255, 0.12);
 	}
 
-	/* ─── Nav Items ─── */
+	/* ─── Nav ─── */
 	.sidebar-nav {
 		flex: 1;
 		padding: 0.75rem 0.75rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
+		gap: 0.15rem;
 		overflow-y: auto;
+	}
+
+	.nav-group-label {
+		font-size: 0.62rem;
+		font-weight: 700;
+		color: #64748b;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		padding: 0.85rem 0.9rem 0.35rem;
 	}
 
 	.nav-item {
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		padding: 0.65rem 0.9rem;
+		padding: 0.6rem 0.9rem;
 		border-radius: 10px;
 		text-decoration: none;
 		color: #94a3b8;
 		font-size: 0.875rem;
 		font-weight: 500;
-		transition: all 0.2s;
+		transition: all 0.18s;
 		white-space: nowrap;
 		overflow: hidden;
+		border: 1px solid transparent;
 	}
 
 	.nav-item:hover {
@@ -235,9 +297,9 @@
 	}
 
 	.nav-item.active {
-		background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(139, 92, 246, 0.2));
+		background: linear-gradient(135deg, rgba(124, 58, 237, 0.32), rgba(139, 92, 246, 0.18));
 		color: white;
-		border: 1px solid rgba(124, 58, 237, 0.3);
+		border-color: rgba(124, 58, 237, 0.35);
 	}
 
 	.nav-icon {
@@ -303,7 +365,7 @@
 	}
 
 	.user-email {
-		font-size: 0.7rem;
+		font-size: 0.68rem;
 		color: #64748b;
 		white-space: nowrap;
 		overflow: hidden;
@@ -344,7 +406,7 @@
 
 	/* ─── Topbar ─── */
 	.topbar {
-		height: 60px;
+		height: 62px;
 		background: white;
 		border-bottom: 1px solid #e2e8f0;
 		display: flex;
@@ -394,6 +456,22 @@
 	.topbar-right {
 		display: flex;
 		align-items: center;
+		gap: 1rem;
+	}
+
+	.topbar-link {
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: #6d28d9;
+		text-decoration: none;
+		padding: 0.4rem 0.75rem;
+		border-radius: 8px;
+		background: #ede9fe;
+		transition: background 0.15s;
+	}
+
+	.topbar-link:hover {
+		background: #ddd6fe;
 	}
 
 	.topbar-user {
@@ -427,12 +505,14 @@
 		padding: 1.75rem;
 		max-width: 1400px;
 		width: 100%;
+		box-sizing: border-box;
 	}
 
 	/* ─── Responsive ─── */
-	@media (max-width: 768px) {
+	@media (max-width: 900px) {
 		.sidebar {
 			transform: translateX(-100%);
+			box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
 		}
 
 		.sidebar.open {
@@ -446,6 +526,24 @@
 
 		.mobile-menu-btn {
 			display: block;
+		}
+
+		.backdrop {
+			display: block;
+			position: fixed;
+			inset: 0;
+			background: rgba(15, 23, 42, 0.45);
+			z-index: 90;
+		}
+
+		.topbar-name {
+			display: none;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.page-content {
+			padding: 1rem;
 		}
 	}
 </style>

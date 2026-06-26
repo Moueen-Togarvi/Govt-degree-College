@@ -6,18 +6,25 @@ import { createStudentProfile } from '$lib/server/database/students';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const [users, departments] = await Promise.all([getAllUsers(), getAllDepartments()]);
+	let users: Awaited<ReturnType<typeof getAllUsers>> = [];
+	let departments: Awaited<ReturnType<typeof getAllDepartments>> = [];
+	try {
+		[users, departments] = await Promise.all([getAllUsers(), getAllDepartments()]);
+	} catch (e: any) {
+		return { users, departments, dbError: true };
+	}
 	return { users, departments };
 };
 
 export const actions: Actions = {
 	create: async ({ request, locals }) => {
-		if (!locals.user || locals.user.role !== 'super_admin') return fail(403, { error: 'Unauthorized' });
+		if (!locals.user || locals.user.role !== 'super_admin')
+			return fail(403, { error: 'Unauthorized' });
 
 		const data = await request.formData();
 		const name = (data.get('name') as string)?.trim();
 		const email = (data.get('email') as string)?.trim();
-		const password = (data.get('password') as string);
+		const password = data.get('password') as string;
 		const role = data.get('role') as string;
 		const department_id = data.get('department_id') ? Number(data.get('department_id')) : undefined;
 		const roll_number = (data.get('roll_number') as string)?.trim();
@@ -63,7 +70,8 @@ export const actions: Actions = {
 	},
 
 	toggle_active: async ({ request, locals }) => {
-		if (!locals.user || locals.user.role !== 'super_admin') return fail(403, { error: 'Unauthorized' });
+		if (!locals.user || locals.user.role !== 'super_admin')
+			return fail(403, { error: 'Unauthorized' });
 		const data = await request.formData();
 		const id = Number(data.get('id'));
 		const is_active = data.get('is_active') === 'true';
@@ -72,7 +80,8 @@ export const actions: Actions = {
 	},
 
 	delete: async ({ request, locals }) => {
-		if (!locals.user || locals.user.role !== 'super_admin') return fail(403, { error: 'Unauthorized' });
+		if (!locals.user || locals.user.role !== 'super_admin')
+			return fail(403, { error: 'Unauthorized' });
 		const data = await request.formData();
 		const id = Number(data.get('id'));
 		if (id === locals.user.id) return fail(400, { error: 'Cannot delete your own account.' });

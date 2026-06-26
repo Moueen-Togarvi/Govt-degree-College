@@ -151,8 +151,19 @@ const facultyMemberSeeds = fallbackFacultyDepartments.flatMap((department) =>
 	}))
 );
 
+// Reconcile columns the content system reads/writes that may be missing when the
+// table was created by schema.sql (which predates the content store's columns).
+// `CREATE TABLE IF NOT EXISTS` will not add these to an existing table, so we
+// ALTER them into place idempotently.
+const reconciliationStatements = [
+	`ALTER TABLE announcements ADD COLUMN IF NOT EXISTS date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP`
+];
+
 async function createTables(db: DatabaseClient) {
 	for (const statement of schemaStatements) {
+		await db.query(statement);
+	}
+	for (const statement of reconciliationStatements) {
 		await db.query(statement);
 	}
 }
@@ -220,10 +231,11 @@ async function seedLatestNews(db: DatabaseClient) {
 	if (count > 0) return 0;
 
 	for (const [title, href, sortOrder] of latestNewsSeeds) {
-		await db.query(
-			'INSERT INTO latest_news_items (title, href, sort_order) VALUES ($1, $2, $3)',
-			[title, href, sortOrder]
-		);
+		await db.query('INSERT INTO latest_news_items (title, href, sort_order) VALUES ($1, $2, $3)', [
+			title,
+			href,
+			sortOrder
+		]);
 	}
 
 	return latestNewsSeeds.length;
@@ -274,10 +286,11 @@ async function seedDepartments(db: DatabaseClient) {
 	if (count > 0) return 0;
 
 	for (const [name, slug, urduName] of departmentSeeds) {
-		await db.query(
-			'INSERT INTO departments (name, slug, urdu_name) VALUES ($1, $2, $3)',
-			[name, slug, urduName]
-		);
+		await db.query('INSERT INTO departments (name, slug, urdu_name) VALUES ($1, $2, $3)', [
+			name,
+			slug,
+			urduName
+		]);
 	}
 
 	return departmentSeeds.length;
@@ -294,7 +307,9 @@ async function seedFacultyMembers(db: DatabaseClient) {
 	const departments = (await db.query(
 		'SELECT id, slug FROM departments ORDER BY id ASC'
 	)) as Array<{ id: number | string; slug: string }>;
-	const departmentMap = new Map(departments.map((department) => [department.slug, Number(department.id)]));
+	const departmentMap = new Map(
+		departments.map((department) => [department.slug, Number(department.id)])
+	);
 
 	let inserted = 0;
 
