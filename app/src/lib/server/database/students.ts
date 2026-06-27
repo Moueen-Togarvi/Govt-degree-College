@@ -106,6 +106,8 @@ export async function createStudentProfile(data: {
 export async function updateStudentProfile(
 	id: number,
 	data: Partial<{
+		department_id: number;
+		roll_number: string;
 		semester: number;
 		father_name: string;
 		phone: string;
@@ -117,6 +119,8 @@ export async function updateStudentProfile(
 	const rows = (await sql`
 		UPDATE student_profiles
 		SET
+			department_id = COALESCE(${data.department_id ?? null}, department_id),
+			roll_number = COALESCE(${data.roll_number ?? null}, roll_number),
 			semester = COALESCE(${data.semester ?? null}, semester),
 			father_name = COALESCE(${data.father_name ?? null}, father_name),
 			phone = COALESCE(${data.phone ?? null}, phone),

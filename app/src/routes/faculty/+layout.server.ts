@@ -4,7 +4,7 @@ import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	if (!locals.user || (locals.user.role !== 'faculty' && locals.user.role !== 'super_admin')) {
-		redirect(303, '/login');
+		redirect(303, '/portal');
 	}
 	const profile = await getFacultyByUserId(locals.user.id);
 	return { user: locals.user, profile };

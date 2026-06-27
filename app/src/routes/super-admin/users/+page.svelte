@@ -6,6 +6,7 @@
 
 	import Users from 'lucide-svelte/icons/users';
 	import UserPlus from 'lucide-svelte/icons/user-plus';
+	import Pencil from 'lucide-svelte/icons/pencil';
 	import Search from 'lucide-svelte/icons/search';
 	import Lock from 'lucide-svelte/icons/lock';
 	import Ban from 'lucide-svelte/icons/ban';
@@ -18,6 +19,7 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let showModal = $state(false);
+	let editingUser = $state<any>(null);
 	let selectedRole = $state('coordinator');
 	let submitting = $state(false);
 	let searchQuery = $state('');
@@ -53,9 +55,30 @@
 		return role === 'all' ? data.users.length : data.users.filter((u) => u.role === role).length;
 	}
 
+	// Department currently linked to a user (coordinator link lives on the dept row).
+	function deptForUser(user: any): number | string {
+		if (user.role === 'coordinator') {
+			const dept = data.departments.find((d: any) => d.coordinator_id === user.id);
+			return dept?.id ?? '';
+		}
+		return '';
+	}
+
+	function openEdit(user: any) {
+		editingUser = user;
+		selectedRole = user.role;
+		showModal = true;
+	}
+
+	function closeModals() {
+		showModal = false;
+		editingUser = null;
+		selectedRole = 'coordinator';
+	}
+
 	$effect(() => {
 		if (form?.success) {
-			showModal = false;
+			closeModals();
 		}
 	});
 </script>
@@ -70,24 +93,28 @@
 			<h1 class="adm-title"><Users size={22} stroke-width={1.75} /> User Management</h1>
 			<p class="adm-sub">Create and manage all portal users across all roles.</p>
 		</div>
-		<button class="adm-btn adm-btn--primary" onclick={() => (showModal = true)}>
+		<button
+			class="adm-btn adm-btn--primary"
+			onclick={() => {
+				editingUser = null;
+				selectedRole = 'coordinator';
+				showModal = true;
+			}}
+		>
 			<UserPlus size={16} stroke-width={2} /> Add User
 		</button>
 	</div>
 
 	{#if form?.error}
 		<div class="adm-alert adm-alert--error" transition:fade>
-			<CircleAlert size={16} stroke-width={2} /> {form.error}
+			<CircleAlert size={16} stroke-width={2} />
+			{form.error}
 		</div>
 	{/if}
 	{#if form?.success}
 		<div class="adm-alert adm-alert--success" transition:fade>
 			<CircleCheck size={16} stroke-width={2} />
-			User {form.action === 'create'
-				? 'created'
-				: form.action === 'delete'
-					? 'deleted'
-					: 'updated'} successfully.
+			User {form.action === 'create' ? 'created' : form.action === 'delete' ? 'deleted' : 'updated'} successfully.
 		</div>
 	{/if}
 
@@ -147,7 +174,11 @@
 								</td>
 								<td>
 									<span class="status {user.is_active ? 'active' : 'inactive'}">
-										<span class="adm-status-dot {user.is_active ? 'adm-status-dot--green' : 'adm-status-dot--amber'}"></span>
+										<span
+											class="adm-status-dot {user.is_active
+												? 'adm-status-dot--green'
+												: 'adm-status-dot--amber'}"
+										></span>
 										{user.is_active ? 'Active' : 'Inactive'}
 									</span>
 								</td>
@@ -161,6 +192,14 @@
 												<Lock size={13} stroke-width={2} /> Protected
 											</span>
 										{:else}
+											<button
+												type="button"
+												class="adm-btn adm-btn--ghost adm-btn--sm"
+												title="Edit user"
+												onclick={() => openEdit(user)}
+											>
+												<Pencil size={14} stroke-width={1.75} /> Edit
+											</button>
 											<form method="POST" action="?/toggle_active" use:enhance>
 												<input type="hidden" name="id" value={user.id} />
 												<input type="hidden" name="is_active" value={user.is_active} />
@@ -213,13 +252,13 @@
 	</div>
 </div>
 
-<!-- Add User Modal -->
+<!-- User Modal (Add / Edit) -->
 {#if showModal}
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 	<div
 		class="adm-overlay"
 		transition:fade={{ duration: 150 }}
-		onclick={() => (showModal = false)}
+		onclick={() => closeModals()}
 		role="presentation"
 	>
 		<div
@@ -232,16 +271,20 @@
 		>
 			<div class="adm-modal__head">
 				<h2 class="adm-modal__title">
-					<UserPlus size={18} stroke-width={1.75} /> Add New User
+					{#if editingUser}
+						<Pencil size={18} stroke-width={1.75} /> Edit User
+					{:else}
+						<UserPlus size={18} stroke-width={1.75} /> Add New User
+					{/if}
 				</h2>
-				<button class="adm-modal__close" onclick={() => (showModal = false)} aria-label="Close">
+				<button class="adm-modal__close" onclick={() => closeModals()} aria-label="Close">
 					<X size={18} stroke-width={1.75} />
 				</button>
 			</div>
 
 			<form
 				method="POST"
-				action="?/create"
+				action={editingUser ? '?/update' : '?/create'}
 				use:enhance={() => {
 					submitting = true;
 					return async ({ update }) => {
@@ -251,6 +294,10 @@
 				}}
 				class="adm-modal__body adm-form"
 			>
+				{#if editingUser}
+					<input type="hidden" name="id" value={editingUser.id} />
+				{/if}
+
 				<div class="adm-grid-2">
 					<div class="adm-field">
 						<label class="adm-label" for="user-name">Full Name *</label>
@@ -261,6 +308,7 @@
 							required
 							placeholder="Muhammad Ali"
 							class="adm-input"
+							value={editingUser?.name ?? ''}
 						/>
 					</div>
 					<div class="adm-field">
@@ -272,21 +320,24 @@
 							required
 							placeholder="ali@gpgc.edu.pk"
 							class="adm-input"
+							value={editingUser?.email ?? ''}
 						/>
 					</div>
 				</div>
 
 				<div class="adm-grid-2">
 					<div class="adm-field">
-						<label class="adm-label" for="user-password">Password *</label>
+						<label class="adm-label" for="user-password">
+							{#if editingUser}Reset Password{:else}Password *{/if}
+						</label>
 						<input
 							id="user-password"
 							type="password"
 							name="password"
-							required
 							minlength="6"
-							placeholder="Min. 6 characters"
+							placeholder={editingUser ? 'Leave blank to keep current' : 'Min. 6 characters'}
 							class="adm-input"
+							required={!editingUser}
 						/>
 					</div>
 					<div class="adm-field">
@@ -296,6 +347,7 @@
 							name="role"
 							class="adm-select"
 							bind:value={selectedRole}
+							disabled={editingUser?.role === 'super_admin'}
 						>
 							<option value="coordinator">Coordinator</option>
 							<option value="faculty">Faculty</option>
@@ -310,7 +362,9 @@
 						<select id="user-dept" name="department_id" class="adm-select" required>
 							<option value="">— Select Department —</option>
 							{#each data.departments as dept (dept.id)}
-								<option value={dept.id}>{dept.name}</option>
+								<option value={dept.id} selected={editingUser && deptForUser(editingUser) === dept.id}>
+									{dept.name}
+								</option>
 							{/each}
 						</select>
 					</div>
@@ -365,12 +419,12 @@
 				{/if}
 
 				<div class="adm-modal__foot">
-					<button type="button" class="adm-btn adm-btn--ghost" onclick={() => (showModal = false)}
-						>Cancel</button>
+					<button type="button" class="adm-btn adm-btn--ghost" onclick={() => closeModals()}
+						>Cancel</button
 					>
 					<button type="submit" class="adm-btn adm-btn--primary" disabled={submitting}>
 						{#if submitting}<span class="adm-spin"></span>{/if}
-						Create User
+						{editingUser ? 'Save Changes' : 'Create User'}
 					</button>
 				</div>
 			</form>
@@ -412,7 +466,9 @@
 		color: var(--adm-ink);
 		background: #fff;
 		box-sizing: border-box;
-		transition: border-color 0.15s, box-shadow 0.15s;
+		transition:
+			border-color 0.15s,
+			box-shadow 0.15s;
 	}
 
 	.search-input:focus {

@@ -105,3 +105,20 @@ export async function deleteDepartment(id: number): Promise<void> {
 	const sql = getSql();
 	await sql`DELETE FROM departments WHERE id = ${id}`;
 }
+
+/**
+ * Link a coordinator user to a department (and clear any previous assignment
+ * for that user). Pass `null` to unassign. Used by the user-management flows
+ * so creating/editing a coordinator actually persists the department link.
+ */
+export async function assignCoordinatorToDepartment(
+	userId: number,
+	departmentId: number | null
+): Promise<void> {
+	const sql = getSql();
+	// Clear any existing assignment for this coordinator first.
+	await sql`UPDATE departments SET coordinator_id = NULL WHERE coordinator_id = ${userId}`;
+	if (departmentId !== null) {
+		await sql`UPDATE departments SET coordinator_id = ${userId} WHERE id = ${departmentId}`;
+	}
+}

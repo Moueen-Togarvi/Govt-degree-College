@@ -6,7 +6,7 @@
 		image?: string;
 	}
 	let { title, subtitle, breadcrumbs, image = '' }: Props = $props();
-	const sharedBackgroundImage = '/images/logos/hero%20section%20bg.png';
+	const sharedBackgroundImage = '/images/logos/hero-section-bg.png';
 </script>
 
 <!-- Page Hero Banner -->

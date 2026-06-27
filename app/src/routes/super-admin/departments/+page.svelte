@@ -61,7 +61,8 @@
 
 	{#if form?.error}
 		<div class="adm-alert adm-alert--error" transition:fade>
-			<CircleAlert size={16} stroke-width={2} /> {form.error}
+			<CircleAlert size={16} stroke-width={2} />
+			{form.error}
 		</div>
 	{/if}
 	{#if form?.success}
@@ -101,9 +102,7 @@
 											<div class="is-strong">{dept.name}</div>
 											{#if dept.description}
 												<div class="adm-clamp is-muted" style="max-width: 360px">
-													{dept.description.slice(0, 60)}{dept.description.length > 60
-														? '…'
-														: ''}
+													{dept.description.slice(0, 60)}{dept.description.length > 60 ? '…' : ''}
 												</div>
 											{/if}
 										</div>
@@ -248,8 +247,8 @@
 						name="description"
 						rows="3"
 						placeholder="Brief description of the department..."
-						class="adm-textarea"
-					>{editingDept?.description ?? ''}</textarea>
+						class="adm-textarea">{editingDept?.description ?? ''}</textarea
+					>
 				</div>
 
 				<div class="adm-field">
@@ -266,7 +265,6 @@
 
 				<div class="adm-modal__foot">
 					<button type="button" class="adm-btn adm-btn--ghost" onclick={closeModal}>Cancel</button>
-					>
 					<button type="submit" class="adm-btn adm-btn--primary" disabled={submitting}>
 						{#if submitting}<span class="adm-spin"></span>{/if}
 						{editingDept ? 'Save Changes' : 'Create Department'}

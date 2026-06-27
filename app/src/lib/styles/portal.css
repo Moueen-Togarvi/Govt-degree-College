@@ -436,7 +436,9 @@
 	border-radius: 8px;
 	display: grid;
 	place-items: center;
-	transition: background 0.15s, color 0.15s;
+	transition:
+		background 0.15s,
+		color 0.15s;
 }
 .adm-modal__close:hover {
 	background: var(--adm-line-soft);

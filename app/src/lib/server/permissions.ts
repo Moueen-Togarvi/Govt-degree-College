@@ -8,11 +8,11 @@ import type { AuthUser } from './auth';
 // ─── Route Guards ──────────────────────────────────────────────────────────────
 
 /**
- * Require the user to be authenticated. Redirects to /login if not.
+ * Require the user to be authenticated. Redirects to /portal if not.
  */
 export function requireAuth(user: AuthUser | null): asserts user is AuthUser {
 	if (!user) {
-		redirect(303, '/login');
+		redirect(303, '/portal');
 	}
 }
 

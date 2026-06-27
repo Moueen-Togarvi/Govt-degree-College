@@ -39,12 +39,14 @@
 
 	{#if form?.error}
 		<div class="adm-alert adm-alert--error" transition:fade>
-			<CircleAlert size={16} stroke-width={2} /> {form.error}
+			<CircleAlert size={16} stroke-width={2} />
+			{form.error}
 		</div>
 	{/if}
 	{#if form?.success}
 		<div class="adm-alert adm-alert--success" transition:fade>
-			<CircleCheck size={16} stroke-width={2} /> {form.message}
+			<CircleCheck size={16} stroke-width={2} />
+			{form.message}
 		</div>
 	{/if}
 
@@ -169,7 +171,10 @@
 							if (!confirm('Re-seed empty content tables now?')) e.preventDefault();
 						}}
 					>
-						{#if seeding}<span class="adm-spin"></span>{:else}<RefreshCw size={15} stroke-width={2} />{/if}
+						{#if seeding}<span class="adm-spin"></span>{:else}<RefreshCw
+								size={15}
+								stroke-width={2}
+							/>{/if}
 						Re-seed Content
 					</button>
 				</form>

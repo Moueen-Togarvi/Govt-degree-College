@@ -6,7 +6,7 @@ import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	if (!locals.user || locals.user.role !== 'super_admin') {
-		redirect(303, '/login');
+		redirect(303, '/portal');
 	}
 
 	let departments: Awaited<ReturnType<typeof getAllDepartments>> = [];

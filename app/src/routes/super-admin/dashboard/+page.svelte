@@ -35,38 +35,36 @@
 		href: string;
 	};
 
-	let statsCards = $derived<Stat[]>(
-		[
-			{
-				icon: Building2,
-				label: 'Departments',
-				value: data.departments?.length ?? 0,
-				tone: 'teal',
-				href: '/super-admin/departments'
-			},
-			{
-				icon: Users,
-				label: 'Total Users',
-				value: totalUsers,
-				tone: 'teal',
-				href: '/super-admin/users'
-			},
-			{
-				icon: BookOpen,
-				label: 'Faculty',
-				value: data.userCounts?.faculty ?? 0,
-				tone: 'teal',
-				href: '/super-admin/users'
-			},
-			{
-				icon: GraduationCap,
-				label: 'Students',
-				value: data.userCounts?.student ?? 0,
-				tone: 'orange',
-				href: '/super-admin/users'
-			}
-		]
-	);
+	let statsCards = $derived<Stat[]>([
+		{
+			icon: Building2,
+			label: 'Departments',
+			value: data.departments?.length ?? 0,
+			tone: 'teal',
+			href: '/super-admin/departments'
+		},
+		{
+			icon: Users,
+			label: 'Total Users',
+			value: totalUsers,
+			tone: 'teal',
+			href: '/super-admin/users'
+		},
+		{
+			icon: BookOpen,
+			label: 'Faculty',
+			value: data.userCounts?.faculty ?? 0,
+			tone: 'teal',
+			href: '/super-admin/users'
+		},
+		{
+			icon: GraduationCap,
+			label: 'Students',
+			value: data.userCounts?.student ?? 0,
+			tone: 'orange',
+			href: '/super-admin/users'
+		}
+	]);
 
 	type Action = {
 		icon: IconComponent;
@@ -372,7 +370,9 @@
 
 	.stat-card :global(.stat-arrow) {
 		color: #cbd5e1;
-		transition: transform 0.2s, color 0.2s;
+		transition:
+			transform 0.2s,
+			color 0.2s;
 	}
 
 	.stat-card:hover :global(.stat-arrow) {
@@ -422,7 +422,9 @@
 		border-radius: 10px;
 		background: var(--adm-bg);
 		border: 1px solid var(--adm-line);
-		transition: border-color 0.15s, background 0.15s;
+		transition:
+			border-color 0.15s,
+			background 0.15s;
 	}
 
 	.dept-item:hover {
@@ -465,7 +467,9 @@
 		border-radius: 7px;
 		color: #94a3b8;
 		text-decoration: none;
-		transition: background 0.15s, color 0.15s;
+		transition:
+			background 0.15s,
+			color 0.15s;
 	}
 
 	.dept-edit:hover {
@@ -489,7 +493,10 @@
 		background: var(--adm-bg);
 		border: 1px solid var(--adm-line);
 		text-decoration: none;
-		transition: border-color 0.15s, background 0.15s, transform 0.15s;
+		transition:
+			border-color 0.15s,
+			background 0.15s,
+			transform 0.15s;
 	}
 
 	.action-card:hover {
@@ -527,7 +534,9 @@
 
 	.action-card :global(.action-arrow) {
 		color: #cbd5e1;
-		transition: transform 0.2s, color 0.2s;
+		transition:
+			transform 0.2s,
+			color 0.2s;
 	}
 
 	.action-card:hover :global(.action-arrow) {

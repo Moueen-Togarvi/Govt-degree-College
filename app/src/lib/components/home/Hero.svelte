@@ -58,162 +58,187 @@
 	onMount(() => {
 		queueType(420);
 
-		if (!heroSection || prefersReducedMotion()) return;
+		if (!heroSection) return;
 
 		let cleanup = () => {};
 		let disposed = false;
 
+		const hideCurtainFallback = () => {
+			if (!heroSection) return;
+			const curtain = heroSection.querySelector('[data-hero-curtain]') as HTMLElement;
+			if (curtain) {
+				curtain.style.display = 'none';
+				curtain.style.opacity = '0';
+			}
+			const elements = heroSection.querySelectorAll(
+				'[data-hero-eyebrow], [data-hero-kicker], [data-hero-legacy], [data-hero-logo-ribbon], [data-hero-quote], [data-hero-cta], [data-hero-indicator]'
+			);
+			elements.forEach((el) => {
+				const htmlEl = el as HTMLElement;
+				htmlEl.style.opacity = '1';
+				htmlEl.style.visibility = 'visible';
+			});
+		};
+
+		if (prefersReducedMotion()) {
+			hideCurtainFallback();
+			return;
+		}
+
 		void (async () => {
-			const runtime = await ensureGsap();
-			if (!runtime || !heroSection || disposed) return;
-
-			const { gsap } = runtime;
-			const context = gsap.context(() => {
-				try {
-					const titleCharacters = gsap.utils.toArray<HTMLElement>('[data-hero-char]');
-
-					gsap.set('[data-hero-curtain]', {
-						transformOrigin: 'top center',
-						scaleY: 1
-					});
-
-					gsap
-						.timeline({ defaults: { ease: 'power3.out' } })
-						.to('[data-hero-curtain]', {
-							scaleY: 0,
-							duration: 0.8,
-							ease: 'power4.inOut'
-						})
-						.from(
-							'[data-hero-eyebrow]',
-							{
-								autoAlpha: 0,
-								y: 36,
-								skewY: 7,
-								duration: 0.45
-							},
-							'-=0.35'
-						)
-						.from(
-							['[data-hero-kicker]', '[data-hero-legacy]'],
-							{
-								autoAlpha: 0,
-								y: 24,
-								letterSpacing: '0.55em',
-								duration: 0.5,
-								stagger: 0.1
-							},
-							'-=0.3'
-						)
-						.from(
-							titleCharacters,
-							{
-								autoAlpha: 0,
-								yPercent: 150,
-								rotateX: -110,
-								skewY: 10,
-								transformOrigin: '50% 100%',
-								duration: 0.85,
-								ease: 'back.out(2.2)',
-								stagger: {
-									amount: 0.65,
-									from: 'center'
-								}
-							},
-							'-=0.22'
-						)
-						.from(
-							'[data-hero-logo-ribbon]',
-							{
-								autoAlpha: 0,
-								scale: 0.82,
-								filter: 'blur(16px)',
-								duration: 0.6
-							},
-							'-=0.35'
-						)
-						.from(
-							'[data-hero-quote]',
-							{
-								autoAlpha: 0,
-								clipPath: 'inset(0 0 100% 0 round 2rem)',
-								duration: 0.55
-							},
-							'-=0.2'
-						)
-						.from(
-							'[data-hero-cta]',
-							{
-								autoAlpha: 0,
-								y: 32,
-								scale: 0.94,
-								filter: 'blur(10px)',
-								immediateRender: false,
-								duration: 0.48,
-								stagger: 0.08
-							},
-							'-=0.12'
-						)
-						.from(
-							'[data-hero-indicator]',
-							{
-								autoAlpha: 0,
-								y: 28,
-								duration: 0.38
-							},
-							'-=0.05'
-						);
-
-					if (window.innerWidth >= 1024) {
-						gsap.fromTo(
-							'[data-parallax-bg]',
-							{
-								scale: 1.02,
-								yPercent: 0
-							},
-							{
-								scale: 1.08,
-								yPercent: 5,
-								ease: 'none',
-								scrollTrigger: {
-									trigger: heroSection,
-									start: 'top top',
-									end: 'bottom top',
-									scrub: 0.4
-								}
-							}
-						);
-
-						gsap.fromTo(
-							'[data-parallax-plate]',
-							{
-								yPercent: 0
-							},
-							{
-								yPercent: -8,
-								ease: 'none',
-								scrollTrigger: {
-									trigger: heroSection,
-									start: 'top top',
-									end: 'bottom top',
-									scrub: 0.4
-								}
-							}
-						);
-					}
-				} catch (error) {
-					console.error('Hero GSAP animation failed:', error);
-					gsap.set('[data-hero-curtain]', {
-						autoAlpha: 0
-					});
-					gsap.set('[data-hero-cta]', {
-						clearProps: 'all',
-						autoAlpha: 1
-					});
+			try {
+				const runtime = await ensureGsap();
+				if (!runtime) {
+					hideCurtainFallback();
+					return;
 				}
-			}, heroSection);
+				if (!heroSection || disposed) return;
 
-			cleanup = () => context.revert();
+				const { gsap } = runtime;
+				const context = gsap.context(() => {
+					try {
+						const titleCharacters = gsap.utils.toArray<HTMLElement>('[data-hero-char]');
+
+						gsap.set('[data-hero-curtain]', {
+							transformOrigin: 'top center',
+							scaleY: 1
+						});
+
+						gsap
+							.timeline({ defaults: { ease: 'power3.out' } })
+							.to('[data-hero-curtain]', {
+								scaleY: 0,
+								duration: 0.8,
+								ease: 'power4.inOut'
+							})
+							.from(
+								'[data-hero-eyebrow]',
+								{
+									autoAlpha: 0,
+									y: 36,
+									skewY: 7,
+									duration: 0.45
+								},
+								'-=0.35'
+							)
+							.from(
+								['[data-hero-kicker]', '[data-hero-legacy]'],
+								{
+									autoAlpha: 0,
+									y: 24,
+									letterSpacing: '0.55em',
+									duration: 0.5,
+									stagger: 0.1
+								},
+								'-=0.3'
+							)
+							.from(
+								titleCharacters,
+								{
+									autoAlpha: 0,
+									yPercent: 150,
+									rotateX: -110,
+									skewY: 10,
+									transformOrigin: '50% 100%',
+									duration: 0.85,
+									ease: 'back.out(2.2)',
+									stagger: {
+										amount: 0.65,
+										from: 'center'
+									}
+								},
+								'-=0.22'
+							)
+							.from(
+								'[data-hero-logo-ribbon]',
+								{
+									autoAlpha: 0,
+									scale: 0.82,
+									filter: 'blur(16px)',
+									duration: 0.6
+								},
+								'-=0.35'
+							)
+							.from(
+								'[data-hero-quote]',
+								{
+									autoAlpha: 0,
+									clipPath: 'inset(0 0 100% 0 round 2rem)',
+									duration: 0.55
+								},
+								'-=0.2'
+							)
+							.from(
+								'[data-hero-cta]',
+								{
+									autoAlpha: 0,
+									y: 32,
+									scale: 0.94,
+									filter: 'blur(10px)',
+									immediateRender: false,
+									duration: 0.48,
+									stagger: 0.08
+								},
+								'-=0.12'
+							)
+							.from(
+								'[data-hero-indicator]',
+								{
+									autoAlpha: 0,
+									y: 28,
+									duration: 0.38
+								},
+								'-=0.05'
+							);
+
+						if (window.innerWidth >= 1024) {
+							gsap.fromTo(
+								'[data-parallax-bg]',
+								{
+									scale: 1.02,
+									yPercent: 0
+								},
+								{
+									scale: 1.08,
+									yPercent: 5,
+									ease: 'none',
+									scrollTrigger: {
+										trigger: heroSection,
+										start: 'top top',
+										end: 'bottom top',
+										scrub: 0.4
+									}
+								}
+							);
+
+							gsap.fromTo(
+								'[data-parallax-plate]',
+								{
+									yPercent: 0
+								},
+								{
+									yPercent: -8,
+									ease: 'none',
+									scrollTrigger: {
+										trigger: heroSection,
+										start: 'top top',
+										end: 'bottom top',
+										scrub: 0.4
+									}
+								}
+							);
+						}
+					} catch (error) {
+						console.error('Hero GSAP animation failed:', error);
+						hideCurtainFallback();
+					}
+				}, heroSection);
+
+				cleanup = () => context.revert();
+			} catch (error) {
+				console.error('Hero GSAP loading failed:', error);
+				hideCurtainFallback();
+			}
 		})();
 
 		return () => {
@@ -243,7 +268,7 @@
 	<div class="absolute inset-0 z-0">
 		<img
 			data-parallax-bg
-			src="/images/logos/hero section bg.png"
+			src="/images/logos/hero-section-bg.png"
 			alt="College Campus"
 			class="w-full h-full object-cover opacity-90 transition-transform duration-[10s] hover:scale-110"
 		/>

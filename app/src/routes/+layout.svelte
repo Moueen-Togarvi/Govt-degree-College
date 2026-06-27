@@ -11,7 +11,14 @@
 	let { children } = $props();
 	let mainElement = $state<HTMLElement | null>(null);
 
-	const PORTAL_ROUTES = ['/super-admin', '/coordinator', '/faculty', '/student', '/login', '/logout'];
+	const PORTAL_ROUTES = [
+		'/super-admin',
+		'/coordinator',
+		'/faculty',
+		'/student',
+		'/portal',
+		'/logout'
+	];
 	const isPortalRoute = (pathname: string) => PORTAL_ROUTES.some((r) => pathname.startsWith(r));
 
 	onMount(() => {

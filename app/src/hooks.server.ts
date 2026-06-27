@@ -14,23 +14,35 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const path = event.url.pathname;
 
 	if (path.startsWith('/super-admin') && user?.role !== 'super_admin') {
-		return new Response(null, { status: 303, headers: { location: '/login?reason=unauthorized' } });
+		return new Response(null, {
+			status: 303,
+			headers: { location: '/portal?reason=unauthorized' }
+		});
 	}
 
 	if (path.startsWith('/coordinator') && user?.role !== 'coordinator' && user?.role !== 'super_admin') {
-		return new Response(null, { status: 303, headers: { location: '/login?reason=unauthorized' } });
+		return new Response(null, {
+			status: 303,
+			headers: { location: '/portal?reason=unauthorized' }
+		});
 	}
 
 	if (path.startsWith('/faculty') && user?.role !== 'faculty' && user?.role !== 'super_admin') {
-		return new Response(null, { status: 303, headers: { location: '/login?reason=unauthorized' } });
+		return new Response(null, {
+			status: 303,
+			headers: { location: '/portal?reason=unauthorized' }
+		});
 	}
 
 	if (path.startsWith('/student') && user?.role !== 'student' && user?.role !== 'super_admin') {
-		return new Response(null, { status: 303, headers: { location: '/login?reason=unauthorized' } });
+		return new Response(null, {
+			status: 303,
+			headers: { location: '/portal?reason=unauthorized' }
+		});
 	}
 
-	// Redirect logged-in users away from /login
-	if (path === '/login' && user) {
+	// Redirect logged-in users away from /portal
+	if (path === '/portal' && user) {
 		const { getDefaultRedirect } = await import('$lib/server/auth');
 		return new Response(null, { status: 303, headers: { location: getDefaultRedirect(user.role) } });
 	}

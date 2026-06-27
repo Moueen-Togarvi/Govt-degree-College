@@ -19,7 +19,7 @@
 	let deletingId = $state<number | null>(null);
 	let submitting = $state(false);
 
-	const tags = ['Notice', 'Alert', 'Update', 'Holiday', 'Exam', ' Urgent'];
+	const tags = ['Notice', 'Alert', 'Update', 'Holiday', 'Exam', 'Urgent'];
 	function tagClass(t: string) {
 		const map: Record<string, string> = {
 			Alert: 'adm-badge--red',
@@ -70,7 +70,8 @@
 
 	{#if form?.error}
 		<div class="adm-alert adm-alert--error" transition:fade>
-			<CircleAlert size={16} stroke-width={2} /> {form.error}
+			<CircleAlert size={16} stroke-width={2} />
+			{form.error}
 		</div>
 	{/if}
 	{#if form?.success}
@@ -160,7 +161,12 @@
 
 {#if showModal}
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-	<div class="adm-overlay" onclick={closeModal} role="presentation" transition:fade={{ duration: 150 }}>
+	<div
+		class="adm-overlay"
+		onclick={closeModal}
+		role="presentation"
+		transition:fade={{ duration: 150 }}
+	>
 		<div
 			class="adm-modal"
 			onclick={(e) => e.stopPropagation()}

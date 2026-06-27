@@ -1,20 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import '$lib/styles/portal.css';
-	import type { LayoutData } from './$types';
-	import type { Icon } from 'lucide-svelte';
 	import { reveal } from '$lib/admin/motion';
+	import '$lib/styles/portal.css';
+	import type { Icon } from 'lucide-svelte';
 
-	// Real icons (lucide-svelte) — no emojis.
-	import LayoutDashboard from 'lucide-svelte/icons/layout-dashboard';
-	import Building2 from 'lucide-svelte/icons/building-2';
-	import Users from 'lucide-svelte/icons/users';
-	import Megaphone from 'lucide-svelte/icons/megaphone';
-	import CalendarDays from 'lucide-svelte/icons/calendar-days';
-	import ClipboardList from 'lucide-svelte/icons/clipboard-list';
-	import Newspaper from 'lucide-svelte/icons/newspaper';
-	import Trophy from 'lucide-svelte/icons/trophy';
-	import Settings from 'lucide-svelte/icons/settings';
 	import PanelLeftClose from 'lucide-svelte/icons/panel-left-close';
 	import PanelLeftOpen from 'lucide-svelte/icons/panel-left-open';
 	import Menu from 'lucide-svelte/icons/menu';
@@ -22,46 +11,33 @@
 	import ExternalLink from 'lucide-svelte/icons/external-link';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 
-	type NavItem = {
-		href: string;
-		icon: typeof Icon;
-		label: string;
-	};
+	type NavItem = { href: string; icon: typeof Icon; label: string };
+	type NavGroup = { label?: string; items: NavItem[] };
 
-	let { data, children }: { data: LayoutData; children: import('svelte').Snippet } = $props();
+	let {
+		roleLabel,
+		brandHref,
+		navGroups,
+		userName,
+		userEmail,
+		subtitle = '',
+		children,
+		sidebarInfo
+	}: {
+		roleLabel: string;
+		brandHref: string;
+		navGroups: NavGroup[];
+		userName: string;
+		userEmail?: string;
+		subtitle?: string;
+		children: import('svelte').Snippet;
+		sidebarInfo?: import('svelte').Snippet;
+	} = $props();
 
 	let sidebarOpen = $state(true);
 	let mobileOpen = $state(false);
 
-	const navGroups: { label: string; items: NavItem[] }[] = [
-		{
-			label: 'Overview',
-			items: [{ href: '/super-admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' }]
-		},
-		{
-			label: 'Structure',
-			items: [
-				{ href: '/super-admin/departments', icon: Building2, label: 'Departments' },
-				{ href: '/super-admin/users', icon: Users, label: 'Users' }
-			]
-		},
-		{
-			label: 'Content',
-			items: [
-				{ href: '/super-admin/announcements', icon: Megaphone, label: 'Announcements' },
-				{ href: '/super-admin/events', icon: CalendarDays, label: 'Events' },
-				{ href: '/super-admin/notices', icon: ClipboardList, label: 'Notice Board' },
-				{ href: '/super-admin/news', icon: Newspaper, label: 'News Ticker' },
-				{ href: '/super-admin/results', icon: Trophy, label: 'Results' }
-			]
-		},
-		{
-			label: 'System',
-			items: [{ href: '/super-admin/settings', icon: Settings, label: 'Settings' }]
-		}
-	];
-
-	const flatItems = navGroups.flatMap((g) => g.items);
+	const flatItems: NavItem[] = $derived(navGroups.flatMap((g) => g.items));
 
 	function isActive(href: string) {
 		return $page.url.pathname.startsWith(href);
@@ -74,6 +50,9 @@
 	}
 </script>
 
+/** * PortalShell.svelte — Shared chrome for the role-based portals * (student, faculty,
+coordinator). Mirrors the super-admin design system: * deep-teal sidebar, lucide icons, motion
+entrance, mobile-responsive drawer, * breadcrumb topbar. Keeps the whole portal visually unified. */
 <svelte:head>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link
@@ -83,7 +62,6 @@
 </svelte:head>
 
 <div class="portal-root adm">
-	<!-- Mobile backdrop -->
 	{#if mobileOpen}
 		<button
 			class="backdrop"
@@ -96,7 +74,7 @@
 	<!-- Sidebar -->
 	<aside class="sidebar {sidebarOpen ? 'open' : 'collapsed'} mobile-{mobileOpen ? 'show' : 'hide'}">
 		<div class="sidebar-header">
-			<a href="/super-admin/dashboard" class="sidebar-logo" title="GPGC Portal">
+			<a href={brandHref} class="sidebar-logo" title="GPGC Portal">
 				<img
 					src="/images/logos/degree4k-removebg-preview.png"
 					alt="GPGC logo"
@@ -105,7 +83,7 @@
 				{#if sidebarOpen}
 					<div class="sidebar-title-group">
 						<span class="sidebar-title">GPGC Portal</span>
-						<span class="sidebar-role">Super Admin</span>
+						<span class="sidebar-role">{roleLabel}</span>
 					</div>
 				{/if}
 			</a>
@@ -123,9 +101,13 @@
 			</button>
 		</div>
 
+		{#if sidebarInfo && sidebarOpen}
+			{@render sidebarInfo()}
+		{/if}
+
 		<nav class="sidebar-nav">
 			{#each navGroups as group, gi}
-				{#if sidebarOpen}
+				{#if group.label && sidebarOpen}
 					<div class="nav-group-label">{group.label}</div>
 				{/if}
 				{#each group.items as item, ii}
@@ -151,11 +133,11 @@
 
 		<div class="sidebar-footer">
 			<div class="user-info {sidebarOpen ? '' : 'compact'}">
-				<div class="user-avatar">{initials(data.user.name)}</div>
+				<div class="user-avatar">{initials(userName)}</div>
 				{#if sidebarOpen}
 					<div class="user-details">
-						<span class="user-name">{data.user.name}</span>
-						<span class="user-email">{data.user.email}</span>
+						<span class="user-name">{userName}</span>
+						<span class="user-email">{userEmail ?? roleLabel}</span>
 					</div>
 				{/if}
 			</div>
@@ -188,7 +170,7 @@
 					<PanelLeftClose size={18} stroke-width={1.75} />
 				</button>
 				<nav class="breadcrumb" aria-label="Breadcrumb">
-					<span class="breadcrumb-home">Super Admin</span>
+					<span class="breadcrumb-home">{roleLabel}</span>
 					<ChevronRight size={14} stroke-width={2} class="breadcrumb-sep" />
 					<span class="breadcrumb-current">{activeLabel()}</span>
 				</nav>
@@ -199,8 +181,8 @@
 					<span>View site</span>
 				</a>
 				<div class="topbar-user">
-					<div class="topbar-avatar">{initials(data.user.name)}</div>
-					<span class="topbar-name">{data.user.name}</span>
+					<div class="topbar-avatar">{initials(userName)}</div>
+					<span class="topbar-name">{userName}</span>
 				</div>
 			</div>
 		</header>

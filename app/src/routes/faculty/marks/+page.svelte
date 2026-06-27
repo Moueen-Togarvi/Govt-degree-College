@@ -113,8 +113,10 @@
 									<tr>
 										<td class="row-num">{i + 1}</td>
 										<td><span class="roll">{student.roll_number}</span></td>
-										<td class="student-name">{student.name}</td>
-										<input type="hidden" name="student_id" value={student.student_id} />
+										<td class="student-name">
+											{student.name}
+											<input type="hidden" name="student_id" value={student.student_id} />
+										</td>
 										<td><input type="number" name="midterm" min="0" max="30" step="0.5" value={mk?.midterm ?? 0} class="marks-input" /></td>
 										<td><input type="number" name="finals" min="0" max="50" step="0.5" value={mk?.finals ?? 0} class="marks-input" /></td>
 										<td><input type="number" name="quizzes" min="0" max="10" step="0.5" value={mk?.quizzes ?? 0} class="marks-input" /></td>
