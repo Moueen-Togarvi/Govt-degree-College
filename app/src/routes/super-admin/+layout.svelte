@@ -345,7 +345,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		padding: 0.6rem 0.9rem;
+		padding: 0.68rem 0.9rem;
 		border-radius: 10px;
 		text-decoration: none;
 		color: #a9bfbb;
