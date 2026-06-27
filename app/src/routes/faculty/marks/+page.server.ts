@@ -1,14 +1,20 @@
 // Faculty — Marks Entry Module
 import { fail } from '@sveltejs/kit';
 import { getFacultyByUserId } from '$lib/server/database/faculty';
-import { getMarksByOffering, upsertMark, publishResults, calculateGrade } from '$lib/server/database/marks';
+import {
+	getMarksByOffering,
+	upsertMark,
+	publishResults,
+	calculateGrade
+} from '$lib/server/database/marks';
 import { getStudentsByDepartmentAndSemester } from '$lib/server/database/students';
 import { getSql } from '$lib/server/db';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const profile = await getFacultyByUserId(locals.user!.id);
-	if (!profile) return { profile: null, offerings: [], marks: [], students: [], selectedOffering: null };
+	if (!profile)
+		return { profile: null, offerings: [], marks: [], students: [], selectedOffering: null };
 
 	const sql = getSql();
 	const offerings = await sql`
@@ -25,18 +31,19 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	let selectedOffering = null as Record<string, unknown> | null;
 
 	if (offeringId) {
-		selectedOffering = (offerings as unknown as Record<string, unknown>[]).find(o => o.id === offeringId) ?? null;
+		selectedOffering =
+			(offerings as unknown as Record<string, unknown>[]).find((o) => o.id === offeringId) ?? null;
 		marks = await getMarksByOffering(offeringId);
 
 		// Get enrolled students
-		students = await sql`
+		students = (await sql`
 			SELECT sp.id AS student_id, u.name, sp.roll_number, sp.semester
 			FROM enrollments e
 			JOIN student_profiles sp ON sp.id = e.student_id
 			JOIN users u ON u.id = sp.user_id
 			WHERE e.course_offering_id = ${offeringId}
 			ORDER BY sp.roll_number ASC
-		` as Record<string, unknown>[];
+		`) as Record<string, unknown>[];
 	}
 
 	return {
@@ -70,7 +77,17 @@ export const actions: Actions = {
 				const total = midterm + finals + quizzes + assignments + practical;
 				const { grade, gpa } = calculateGrade(total);
 
-				await upsertMark({ student_id: studentId, course_offering_id: offeringId, midterm, finals, quizzes, assignments, practical, grade, gpa_points: gpa });
+				await upsertMark({
+					student_id: studentId,
+					course_offering_id: offeringId,
+					midterm,
+					finals,
+					quizzes,
+					assignments,
+					practical,
+					grade,
+					gpa_points: gpa
+				});
 			}
 			return { success: true, message: `Marks saved for ${studentIds.length} students.` };
 		} catch (err: unknown) {
@@ -85,7 +102,10 @@ export const actions: Actions = {
 		if (!offeringId) return fail(400, { error: 'Invalid ID' });
 		try {
 			await publishResults(offeringId, publish);
-			return { success: true, message: publish ? 'Results published to students.' : 'Results unpublished.' };
+			return {
+				success: true,
+				message: publish ? 'Results published to students.' : 'Results unpublished.'
+			};
 		} catch (err: unknown) {
 			return fail(500, { error: (err as Error).message });
 		}

@@ -270,45 +270,44 @@
 			data-parallax-bg
 			src="/images/logos/hero-section-bg.png"
 			alt="College Campus"
-			class="w-full h-full object-cover opacity-90 transition-transform duration-[10s] hover:scale-110"
+			class="h-full w-full object-cover opacity-90 transition-transform duration-[10s] hover:scale-110"
 		/>
 		<!-- Lighter, warmer overlay -->
-		<div class="absolute inset-0 bg-gradient-to-b from-primary/30 via-primary/10 to-primary/60 backdrop-brightness-[0.85]"></div>
+		<div
+			class="absolute inset-0 bg-gradient-to-b from-primary/30 via-primary/10 to-primary/60 backdrop-brightness-[0.85]"
+		></div>
 	</div>
 
 	<!-- Top Left: Welcome Text -->
-	<div
-		data-hero-eyebrow
-		class="absolute left-8 top-12 z-30 lg:left-16"
-	>
-		<p class="text-secondary font-black uppercase tracking-[0.3em] text-sm lg:text-base">Welcome to</p>
-		<div class="w-12 h-1 bg-secondary mt-2 rounded-full"></div>
+	<div data-hero-eyebrow class="absolute top-12 left-8 z-30 lg:left-16">
+		<p class="text-sm font-black tracking-[0.3em] text-secondary uppercase lg:text-base">
+			Welcome to
+		</p>
+		<div class="mt-2 h-1 w-12 rounded-full bg-secondary"></div>
 	</div>
 
-
-
 	<!-- Main Content -->
-	<div class="container relative z-30 mx-auto px-4 text-center lg:px-8 flex flex-col items-center">
+	<div class="relative z-30 container mx-auto flex flex-col items-center px-4 text-center lg:px-8">
 		<!-- Top Center: Main Title -->
 		<div class="space-y-3">
 			<h2
 				data-hero-kicker
-				class="text-[10px] font-bold uppercase tracking-[0.35em] text-white/60 lg:text-xs"
+				class="text-[10px] font-bold tracking-[0.35em] text-white/60 uppercase lg:text-xs"
 			>
 				Our Institution
 			</h2>
 			<p
 				data-hero-legacy
-				class="text-[9px] font-medium uppercase tracking-[0.35em] text-secondary/90 lg:text-[10px]"
+				class="text-[9px] font-medium tracking-[0.35em] text-secondary/90 uppercase lg:text-[10px]"
 			>
 				Legacy 1945
 			</p>
-			<h1 class="mt-4 text-3xl font-black leading-tight tracking-tight text-white drop-shadow-2xl lg:text-5xl xl:text-7xl">
+			<h1
+				class="mt-4 text-3xl leading-tight font-black tracking-tight text-white drop-shadow-2xl lg:text-5xl xl:text-7xl"
+			>
 				{#each heroTitleLines as line, lineIndex}
 					<span class="block overflow-hidden">
-						<span
-							class={`hero-title-line ${lineIndex === 1 ? 'text-secondary' : 'text-white'}`}
-						>
+						<span class={`hero-title-line ${lineIndex === 1 ? 'text-secondary' : 'text-white'}`}>
 							{#each renderCharacters(line) as character}
 								<span data-hero-char class="hero-char">{character}</span>
 							{/each}
@@ -326,19 +325,31 @@
 					<div
 						data-hero-logo-ribbon
 						data-parallax-plate
-						class="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 items-center gap-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-4 shadow-2xl backdrop-blur-2xl"
+						class="absolute top-0 left-1/2 z-10 flex -translate-x-1/2 items-center gap-6 rounded-3xl border border-white/10 bg-white/5 px-6 py-4 shadow-2xl backdrop-blur-2xl"
 					>
-						<div class="flex flex-col items-center group">
-							<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110">
-								<img src="/images/logos/image.png" alt="Govt Logo" class="h-full w-full object-contain" />
+						<div class="group flex flex-col items-center">
+							<div
+								class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110"
+							>
+								<img
+									src="/images/logos/image.png"
+									alt="Govt Logo"
+									class="h-full w-full object-contain"
+								/>
 							</div>
 						</div>
-						
+
 						<div class="h-10 w-px bg-white/10"></div>
-						
-						<div class="flex flex-col items-center group">
-							<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110">
-								<img src="/images/logos/degree4k-removebg-preview.png" alt="College Logo" class="h-full w-full object-contain" />
+
+						<div class="group flex flex-col items-center">
+							<div
+								class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white p-2.5 shadow-xl transition-transform group-hover:scale-110"
+							>
+								<img
+									src="/images/logos/degree4k-removebg-preview.png"
+									alt="College Logo"
+									class="h-full w-full object-contain"
+								/>
 							</div>
 						</div>
 					</div>
@@ -348,7 +359,7 @@
 							<path id="heroQuoteCurve" d="M 150 70 Q 450 138 750 70" fill="transparent" />
 							<path id="heroQuoteCurveAccent" d="M 205 142 Q 450 202 695 142" fill="transparent" />
 							<text
-								class="fill-white text-[28px] font-bold italic tracking-tight drop-shadow-lg lg:text-[36px]"
+								class="fill-white text-[28px] font-bold tracking-tight italic drop-shadow-lg lg:text-[36px]"
 								text-anchor="middle"
 							>
 								<textPath href="#heroQuoteCurve" startOffset="50%">
@@ -356,12 +367,12 @@
 								</textPath>
 							</text>
 							<text
-								class="text-[26px] font-black italic tracking-tight drop-shadow-lg transition-all duration-500 lg:text-[34px]"
+								class="text-[26px] font-black tracking-tight italic drop-shadow-lg transition-all duration-500 lg:text-[34px]"
 								text-anchor="middle"
 								style={`fill: ${currentAccentColor};`}
 							>
 								<textPath href="#heroQuoteCurveAccent" startOffset="50%">
-									{displayedSuffix || " "}
+									{displayedSuffix || ' '}
 								</textPath>
 							</text>
 						</svg>
@@ -374,7 +385,7 @@
 					<a
 						data-hero-cta
 						href="/admissions/how-to-apply"
-						class="group inline-flex min-h-[60px] w-[243px] items-center justify-center gap-3 whitespace-nowrap rounded-2xl bg-secondary px-6 py-4 text-center text-sm font-black text-white shadow-2xl shadow-secondary/40 transition-all hover:scale-105 hover:bg-secondary/90 active:scale-95 sm:w-[213px] sm:text-base lg:w-[233px] lg:py-4"
+						class="group inline-flex min-h-[60px] w-[243px] items-center justify-center gap-3 rounded-2xl bg-secondary px-6 py-4 text-center text-sm font-black whitespace-nowrap text-white shadow-2xl shadow-secondary/40 transition-all hover:scale-105 hover:bg-secondary/90 active:scale-95 sm:w-[213px] sm:text-base lg:w-[233px] lg:py-4"
 					>
 						Apply Now!
 						<ArrowRight size={20} class="transition-transform group-hover:translate-x-2" />
@@ -382,7 +393,7 @@
 					<a
 						data-hero-cta
 						href="/about/overview"
-						class="inline-flex min-h-[60px] w-[243px] items-center justify-center gap-3 whitespace-nowrap rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-center text-sm font-black text-white backdrop-blur-2xl transition-all hover:scale-105 hover:bg-white/20 active:scale-95 sm:w-[213px] sm:text-base lg:w-[233px] lg:py-4"
+						class="inline-flex min-h-[60px] w-[243px] items-center justify-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-6 py-4 text-center text-sm font-black whitespace-nowrap text-white backdrop-blur-2xl transition-all hover:scale-105 hover:bg-white/20 active:scale-95 sm:w-[213px] sm:text-base lg:w-[233px] lg:py-4"
 					>
 						Discover More
 					</a>
@@ -391,24 +402,30 @@
 		</div>
 	</div>
 
-
-
 	<!-- Spinning Scroll Indicator -->
-	<div data-hero-indicator class="absolute bottom-8 right-8 z-30 hidden lg:block">
-		<div class="relative w-32 h-32 flex items-center justify-center group cursor-pointer hover:scale-110 transition-transform">
+	<div data-hero-indicator class="absolute right-8 bottom-8 z-30 hidden lg:block">
+		<div
+			class="group relative flex h-32 w-32 cursor-pointer items-center justify-center transition-transform hover:scale-110"
+		>
 			<!-- Spinning SVG Text -->
-			<div class="absolute inset-0 animate-spin-slow">
-				<svg viewBox="0 0 100 100" class="w-full h-full text-white/80 overflow-visible">
-					<path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="transparent" />
-					<text class="text-[12px] font-black uppercase tracking-[0.15em] fill-current">
+			<div class="animate-spin-slow absolute inset-0">
+				<svg viewBox="0 0 100 100" class="h-full w-full overflow-visible text-white/80">
+					<path
+						id="circlePath"
+						d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+						fill="transparent"
+					/>
+					<text class="fill-current text-[12px] font-black tracking-[0.15em] uppercase">
 						<textPath href="#circlePath" startOffset="0%">
-							EXPLORE CAMPUS • SCROLL DOWN • 
+							EXPLORE CAMPUS • SCROLL DOWN •
 						</textPath>
 					</text>
 				</svg>
 			</div>
 			<!-- Center Arrow -->
-			<div class="w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center relative z-10 group-hover:-translate-y-2 transition-transform shadow-xl">
+			<div
+				class="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-white shadow-xl transition-transform group-hover:-translate-y-2"
+			>
 				<ArrowDown size={20} class="animate-bounce" />
 			</div>
 		</div>
@@ -417,7 +434,9 @@
 	<div class="pointer-events-none absolute inset-x-0 bottom-0 z-30 px-4 lg:px-8">
 		<div class="container mx-auto">
 			<div class="relative mx-auto h-16 max-w-6xl overflow-hidden rounded-full">
-				<div class="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent"></div>
+				<div
+					class="absolute top-1/2 right-0 left-0 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent"
+				></div>
 			</div>
 		</div>
 	</div>

@@ -39,28 +39,39 @@
 	}
 </script>
 
-<section class="py-24 bg-neutral-soft">
+<section class="bg-neutral-soft py-24">
 	<div class="container mx-auto px-4 lg:px-8">
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+		<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
 			{#each links as link}
 				{@const Icon = getIcon(link.iconName)}
-				<div class="group bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-border-soft relative overflow-hidden">
+				<div
+					class="group relative overflow-hidden rounded-3xl border border-border-soft bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+				>
 					<!-- Hover Accent -->
-					<div class="absolute top-0 right-0 w-24 h-24 bg-secondary/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150"></div>
-					
-					<div class="space-y-6 relative z-10">
-						<div class="w-16 h-16 {getBackground(link.iconName)} {getColor(link.iconName)} rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
+					<div
+						class="absolute top-0 right-0 -mt-12 -mr-12 h-24 w-24 rounded-full bg-secondary/5 transition-transform group-hover:scale-150"
+					></div>
+
+					<div class="relative z-10 space-y-6">
+						<div
+							class="h-16 w-16 {getBackground(link.iconName)} {getColor(
+								link.iconName
+							)} flex items-center justify-center rounded-2xl transition-transform group-hover:scale-110"
+						>
 							<Icon size={32} />
 						</div>
-						
+
 						<div class="space-y-3">
 							<h3 class="text-xl font-black text-primary">{link.title}</h3>
-							<p class="text-sm font-medium text-primary/60 leading-relaxed">
+							<p class="text-sm leading-relaxed font-medium text-primary/60">
 								{link.description}
 							</p>
 						</div>
 
-						<a href={link.href} class="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:text-secondary transition-colors">
+						<a
+							href={link.href}
+							class="inline-flex items-center gap-2 text-xs font-black tracking-widest text-primary uppercase transition-colors hover:text-secondary"
+						>
 							Learn More
 							<ArrowUpRight size={14} />
 						</a>

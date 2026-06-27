@@ -8,8 +8,7 @@ function filterFallbackResults(search: string) {
 
 	const query = search.toLowerCase();
 	return fallbackResults.filter(
-		(item) =>
-			item.title.toLowerCase().includes(query) || item.type.toLowerCase().includes(query)
+		(item) => item.title.toLowerCase().includes(query) || item.type.toLowerCase().includes(query)
 	);
 }
 

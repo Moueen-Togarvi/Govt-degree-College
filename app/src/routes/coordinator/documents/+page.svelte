@@ -1,6 +1,21 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
+	import { reveal } from '$lib/admin/motion';
+
+	import Folder from 'lucide-svelte/icons/folder';
+	import FileText from 'lucide-svelte/icons/file-text';
+	import Upload from 'lucide-svelte/icons/upload';
+	import Trash2 from 'lucide-svelte/icons/trash-2';
+	import Eye from 'lucide-svelte/icons/eye';
+	import User from 'lucide-svelte/icons/user';
+	import X from 'lucide-svelte/icons/x';
+	import Check from 'lucide-svelte/icons/check';
+	import TriangleAlert from 'lucide-svelte/icons/triangle-alert';
+	import StickyNote from 'lucide-svelte/icons/sticky-note';
+	import Clipboard from 'lucide-svelte/icons/clipboard';
+	import FlaskConical from 'lucide-svelte/icons/flask-conical';
+	import Book from 'lucide-svelte/icons/book';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -8,107 +23,196 @@
 	let submitting = $state(false);
 
 	function docIcon(type: string) {
-		switch(type) {
-			case 'note': return '📝';
-			case 'assignment': return '📋';
-			case 'lab_manual': return '🧪';
-			case 'past_paper': return '📄';
-			case 'syllabus': return '📘';
-			default: return '📁';
+		switch (type) {
+			case 'note':
+				return StickyNote;
+			case 'assignment':
+				return Clipboard;
+			case 'lab_manual':
+				return FlaskConical;
+			case 'past_paper':
+				return FileText;
+			case 'syllabus':
+				return Book;
+			default:
+				return Folder;
 		}
 	}
 </script>
 
-<svelte:head><title>Documents — Coordinator | GPGC</title></svelte:head>
+<svelte:head><title>Documents — Coordinator | GPGC Portal</title></svelte:head>
 
-<div class="page">
-	<div class="page-header">
+<div class="adm-page">
+	<!-- Header -->
+	<div class="adm-head">
 		<div>
-			<h1 class="page-title">📁 Department Documents</h1>
-			<p class="page-subtitle">Manage notes, assignments, and course resources</p>
+			<h1 class="adm-title"><Folder size={22} stroke-width={1.75} /> Department Documents</h1>
+			<p class="adm-sub">Manage notes, assignments, and course resources</p>
 		</div>
-		<button class="btn-primary" onclick={() => showModal = true}>+ Upload Document</button>
+		<button class="adm-btn adm-btn--primary" onclick={() => (showModal = true)}>
+			<Upload size={16} stroke-width={1.75} /> Upload Document
+		</button>
 	</div>
 
+	<!-- Flash Messages -->
 	{#if form?.error}
-		<div class="alert alert-error">❌ {form.error}</div>
+		<div class="adm-alert adm-alert--error">
+			<TriangleAlert size={18} stroke-width={2} />
+			<span>{form.error}</span>
+		</div>
 	{/if}
 	{#if form?.success}
-		<div class="alert alert-success">✅ {form.message}</div>
+		<div class="adm-alert adm-alert--success">
+			<Check size={18} stroke-width={2} />
+			<span>{form.message}</span>
+		</div>
 	{/if}
 
-	<div class="table-card">
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Title & Type</th>
-					<th>Course Assignment</th>
-					<th>Uploaded By</th>
-					<th>Date</th>
-					<th class="text-right">Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#if data.documents.length === 0}
-					<tr><td colspan="5" class="text-center py-8">No documents uploaded yet.</td></tr>
-				{:else}
-					{#each data.documents as doc}
+	<!-- Documents Table -->
+	<div class="adm-card" use:reveal={{ y: 16 }}>
+		<div class="adm-table-wrap">
+			<table class="adm-table">
+				<thead>
+					<tr>
+						<th>Title & Type</th>
+						<th>Course Assignment</th>
+						<th>Uploaded By</th>
+						<th>Date</th>
+						<th class="text-right">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#if data.documents.length === 0}
 						<tr>
-							<td>
-								<div class="flex items-center gap-3">
-									<span class="text-2xl">{docIcon(doc.doc_type)}</span>
-									<div>
-										<div class="font-semibold text-slate-900">{doc.title}</div>
-										<div class="text-xs text-slate-500 uppercase tracking-wider">{doc.doc_type.replace('_', ' ')}</div>
-									</div>
+							<td colspan="5">
+								<div class="adm-empty">
+									<div class="adm-empty__icon"><Folder size={24} stroke-width={1.75} /></div>
+									<h3>No documents uploaded yet</h3>
+									<p>Click "Upload Document" to add your first resource.</p>
 								</div>
 							</td>
-							<td>
-								{#if doc.course_code}
-									<div class="badge-blue font-mono mb-1">{doc.course_code}</div>
-									<div class="text-sm text-slate-700">{doc.course_title} (Sem {doc.semester})</div>
-								{:else}
-									<span class="text-sm text-slate-400 italic">General / Department-wide</span>
-								{/if}
-							</td>
-							<td><span class="text-sm">👤 {doc.uploaded_by_name}</span></td>
-							<td><span class="text-sm text-slate-500">{new Date(doc.created_at).toLocaleDateString()}</span></td>
-							<td class="text-right">
-								<a href={doc.file_url} target="_blank" class="btn-icon text-blue-600 hover:bg-blue-50" title="View/Download">🔗</a>
-								<form method="POST" action="?/delete" class="inline" use:enhance={() => {
-									if (!confirm(`Delete document "${doc.title}"?`)) return () => {};
-									return async ({ update }) => update();
-								}}>
-									<input type="hidden" name="id" value={doc.id} />
-									<button type="submit" class="btn-icon text-red-500 hover:bg-red-50" title="Delete">🗑️</button>
-								</form>
-							</td>
 						</tr>
-					{/each}
-				{/if}
-			</tbody>
-		</table>
+					{:else}
+						{#each data.documents as doc (doc.id)}
+							{@const Icon = docIcon(doc.doc_type)}
+							<tr>
+								<td>
+									<div class="doc-cell">
+										<span class="doc-icon"><Icon size={18} stroke-width={1.75} /></span>
+										<div>
+											<div class="doc-title">{doc.title}</div>
+											<div class="doc-type">{doc.doc_type.replace('_', ' ')}</div>
+										</div>
+									</div>
+								</td>
+								<td>
+									{#if doc.course_code}
+										<div class="course-line">
+											<span class="adm-badge adm-badge--teal doc-code">{doc.course_code}</span>
+											<span class="course-meta">{doc.course_title} (Sem {doc.semester})</span>
+										</div>
+									{:else}
+										<span class="is-muted general-note">General / Department-wide</span>
+									{/if}
+								</td>
+								<td>
+									<span class="uploader">
+										<User size={14} stroke-width={1.75} />
+										{doc.uploaded_by_name}
+									</span>
+								</td>
+								<td class="is-muted">{new Date(doc.created_at).toLocaleDateString()}</td>
+								<td class="text-right">
+									<div class="adm-row-actions doc-actions">
+										<a
+											href={doc.file_url}
+											target="_blank"
+											class="adm-btn adm-btn--ghost adm-btn--sm"
+											title="View/Download"
+											aria-label="View/Download"
+										>
+											<Eye size={15} stroke-width={1.75} />
+										</a>
+										<form
+											method="POST"
+											action="?/delete"
+											use:enhance={() => {
+												if (!confirm(`Delete document "${doc.title}"?`)) return () => {};
+												return async ({ update }) => update();
+											}}
+										>
+											<input type="hidden" name="id" value={doc.id} />
+											<button
+												type="submit"
+												class="adm-btn adm-btn--danger adm-btn--sm"
+												title="Delete"
+												aria-label="Delete"
+											>
+												<Trash2 size={15} stroke-width={1.75} />
+											</button>
+										</form>
+									</div>
+								</td>
+							</tr>
+						{/each}
+					{/if}
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
 
+<!-- Upload Modal -->
 {#if showModal}
-	<div class="modal-overlay" onclick={() => showModal = false} role="presentation" onkeydown={() => {}}>
-		<div class="modal" onclick={e => e.stopPropagation()} role="dialog" aria-modal="true" tabindex="-1">
-			<div class="modal-header">
-				<h2 class="modal-title">Upload Document</h2>
-				<button onclick={() => showModal = false} class="modal-close">✕</button>
+	<div
+		class="adm-overlay"
+		onclick={() => (showModal = false)}
+		role="presentation"
+		onkeydown={() => {}}
+	>
+		<div
+			class="adm-modal"
+			onclick={(e) => e.stopPropagation()}
+			role="dialog"
+			aria-modal="true"
+			tabindex="-1"
+		>
+			<div class="adm-modal__head">
+				<h2 class="adm-modal__title"><Upload size={18} stroke-width={1.75} /> Upload Document</h2>
+				<button onclick={() => (showModal = false)} class="adm-modal__close" aria-label="Close">
+					<X size={18} stroke-width={2} />
+				</button>
 			</div>
-			<form method="POST" action="?/create" use:enhance={() => { submitting = true; return async ({ update }) => { submitting = false; await update(); showModal = false; }; }} class="modal-form">
-				
-				<div class="form-group">
-					<label class="form-label" for="title">Document Title *</label>
-					<input type="text" id="title" name="title" required class="form-input" placeholder="e.g. Intro to DB Notes Chap 1" />
+
+			<form
+				method="POST"
+				action="?/create"
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+						showModal = false;
+					};
+				}}
+				class="adm-modal__body adm-form"
+			>
+				<div class="adm-field">
+					<label class="adm-label" for="title">Document Title *</label>
+					<input
+						type="text"
+						id="title"
+						name="title"
+						required
+						class="adm-input"
+						placeholder="e.g. Intro to DB Notes Chap 1"
+					/>
 				</div>
 
-				<div class="form-row">
-					<div class="form-group">
-						<label class="form-label" for="doc_type">Document Type *</label>
-						<select id="doc_type" name="doc_type" required class="form-input">
+				<div class="adm-grid-2">
+					<div class="adm-field">
+						<label class="adm-label" for="doc_type">Document Type *</label>
+						<select id="doc_type" name="doc_type" required class="adm-select">
 							<option value="note">Note / Slides</option>
 							<option value="assignment">Assignment</option>
 							<option value="lab_manual">Lab Manual</option>
@@ -117,27 +221,39 @@
 							<option value="other">Other</option>
 						</select>
 					</div>
-					<div class="form-group">
-						<label class="form-label" for="file_url">File URL *</label>
-						<input type="url" id="file_url" name="file_url" required class="form-input" placeholder="https://drive.google.com/..." />
+					<div class="adm-field">
+						<label class="adm-label" for="file_url">File URL *</label>
+						<input
+							type="url"
+							id="file_url"
+							name="file_url"
+							required
+							class="adm-input"
+							placeholder="https://drive.google.com/..."
+						/>
 					</div>
 				</div>
 
-				<div class="form-group">
-					<label class="form-label" for="course_offering_id">Link to Course (Optional)</label>
-					<select id="course_offering_id" name="course_offering_id" class="form-input">
+				<div class="adm-field">
+					<label class="adm-label" for="course_offering_id">Link to Course (Optional)</label>
+					<select id="course_offering_id" name="course_offering_id" class="adm-select">
 						<option value="">— General / No Course —</option>
-						{#each data.offerings as o}
+						{#each data.offerings as o (o.id)}
 							<option value={o.id}>{o.course_code} - {o.course_title} (Sem {o.semester})</option>
 						{/each}
 					</select>
-					<p class="text-xs text-slate-500 mt-1">Linking to a course makes it visible on the student's dashboard for that specific course.</p>
+					<p class="adm-hint">
+						Linking to a course makes it visible on the student's dashboard for that specific
+						course.
+					</p>
 				</div>
 
-				<div class="modal-footer">
-					<button type="button" onclick={() => showModal = false} class="btn-secondary">Cancel</button>
-					<button type="submit" class="btn-primary" disabled={submitting}>
-						{#if submitting}<span class="spinner"></span>{/if} Upload
+				<div class="modal-foot">
+					<button type="button" onclick={() => (showModal = false)} class="adm-btn adm-btn--ghost">
+						Cancel
+					</button>
+					<button type="submit" class="adm-btn adm-btn--primary" disabled={submitting}>
+						{#if submitting}<span class="adm-spin"></span>{/if} Upload
 					</button>
 				</div>
 			</form>
@@ -146,52 +262,86 @@
 {/if}
 
 <style>
-	/* Shared CSS - Keep it identical to fyp table style */
-	.page { display: flex; flex-direction: column; gap: 1.5rem; }
-	.page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-	.page-title { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0 0 0.25rem; }
-	.page-subtitle { font-size: 0.85rem; color: #64748b; margin: 0; }
-	
-	.alert { padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.88rem; font-weight: 500; }
-	.alert-error { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-	.alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+	/* Table cell helpers */
+	.text-right {
+		text-align: right;
+	}
 
-	.table-card { background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
-	.table { width: 100%; border-collapse: collapse; }
-	.table th { background: #f8fafc; padding: 0.85rem 1.25rem; text-align: left; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; }
-	.table td { padding: 1rem 1.25rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-	.table tbody tr:last-child td { border-bottom: none; }
-	.table tbody tr:hover { background: #f8fafc; }
+	.doc-cell {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
 
-	.badge-blue { display: inline-block; background: #eff6ff; color: #1d4ed8; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
-	
-	.inline { display: inline-block; }
-	.flex { display: flex; } .items-center { align-items: center; } .gap-3 { gap: 0.75rem; }
-	.font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
-	.text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; } .text-2xl { font-size: 1.5rem; }
-	.uppercase { text-transform: uppercase; } .tracking-wider { letter-spacing: 0.05em; }
-	.text-slate-900 { color: #0f172a; } .text-slate-700 { color: #334155; } .text-slate-500 { color: #64748b; } .text-slate-400 { color: #94a3b8; }
-	.italic { font-style: italic; } .mb-1 { margin-bottom: 0.25rem; } .mt-1 { margin-top: 0.25rem; }
-	.text-right { text-align: right; } .text-center { text-align: center; } .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-	.text-red-500 { color: #ef4444; } .text-blue-600 { color: #2563eb; }
-	.hover\:bg-red-50:hover { background-color: #fef2f2; } .hover\:bg-blue-50:hover { background-color: #eff6ff; }
-	
-	.btn-primary { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 10px; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
-	.btn-secondary { background: white; color: #475569; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-	.btn-icon { background: none; border: 1px solid transparent; border-radius: 8px; padding: 0.4rem; cursor: pointer; font-size: 1rem; transition: all 0.2s; text-decoration: none; display: inline-flex; }
+	.doc-icon {
+		display: grid;
+		place-items: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 10px;
+		background: #e6f2f0;
+		color: #0d5d56;
+		flex-shrink: 0;
+	}
 
-	.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 1rem; }
-	.modal { background: white; border-radius: 16px; width: 100%; max-width: 550px; box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
-	.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; }
-	.modal-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0; }
-	.modal-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #94a3b8; }
-	.modal-form { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.15rem; }
-	.modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem; }
-	
-	.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-	.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-	.form-label { font-size: 0.85rem; font-weight: 600; color: #374151; }
-	.form-input { padding: 0.65rem 0.875rem; border: 1px solid #e2e8f0; border-radius: 9px; font-size: 0.9rem; font-family: inherit; outline: none; background: #fff; }
-	.spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
-	@keyframes spin { to { transform: rotate(360deg); } }
+	.doc-title {
+		font-size: 0.88rem;
+		font-weight: 600;
+		color: var(--adm-ink);
+	}
+
+	.doc-type {
+		font-size: 0.72rem;
+		color: var(--adm-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-top: 0.1rem;
+	}
+
+	.course-line {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.doc-code {
+		align-self: flex-start;
+		font-family: ui-monospace, monospace;
+	}
+
+	.course-meta {
+		font-size: 0.78rem;
+		color: var(--adm-ink-2);
+	}
+
+	.general-note {
+		font-style: italic;
+		font-size: 0.85rem;
+	}
+
+	.uploader {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.85rem;
+		color: var(--adm-ink-2);
+	}
+
+	.uploader :global(svg) {
+		color: var(--adm-muted);
+	}
+
+	.doc-actions {
+		justify-content: flex-end;
+	}
+
+	/* Modal footer */
+	.modal-foot {
+		display: flex;
+		justify-content: flex-end;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--adm-line-soft);
+	}
 </style>

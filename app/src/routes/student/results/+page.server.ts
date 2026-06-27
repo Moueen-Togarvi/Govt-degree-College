@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!profile) return { profile: null, results: [], cgpa: 0 };
 
 	const results = await getStudentResults(profile.id);
-	const published = results.filter(r => r.is_published);
+	const published = results.filter((r) => r.is_published);
 
 	// Calculate CGPA
 	let totalCredits = 0;

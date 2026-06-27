@@ -19,5 +19,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 		ORDER BY c.title ASC
 	`;
 
-	return { profile, courses: courses as unknown as { title: string; code: string; credit_hours: number; description: string | null; semester: number; teacher_name: string; designation: string }[] };
+	return {
+		profile,
+		courses: courses as unknown as {
+			title: string;
+			code: string;
+			credit_hours: number;
+			description: string | null;
+			semester: number;
+			teacher_name: string;
+			designation: string;
+		}[]
+	};
 };

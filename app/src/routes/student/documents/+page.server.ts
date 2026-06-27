@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!profile) return { profile: null, documents: [] };
 
 	const sql = getSql();
-	
+
 	// Students see general department documents OR documents tied to courses they are enrolled in
 	const documents = await sql`
 		SELECT d.*, u.name AS uploaded_by_name,

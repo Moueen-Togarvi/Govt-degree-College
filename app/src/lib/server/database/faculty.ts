@@ -132,31 +132,30 @@ export async function deleteFacultyProfile(id: number): Promise<void> {
 // ─── Support for public frontend /about/faculty ────────────────────────────────
 
 export async function listFacultyDirectory(): Promise<FacultyDirectoryDepartment[]> {
-	const [departments, facultyMembers] = await Promise.all([
-		getAllDepartments(),
-		getAllFaculty()
-	]);
+	const [departments, facultyMembers] = await Promise.all([getAllDepartments(), getAllFaculty()]);
 
 	return departments.map((department) => {
 		const members = facultyMembers
 			.filter((member) => member.department_id === department.id)
-			.map((member): FacultyDirectoryMember => ({
-				id: member.id,
-				name: member.name || 'Unknown',
-				urduName: member.name || 'Unknown',
-				role: member.designation,
-				urduRole: member.designation,
-				qualification: member.education || 'N/A',
-				urduQualification: member.education || 'N/A',
-				photo: member.image_url || defaultFacultyImage,
-				subject: department.name,
-				isHod: member.is_hod,
-				isCoordinator: false, // We will figure this out below
-				isTeachingStaff: true
-			}));
+			.map(
+				(member): FacultyDirectoryMember => ({
+					id: member.id,
+					name: member.name || 'Unknown',
+					urduName: member.name || 'Unknown',
+					role: member.designation,
+					urduRole: member.designation,
+					qualification: member.education || 'N/A',
+					urduQualification: member.education || 'N/A',
+					photo: member.image_url || defaultFacultyImage,
+					subject: department.name,
+					isHod: member.is_hod,
+					isCoordinator: false, // We will figure this out below
+					isTeachingStaff: true
+				})
+			);
 
 		let coordinator: FacultyDirectoryMember | null = null;
-		
+
 		if (department.coordinator_id) {
 			const coordProfile = members.find((m) => m.name === department.coordinator_name);
 			if (coordProfile) {

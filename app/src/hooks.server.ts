@@ -20,7 +20,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 		});
 	}
 
-	if (path.startsWith('/coordinator') && user?.role !== 'coordinator' && user?.role !== 'super_admin') {
+	if (
+		path.startsWith('/coordinator') &&
+		user?.role !== 'coordinator' &&
+		user?.role !== 'super_admin'
+	) {
 		return new Response(null, {
 			status: 303,
 			headers: { location: '/portal?reason=unauthorized' }
@@ -44,7 +48,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// Redirect logged-in users away from /portal
 	if (path === '/portal' && user) {
 		const { getDefaultRedirect } = await import('$lib/server/auth');
-		return new Response(null, { status: 303, headers: { location: getDefaultRedirect(user.role) } });
+		return new Response(null, {
+			status: 303,
+			headers: { location: getDefaultRedirect(user.role) }
+		});
 	}
 
 	return resolve(event);

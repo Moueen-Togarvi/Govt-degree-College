@@ -21,5 +21,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 		ORDER BY a.date DESC LIMIT 30
 	`;
 
-	return { profile, attendance, detail: detail as unknown as { date: string; status: string; course_title: string; course_code: string }[] };
+	return {
+		profile,
+		attendance,
+		detail: detail as unknown as {
+			date: string;
+			status: string;
+			course_title: string;
+			course_code: string;
+		}[]
+	};
 };

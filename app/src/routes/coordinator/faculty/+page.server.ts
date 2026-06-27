@@ -1,7 +1,12 @@
 // Coordinator — Faculty Management
 import { fail } from '@sveltejs/kit';
 import { getDepartmentByCoordinatorId } from '$lib/server/database/departments';
-import { getFacultyByDepartment, createFacultyProfile, updateFacultyProfile, deleteFacultyProfile } from '$lib/server/database/faculty';
+import {
+	getFacultyByDepartment,
+	createFacultyProfile,
+	updateFacultyProfile,
+	deleteFacultyProfile
+} from '$lib/server/database/faculty';
 import { hashPassword } from '$lib/server/auth';
 import { getSql } from '$lib/server/db';
 import type { PageServerLoad, Actions } from './$types';
@@ -26,16 +31,17 @@ export const actions: Actions = {
 		const phone = fd.get('phone')?.toString() || null;
 		const is_hod = fd.get('is_hod') === 'on';
 
-		if (!name || !email || !password) return fail(400, { error: 'Name, email, and password are required' });
+		if (!name || !email || !password)
+			return fail(400, { error: 'Name, email, and password are required' });
 
 		const sql = getSql();
 		try {
 			// Create user
-			const userRows = await sql`
+			const userRows = (await sql`
 				INSERT INTO users (name, email, password_hash, role)
 				VALUES (${name}, ${email}, ${hashPassword(password)}, 'faculty')
 				RETURNING id
-			` as Record<string, unknown>[];
+			`) as Record<string, unknown>[];
 			const userId = userRows[0].id as number;
 
 			// Create faculty profile
@@ -76,7 +82,12 @@ export const actions: Actions = {
 		const sql = getSql();
 		try {
 			if (name) await sql`UPDATE users SET name = ${name} WHERE id = ${userId}`;
-			await updateFacultyProfile(profileId, { designation, education, phone: phone ?? undefined, is_hod });
+			await updateFacultyProfile(profileId, {
+				designation,
+				education,
+				phone: phone ?? undefined,
+				is_hod
+			});
 
 			// If marking as HOD, clear other HODs in same department
 			if (is_hod) {

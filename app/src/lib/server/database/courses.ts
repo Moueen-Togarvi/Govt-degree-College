@@ -58,9 +58,15 @@ export async function createCourse(data: {
 	return rows[0] as unknown as Course;
 }
 
-export async function updateCourse(id: number, data: Partial<{
-	code: string; title: string; credit_hours: number; description: string;
-}>): Promise<Course | null> {
+export async function updateCourse(
+	id: number,
+	data: Partial<{
+		code: string;
+		title: string;
+		credit_hours: number;
+		description: string;
+	}>
+): Promise<Course | null> {
 	const sql = getSql();
 	const rows = (await sql`
 		UPDATE courses SET

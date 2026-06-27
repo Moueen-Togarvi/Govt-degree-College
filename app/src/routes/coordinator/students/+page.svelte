@@ -18,14 +18,15 @@
 
 	let showModal = $state(false);
 	let showImportModal = $state(false);
-	let editingStudent = $state<typeof data.students[0] | null>(null);
+	let editingStudent = $state<(typeof data.students)[0] | null>(null);
 	let submitting = $state(false);
 	let search = $state('');
 	let semesterFilter = $state('');
 
 	const filtered = $derived(
-		data.students.filter(s => {
-			const matchSearch = !search.trim() ||
+		data.students.filter((s) => {
+			const matchSearch =
+				!search.trim() ||
 				s.name?.toLowerCase().includes(search.toLowerCase()) ||
 				s.roll_number?.toLowerCase().includes(search.toLowerCase());
 			const matchSem = !semesterFilter || s.semester === parseInt(semesterFilter);
@@ -34,11 +35,20 @@
 	);
 
 	// Group by semester for display
-	const semesters = [1,2,3,4,5,6,7,8];
+	const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
-	function openCreate() { editingStudent = null; showModal = true; }
-	function openEdit(s: typeof data.students[0]) { editingStudent = s; showModal = true; }
-	function closeModal() { showModal = false; editingStudent = null; }
+	function openCreate() {
+		editingStudent = null;
+		showModal = true;
+	}
+	function openEdit(s: (typeof data.students)[0]) {
+		editingStudent = s;
+		showModal = true;
+	}
+	function closeModal() {
+		showModal = false;
+		editingStudent = null;
+	}
 </script>
 
 <svelte:head><title>Students — Coordinator | GPGC Portal</title></svelte:head>
@@ -51,7 +61,7 @@
 			<p class="adm-sub">{data.department?.name ?? ''} · {data.students.length} enrolled</p>
 		</div>
 		<div class="head-actions">
-			<button class="adm-btn adm-btn--ghost" onclick={() => showImportModal = true}>
+			<button class="adm-btn adm-btn--ghost" onclick={() => (showImportModal = true)}>
 				<Upload size={16} stroke-width={1.75} /> Import CSV
 			</button>
 			<button class="adm-btn adm-btn--primary" onclick={openCreate}>
@@ -126,7 +136,9 @@
 								<td class="row-num">{i + 1}</td>
 								<td>
 									<div class="student-cell">
-										<div class="student-avatar">{(student.name ?? '?').charAt(0).toUpperCase()}</div>
+										<div class="student-avatar">
+											{(student.name ?? '?').charAt(0).toUpperCase()}
+										</div>
 										<div>
 											<div class="student-name">{student.name}</div>
 											<div class="student-email">{student.email}</div>
@@ -140,15 +152,29 @@
 								<td class="is-muted">{student.phone ?? '—'}</td>
 								<td>
 									<div class="adm-row-actions">
-										<button class="adm-btn adm-btn--ghost adm-btn--sm" onclick={() => openEdit(student)} title="Edit" aria-label="Edit">
+										<button
+											class="adm-btn adm-btn--ghost adm-btn--sm"
+											onclick={() => openEdit(student)}
+											title="Edit"
+											aria-label="Edit"
+										>
 											<Pencil size={15} stroke-width={1.75} />
 										</button>
-										<form method="POST" action="?/delete" use:enhance={() => {
-											if (!confirm(`Remove ${student.name}?`)) return () => {};
-											return async ({ update }) => update();
-										}}>
+										<form
+											method="POST"
+											action="?/delete"
+											use:enhance={() => {
+												if (!confirm(`Remove ${student.name}?`)) return () => {};
+												return async ({ update }) => update();
+											}}
+										>
 											<input type="hidden" name="profile_id" value={student.id} />
-											<button class="adm-btn adm-btn--danger adm-btn--sm" type="submit" title="Delete" aria-label="Delete">
+											<button
+												class="adm-btn adm-btn--danger adm-btn--sm"
+												type="submit"
+												title="Delete"
+												aria-label="Delete"
+											>
 												<Trash2 size={15} stroke-width={1.75} />
 											</button>
 										</form>
@@ -165,33 +191,74 @@
 
 <!-- Import CSV Modal -->
 {#if showImportModal}
-	<div class="adm-overlay" onclick={() => showImportModal = false} role="presentation" onkeydown={() => {}}>
-		<div class="adm-modal" onclick={e => e.stopPropagation()} role="dialog" aria-modal="true" tabindex="-1">
+	<div
+		class="adm-overlay"
+		onclick={() => (showImportModal = false)}
+		role="presentation"
+		onkeydown={() => {}}
+	>
+		<div
+			class="adm-modal"
+			onclick={(e) => e.stopPropagation()}
+			role="dialog"
+			aria-modal="true"
+			tabindex="-1"
+		>
 			<div class="adm-modal__head">
-				<h2 class="adm-modal__title"><Upload size={18} stroke-width={1.75} /> Import Students via CSV</h2>
-				<button onclick={() => showImportModal = false} class="adm-modal__close" aria-label="Close">
+				<h2 class="adm-modal__title">
+					<Upload size={18} stroke-width={1.75} /> Import Students via CSV
+				</h2>
+				<button
+					onclick={() => (showImportModal = false)}
+					class="adm-modal__close"
+					aria-label="Close"
+				>
 					<X size={18} stroke-width={2} />
 				</button>
 			</div>
 
-			<form method="POST" action="?/importCSV" enctype="multipart/form-data"
-				use:enhance={() => { submitting = true; return async ({ update }) => { submitting = false; await update(); showImportModal = false; }; }}
-				class="adm-modal__body adm-form">
-
+			<form
+				method="POST"
+				action="?/importCSV"
+				enctype="multipart/form-data"
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+						showImportModal = false;
+					};
+				}}
+				class="adm-modal__body adm-form"
+			>
 				<div class="adm-field">
 					<label class="adm-label" for="csv_file">Upload CSV File</label>
-					<input type="file" id="csv_file" name="csv_file" accept=".csv" required class="adm-input" style="padding: 0.5rem;" />
+					<input
+						type="file"
+						id="csv_file"
+						name="csv_file"
+						accept=".csv"
+						required
+						class="adm-input"
+						style="padding: 0.5rem;"
+					/>
 					<p class="note">
 						<Info size={15} stroke-width={1.75} />
 						<span>
-							Ensure your CSV has these exact columns in the first row:<br>
-							<code class="code-chip">Name, Email, RollNumber, Session, Semester, FatherName, Phone</code>
+							Ensure your CSV has these exact columns in the first row:<br />
+							<code class="code-chip"
+								>Name, Email, RollNumber, Session, Semester, FatherName, Phone</code
+							>
 						</span>
 					</p>
 				</div>
 
 				<div class="modal-foot">
-					<button type="button" onclick={() => showImportModal = false} class="adm-btn adm-btn--ghost">Cancel</button>
+					<button
+						type="button"
+						onclick={() => (showImportModal = false)}
+						class="adm-btn adm-btn--ghost">Cancel</button
+					>
 					<button type="submit" class="adm-btn adm-btn--primary" disabled={submitting}>
 						{#if submitting}<span class="adm-spin"></span>{/if} Upload & Import
 					</button>
@@ -204,7 +271,13 @@
 <!-- Modal -->
 {#if showModal}
 	<div class="adm-overlay" onclick={closeModal} role="presentation" onkeydown={() => {}}>
-		<div class="adm-modal" onclick={e => e.stopPropagation()} role="dialog" aria-modal="true" tabindex="-1">
+		<div
+			class="adm-modal"
+			onclick={(e) => e.stopPropagation()}
+			role="dialog"
+			aria-modal="true"
+			tabindex="-1"
+		>
 			<div class="adm-modal__head">
 				<h2 class="adm-modal__title">
 					{#if editingStudent}
@@ -218,10 +291,19 @@
 				</button>
 			</div>
 
-			<form method="POST" action={editingStudent ? '?/update' : '?/create'}
-				use:enhance={() => { submitting = true; return async ({ update }) => { submitting = false; await update(); closeModal(); }; }}
-				class="adm-modal__body adm-form">
-
+			<form
+				method="POST"
+				action={editingStudent ? '?/update' : '?/create'}
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+						closeModal();
+					};
+				}}
+				class="adm-modal__body adm-form"
+			>
 				{#if editingStudent}
 					<input type="hidden" name="profile_id" value={editingStudent.id} />
 					<input type="hidden" name="user_id" value={editingStudent.user_id} />
@@ -230,12 +312,25 @@
 				<div class="adm-grid-2">
 					<div class="adm-field">
 						<label class="adm-label">Full Name *</label>
-						<input type="text" name="name" required value={editingStudent?.name ?? ''} placeholder="Muhammad Ali" class="adm-input" />
+						<input
+							type="text"
+							name="name"
+							required
+							value={editingStudent?.name ?? ''}
+							placeholder="Muhammad Ali"
+							class="adm-input"
+						/>
 					</div>
 					{#if !editingStudent}
 						<div class="adm-field">
 							<label class="adm-label">Email *</label>
-							<input type="email" name="email" required placeholder="ali@student.gpgc.edu.pk" class="adm-input" />
+							<input
+								type="email"
+								name="email"
+								required
+								placeholder="ali@student.gpgc.edu.pk"
+								class="adm-input"
+							/>
 						</div>
 					{/if}
 				</div>
@@ -244,11 +339,23 @@
 					<div class="adm-grid-2">
 						<div class="adm-field">
 							<label class="adm-label">Roll Number *</label>
-							<input type="text" name="roll_number" required placeholder="CS-2022-001" class="adm-input" />
+							<input
+								type="text"
+								name="roll_number"
+								required
+								placeholder="CS-2022-001"
+								class="adm-input"
+							/>
 						</div>
 						<div class="adm-field">
 							<label class="adm-label">Session *</label>
-							<input type="text" name="session" required placeholder="2022-2026" class="adm-input" />
+							<input
+								type="text"
+								name="session"
+								required
+								placeholder="2022-2026"
+								class="adm-input"
+							/>
 						</div>
 					</div>
 				{/if}
@@ -257,26 +364,40 @@
 					<div class="adm-field">
 						<label class="adm-label">Semester *</label>
 						<select name="semester" class="adm-select">
-							{#each [1,2,3,4,5,6,7,8] as s}
+							{#each [1, 2, 3, 4, 5, 6, 7, 8] as s}
 								<option value={s} selected={editingStudent?.semester === s}>{s}</option>
 							{/each}
 						</select>
 					</div>
 					<div class="adm-field">
 						<label class="adm-label">Father's Name</label>
-						<input type="text" name="father_name" value={editingStudent?.father_name ?? ''} placeholder="Abdul Rahman" class="adm-input" />
+						<input
+							type="text"
+							name="father_name"
+							value={editingStudent?.father_name ?? ''}
+							placeholder="Abdul Rahman"
+							class="adm-input"
+						/>
 					</div>
 				</div>
 
 				<div class="adm-field">
 					<label class="adm-label">Phone</label>
-					<input type="text" name="phone" value={editingStudent?.phone ?? ''} placeholder="03XX-XXXXXXX" class="adm-input" />
+					<input
+						type="text"
+						name="phone"
+						value={editingStudent?.phone ?? ''}
+						placeholder="03XX-XXXXXXX"
+						class="adm-input"
+					/>
 				</div>
 
 				{#if !editingStudent}
 					<p class="note">
 						<Info size={15} stroke-width={1.75} />
-						<span>Default password: <strong>Student@1234</strong> — student can change it later.</span>
+						<span
+							>Default password: <strong>Student@1234</strong> — student can change it later.</span
+						>
 					</p>
 				{/if}
 

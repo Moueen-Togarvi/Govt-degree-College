@@ -1,7 +1,4 @@
-import {
-	fallbackNoticeBoardItems,
-	fallbackTickerAnnouncements
-} from '$lib/content/fallback';
+import { fallbackNoticeBoardItems, fallbackTickerAnnouncements } from '$lib/content/fallback';
 import { listNoticeBoardItems, listTickerAnnouncements } from '$lib/server/database/content';
 import { logDatabaseLoadError } from '$lib/server/db';
 import type { PageServerLoad } from './$types';

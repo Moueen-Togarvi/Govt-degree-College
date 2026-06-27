@@ -74,8 +74,7 @@ export const fallbackNoticeBoardItems: NoticeBoardItem[] = [
 	{
 		id: 2,
 		title: 'BS Morning & Evening Admissions',
-		message:
-			'BS admissions are open in both morning and evening shifts under KFUEIT affiliation.',
+		message: 'BS admissions are open in both morning and evening shifts under KFUEIT affiliation.',
 		tag: 'BS Notice',
 		date: 'May 06, 2026',
 		isoDate: '2026-05-06T00:00:00.000Z',
@@ -159,16 +158,14 @@ export const fallbackQuickLinks: QuickLink[] = [
 	{
 		id: 1,
 		title: 'Scholarship Facility',
-		description:
-			'We offer merit-based and government scholarships to support bright students.',
+		description: 'We offer merit-based and government scholarships to support bright students.',
 		href: '/admissions/scholarships',
 		iconName: 'graduation-cap'
 	},
 	{
 		id: 2,
 		title: 'Skilled Lecturers',
-		description:
-			'Our faculty consists of highly qualified professors dedicated to your success.',
+		description: 'Our faculty consists of highly qualified professors dedicated to your success.',
 		href: '/about/faculty',
 		iconName: 'users'
 	},
@@ -183,8 +180,7 @@ export const fallbackQuickLinks: QuickLink[] = [
 	{
 		id: 4,
 		title: 'Affordable Education',
-		description:
-			'High-quality government-standard education at the most affordable fee structure.',
+		description: 'High-quality government-standard education at the most affordable fee structure.',
 		href: '/admissions/fee-structure',
 		iconName: 'banknote'
 	}

@@ -97,7 +97,10 @@ export async function setupStickyStack(
 	});
 
 	wrappedPanels.forEach(({ panel, shell }, index) => {
-		shell.style.setProperty('--stack-shell-height', index === wrappedPanels.length - 1 ? '115vh' : '140vh');
+		shell.style.setProperty(
+			'--stack-shell-height',
+			index === wrappedPanels.length - 1 ? '115vh' : '140vh'
+		);
 		panel.style.zIndex = String(wrappedPanels.length - index);
 		panel.style.transformOrigin = 'top center';
 

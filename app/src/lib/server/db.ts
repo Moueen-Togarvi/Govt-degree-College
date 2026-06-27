@@ -142,7 +142,10 @@ export function isExpectedDatabaseError(error: unknown) {
 		return true;
 	}
 
-	return isConnectivityFailure(error) || (error instanceof Error && error.name === 'DatabaseUnavailableError');
+	return (
+		isConnectivityFailure(error) ||
+		(error instanceof Error && error.name === 'DatabaseUnavailableError')
+	);
 }
 
 export function logDatabaseLoadError(context: string, error: unknown) {
@@ -159,7 +162,9 @@ export function logDatabaseLoadError(context: string, error: unknown) {
 	if (isConnectivityFailure(error)) {
 		const codes = collectErrorCodes(error);
 		const codeSuffix = codes.length > 0 ? ` (${codes.join(', ')})` : '';
-		warnDatabaseOnce(`${context}: Neon database request failed${codeSuffix}. Using fallback content.`);
+		warnDatabaseOnce(
+			`${context}: Neon database request failed${codeSuffix}. Using fallback content.`
+		);
 		return;
 	}
 
@@ -187,7 +192,9 @@ export async function withDatabase<T>(
 
 		if (isConnectivityFailure(error)) {
 			markDatabaseUnavailable(operation, error);
-			const wrapped = new Error(formatRetryMessage(), { cause: error instanceof Error ? error : undefined });
+			const wrapped = new Error(formatRetryMessage(), {
+				cause: error instanceof Error ? error : undefined
+			});
 			wrapped.name = 'DatabaseUnavailableError';
 			throw wrapped;
 		}

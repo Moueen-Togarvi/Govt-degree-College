@@ -22,9 +22,7 @@ if (!DATABASE_URL) {
 // --- Hash password (same algorithm as auth.ts) ---
 function hashPassword(password) {
 	const salt = randomBytes(16).toString('hex');
-	const hash = createHash('sha256')
-		.update(`${salt}:${password}:${JWT_SECRET}`)
-		.digest('hex');
+	const hash = createHash('sha256').update(`${salt}:${password}:${JWT_SECRET}`).digest('hex');
 	return `${salt}:${hash}`;
 }
 
@@ -43,10 +41,7 @@ async function main() {
 	let schema = readFileSync(schemaPath, 'utf8');
 
 	// Remove the placeholder seed from schema
-	schema = schema.replace(
-		/INSERT INTO users[\s\S]*?ON CONFLICT \(email\) DO NOTHING;/,
-		''
-	);
+	schema = schema.replace(/INSERT INTO users[\s\S]*?ON CONFLICT \(email\) DO NOTHING;/, '');
 
 	// Remove block comments and line comments
 	schema = schema.replace(/--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');

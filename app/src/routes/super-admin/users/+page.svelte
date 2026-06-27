@@ -362,7 +362,10 @@
 						<select id="user-dept" name="department_id" class="adm-select" required>
 							<option value="">— Select Department —</option>
 							{#each data.departments as dept (dept.id)}
-								<option value={dept.id} selected={editingUser && deptForUser(editingUser) === dept.id}>
+								<option
+									value={dept.id}
+									selected={editingUser && deptForUser(editingUser) === dept.id}
+								>
 									{dept.name}
 								</option>
 							{/each}

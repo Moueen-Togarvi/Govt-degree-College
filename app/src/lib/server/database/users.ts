@@ -61,7 +61,13 @@ export async function createUser(data: {
 
 export async function updateUser(
 	id: number,
-	data: Partial<{ name: string; email: string; role: User['role']; is_active: boolean; password: string }>
+	data: Partial<{
+		name: string;
+		email: string;
+		role: User['role'];
+		is_active: boolean;
+		password: string;
+	}>
 ): Promise<User | null> {
 	const sql = getSql();
 
@@ -113,5 +119,7 @@ export async function countUsersByRole(): Promise<Record<string, number>> {
 		FROM users
 		GROUP BY role
 	`;
-	return Object.fromEntries((rows as unknown as Row[]).map((r) => [r.role as string, r.count as number]));
+	return Object.fromEntries(
+		(rows as unknown as Row[]).map((r) => [r.role as string, r.count as number])
+	);
 }

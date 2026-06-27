@@ -27,13 +27,19 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const overallPercent = totalClasses > 0 ? Math.round((totalPresent / totalClasses) * 100) : 0;
 
 	// Published results only
-	const publishedResults = results.filter(r => r.is_published);
+	const publishedResults = results.filter((r) => r.is_published);
 
 	return {
 		profile,
 		attendance,
 		results: publishedResults,
-		announcements: announcements as unknown as { id: number; title: string; description: string; category: string; created_at: string }[],
+		announcements: announcements as unknown as {
+			id: number;
+			title: string;
+			description: string;
+			category: string;
+			created_at: string;
+		}[],
 		stats: {
 			overallAttendance: overallPercent,
 			courses: attendance.length,

@@ -85,20 +85,22 @@ export async function publishResults(courseOfferingId: number, publish: boolean)
 }
 
 /** Get published results for a student */
-export async function getStudentResults(studentId: number): Promise<{
-	course_title: string;
-	course_code: string;
-	credit_hours: number;
-	midterm: number;
-	finals: number;
-	quizzes: number;
-	assignments: number;
-	practical: number;
-	total: number;
-	grade: string | null;
-	gpa_points: number | null;
-	is_published: boolean;
-}[]> {
+export async function getStudentResults(studentId: number): Promise<
+	{
+		course_title: string;
+		course_code: string;
+		credit_hours: number;
+		midterm: number;
+		finals: number;
+		quizzes: number;
+		assignments: number;
+		practical: number;
+		total: number;
+		grade: string | null;
+		gpa_points: number | null;
+		is_published: boolean;
+	}[]
+> {
 	const sql = getSql();
 	const rows = await sql`
 		SELECT m.*, c.title AS course_title, c.code AS course_code, c.credit_hours
@@ -109,24 +111,33 @@ export async function getStudentResults(studentId: number): Promise<{
 		ORDER BY c.title ASC
 	`;
 	return rows as unknown as {
-		course_title: string; course_code: string; credit_hours: number;
-		midterm: number; finals: number; quizzes: number; assignments: number;
-		practical: number; total: number; grade: string | null; gpa_points: number | null; is_published: boolean;
+		course_title: string;
+		course_code: string;
+		credit_hours: number;
+		midterm: number;
+		finals: number;
+		quizzes: number;
+		assignments: number;
+		practical: number;
+		total: number;
+		grade: string | null;
+		gpa_points: number | null;
+		is_published: boolean;
 	}[];
 }
 
 /** Calculate grade from total marks (out of 100) */
 export function calculateGrade(total: number): { grade: string; gpa: number } {
 	if (total >= 90) return { grade: 'A+', gpa: 4.0 };
-	if (total >= 85) return { grade: 'A',  gpa: 4.0 };
+	if (total >= 85) return { grade: 'A', gpa: 4.0 };
 	if (total >= 80) return { grade: 'A-', gpa: 3.7 };
 	if (total >= 75) return { grade: 'B+', gpa: 3.3 };
-	if (total >= 71) return { grade: 'B',  gpa: 3.0 };
+	if (total >= 71) return { grade: 'B', gpa: 3.0 };
 	if (total >= 68) return { grade: 'B-', gpa: 2.7 };
 	if (total >= 64) return { grade: 'C+', gpa: 2.3 };
-	if (total >= 61) return { grade: 'C',  gpa: 2.0 };
+	if (total >= 61) return { grade: 'C', gpa: 2.0 };
 	if (total >= 58) return { grade: 'C-', gpa: 1.7 };
 	if (total >= 55) return { grade: 'D+', gpa: 1.3 };
-	if (total >= 50) return { grade: 'D',  gpa: 1.0 };
+	if (total >= 50) return { grade: 'D', gpa: 1.0 };
 	return { grade: 'F', gpa: 0.0 };
 }

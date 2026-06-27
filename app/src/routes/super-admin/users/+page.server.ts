@@ -1,7 +1,17 @@
 import { fail } from '@sveltejs/kit';
-import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from '$lib/server/database/users';
+import {
+	getAllUsers,
+	getUserById,
+	createUser,
+	updateUser,
+	deleteUser
+} from '$lib/server/database/users';
 import { getAllDepartments, assignCoordinatorToDepartment } from '$lib/server/database/departments';
-import { createFacultyProfile, getFacultyByUserId, updateFacultyProfile } from '$lib/server/database/faculty';
+import {
+	createFacultyProfile,
+	getFacultyByUserId,
+	updateFacultyProfile
+} from '$lib/server/database/faculty';
 import {
 	createStudentProfile,
 	getStudentByUserId,

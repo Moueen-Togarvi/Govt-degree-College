@@ -3,114 +3,119 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-  /* Eduka-inspired Premium Palette */
-  --color-primary: #0D5D56; /* Deep Teal */
-  --color-secondary: #F7941D; /* Vibrant Orange */
-  --color-accent: #117D74; /* Mid Teal */
-  --color-neutral-soft: #F8F9FA; /* Off-white background */
-  --color-border-soft: #E2E8F0;
+	/* Eduka-inspired Premium Palette */
+	--color-primary: #0d5d56; /* Deep Teal */
+	--color-secondary: #f7941d; /* Vibrant Orange */
+	--color-accent: #117d74; /* Mid Teal */
+	--color-neutral-soft: #f8f9fa; /* Off-white background */
+	--color-border-soft: #e2e8f0;
 
-  /* Typography */
-  --font-serif: 'Playfair Display', serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
+	/* Typography */
+	--font-serif: 'Playfair Display', serif;
+	--font-sans: 'Inter', system-ui, sans-serif;
 
-  /* Animations */
-  --animate-float: float 3s ease-in-out infinite;
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-  }
+	/* Animations */
+	--animate-float: float 3s ease-in-out infinite;
+
+	@keyframes float {
+		0%,
+		100% {
+			transform: translateY(0px);
+		}
+		50% {
+			transform: translateY(-10px);
+		}
+	}
 }
 
 :root {
-  background-color: var(--color-neutral-soft);
-  color: var(--color-primary);
-  font-family: var(--font-sans);
+	background-color: var(--color-neutral-soft);
+	color: var(--color-primary);
+	font-family: var(--font-sans);
 }
 
 body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .motion-rise {
-  animation: motion-rise 0.85s ease-out both;
+	animation: motion-rise 0.85s ease-out both;
 }
 
 .motion-slide {
-  animation: motion-slide 0.95s ease-out both;
+	animation: motion-slide 0.95s ease-out both;
 }
 
 .motion-float {
-  animation: gentle-float 5s ease-in-out infinite;
+	animation: gentle-float 5s ease-in-out infinite;
 }
 
 .motion-glow {
-  position: relative;
-  overflow: hidden;
+	position: relative;
+	overflow: hidden;
 }
 
 .motion-glow::after {
-  content: "";
-  position: absolute;
-  inset: -120% auto auto -30%;
-  width: 45%;
-  height: 280%;
-  transform: rotate(22deg);
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.05) 35%,
-    rgba(255, 255, 255, 0.32) 50%,
-    transparent 100%
-  );
-  animation: surface-sheen 7s linear infinite;
-  pointer-events: none;
+	content: '';
+	position: absolute;
+	inset: -120% auto auto -30%;
+	width: 45%;
+	height: 280%;
+	transform: rotate(22deg);
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.05) 35%,
+		rgba(255, 255, 255, 0.32) 50%,
+		transparent 100%
+	);
+	animation: surface-sheen 7s linear infinite;
+	pointer-events: none;
 }
 
 @keyframes motion-rise {
-  0% {
-    opacity: 0;
-    transform: translateY(28px);
-  }
+	0% {
+		opacity: 0;
+		transform: translateY(28px);
+	}
 
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 @keyframes motion-slide {
-  0% {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
+	0% {
+		opacity: 0;
+		transform: translateX(-24px);
+	}
 
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
 }
 
 @keyframes gentle-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
+	0%,
+	100% {
+		transform: translateY(0);
+	}
 
-  50% {
-    transform: translateY(-8px);
-  }
+	50% {
+		transform: translateY(-8px);
+	}
 }
 
 @keyframes surface-sheen {
-  0% {
-    transform: translate3d(-160%, 0, 0) rotate(22deg);
-  }
+	0% {
+		transform: translate3d(-160%, 0, 0) rotate(22deg);
+	}
 
-  100% {
-    transform: translate3d(360%, 0, 0) rotate(22deg);
-  }
+	100% {
+		transform: translate3d(360%, 0, 0) rotate(22deg);
+	}
 }

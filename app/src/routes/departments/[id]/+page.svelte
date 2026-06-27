@@ -13,7 +13,7 @@
 			facilities: ['Modern Computer Labs', 'High-Speed Internet', 'Digital Library'],
 			image: '/images/gallery/682757218_1491086206363014_2879876708562002240_n.jpg'
 		},
-		'mathematics': {
+		mathematics: {
 			name: 'Mathematics',
 			icon: Lightbulb,
 			desc: 'Fostering analytical thinking and problem-solving skills.',
@@ -22,7 +22,7 @@
 			facilities: ['Dedicated Math Library', 'Research Seminar Room'],
 			image: '/images/gallery/491999992_1166947772110194_8921941246071863873_n.jpg'
 		},
-		'english': {
+		english: {
 			name: 'English',
 			icon: PenTool,
 			desc: 'Exploring literature and language to build global communicators.',
@@ -31,7 +31,7 @@
 			facilities: ['Language Lab', 'Literary Society'],
 			image: '/images/gallery/547755271_1299324492205854_5011253499358894922_n.jpg'
 		},
-		'islamiyat': {
+		islamiyat: {
 			name: 'Islamiyat',
 			icon: Users,
 			desc: 'Imparting Islamic values and theological knowledge.',
@@ -40,7 +40,7 @@
 			facilities: ['Islamic Research Center'],
 			image: '/images/gallery/497498149_1184322940372677_5964474392879878424_n.jpg'
 		},
-		'urdu': {
+		urdu: {
 			name: 'Urdu',
 			icon: PenTool,
 			desc: 'Promoting our national language and its rich literary heritage.',
@@ -49,7 +49,7 @@
 			facilities: ['Urdu Literary Society'],
 			image: '/images/gallery/474603631_1113700027116416_3753317337439731517_n.jpg'
 		},
-		'chemistry': {
+		chemistry: {
 			name: 'Chemistry',
 			icon: Microscope,
 			desc: 'Exploring the molecular world through advanced research.',
@@ -58,7 +58,7 @@
 			facilities: ['Fully Equipped Chemistry Lab', 'Chemical Storage'],
 			image: '/images/gallery/488504405_1150873360384302_7113898617720777839_n.jpg'
 		},
-		'zoology': {
+		zoology: {
 			name: 'Zoology',
 			icon: Microscope,
 			desc: 'Studying animal life and biological sciences.',
@@ -84,50 +84,49 @@
 </svelte:head>
 
 {#if dept}
-	<PageHero 
-		title="Dept. of {dept.name}" 
-		subtitle={dept.desc}
-		{breadcrumbs}
-		image={dept.image}
-	/>
+	<PageHero title="Dept. of {dept.name}" subtitle={dept.desc} {breadcrumbs} image={dept.image} />
 
-	<section class="py-24 bg-white">
+	<section class="bg-white py-24">
 		<div class="container mx-auto px-4 lg:px-8">
-			<div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+			<div class="grid grid-cols-1 gap-16 lg:grid-cols-3">
 				<!-- Main Content -->
-				<div class="lg:col-span-2 space-y-12">
+				<div class="space-y-12 lg:col-span-2">
 					<div class="space-y-6">
-						<h2 class="text-3xl font-black text-primary border-l-8 border-secondary pl-6">About the Department</h2>
-						<p class="text-lg text-primary/70 leading-relaxed">
-							The Department of {dept.name} at Govt Post Graduate College Bahawalnagar is one of the most vibrant and academically rigorous departments. We are dedicated to excellence in teaching and providing students with the skills needed for their professional lives.
+						<h2 class="border-l-8 border-secondary pl-6 text-3xl font-black text-primary">
+							About the Department
+						</h2>
+						<p class="text-lg leading-relaxed text-primary/70">
+							The Department of {dept.name} at Govt Post Graduate College Bahawalnagar is one of the most
+							vibrant and academically rigorous departments. We are dedicated to excellence in teaching
+							and providing students with the skills needed for their professional lives.
 						</p>
 					</div>
 
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-						<div class="p-8 bg-neutral-soft rounded-3xl border border-border-soft space-y-6">
-							<h3 class="text-xl font-black text-primary flex items-center gap-3">
+					<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+						<div class="space-y-6 rounded-3xl border border-border-soft bg-neutral-soft p-8">
+							<h3 class="flex items-center gap-3 text-xl font-black text-primary">
 								<BookOpen size={24} class="text-secondary" />
 								Programs Offered
 							</h3>
 							<ul class="space-y-3">
 								{#each dept.programs as prog}
 									<li class="flex items-center gap-2 font-bold text-primary/70">
-										<span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
+										<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
 										{prog}
 									</li>
 								{/each}
 							</ul>
 						</div>
 
-						<div class="p-8 bg-neutral-soft rounded-3xl border border-border-soft space-y-6">
-							<h3 class="text-xl font-black text-primary flex items-center gap-3">
+						<div class="space-y-6 rounded-3xl border border-border-soft bg-neutral-soft p-8">
+							<h3 class="flex items-center gap-3 text-xl font-black text-primary">
 								<Microscope size={24} class="text-secondary" />
 								Key Facilities
 							</h3>
 							<ul class="space-y-3">
 								{#each dept.facilities as facility}
 									<li class="flex items-center gap-2 font-bold text-primary/70">
-										<span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
+										<span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
 										{facility}
 									</li>
 								{/each}
@@ -138,28 +137,44 @@
 
 				<!-- Sidebar -->
 				<div class="space-y-8">
-					<div class="p-8 bg-primary rounded-3xl text-white space-y-6">
+					<div class="space-y-6 rounded-3xl bg-primary p-8 text-white">
 						<h3 class="text-xl font-black italic">Head of Department</h3>
 						<div class="flex items-center gap-4">
-							<div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
+							<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10">
 								<Users2 size={32} class="text-secondary" />
 							</div>
 							<div>
 								<p class="text-lg font-black">{dept.hod}</p>
-								<p class="text-secondary text-xs font-bold uppercase tracking-widest">HOD, {dept.name}</p>
+								<p class="text-xs font-bold tracking-widest text-secondary uppercase">
+									HOD, {dept.name}
+								</p>
 							</div>
 						</div>
-						<button class="w-full py-4 bg-secondary text-white rounded-xl font-black hover:scale-105 transition-all shadow-xl shadow-secondary/20">
+						<button
+							class="w-full rounded-xl bg-secondary py-4 font-black text-white shadow-xl shadow-secondary/20 transition-all hover:scale-105"
+						>
 							Contact HOD
 						</button>
 					</div>
 
-					<div class="p-8 bg-neutral-soft rounded-3xl border border-border-soft space-y-6">
+					<div class="space-y-6 rounded-3xl border border-border-soft bg-neutral-soft p-8">
 						<h3 class="text-xl font-black text-primary">Quick Links</h3>
 						<div class="flex flex-col gap-3">
-							<a href="/admissions/how-to-apply" class="text-sm font-bold text-primary/70 hover:text-secondary transition-colors">Admission Guide</a>
-							<a href="/academics/syllabus" class="text-sm font-bold text-primary/70 hover:text-secondary transition-colors">Course Syllabus</a>
-							<a href="/about/faculty" class="text-sm font-bold text-primary/70 hover:text-secondary transition-colors">Faculty Directory</a>
+							<a
+								href="/admissions/how-to-apply"
+								class="text-sm font-bold text-primary/70 transition-colors hover:text-secondary"
+								>Admission Guide</a
+							>
+							<a
+								href="/academics/syllabus"
+								class="text-sm font-bold text-primary/70 transition-colors hover:text-secondary"
+								>Course Syllabus</a
+							>
+							<a
+								href="/about/faculty"
+								class="text-sm font-bold text-primary/70 transition-colors hover:text-secondary"
+								>Faculty Directory</a
+							>
 						</div>
 					</div>
 				</div>
@@ -167,7 +182,7 @@
 		</div>
 	</section>
 {:else}
-	<div class="min-h-screen flex items-center justify-center">
+	<div class="flex min-h-screen items-center justify-center">
 		<p class="text-2xl font-black text-primary">Department not found.</p>
 	</div>
 {/if}

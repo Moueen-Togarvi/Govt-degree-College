@@ -6,10 +6,10 @@
 
 	function gradeClass(g: string | null) {
 		if (!g) return 'grade-none';
-		if (['A+','A','A-'].includes(g)) return 'grade-a';
-		if (['B+','B','B-'].includes(g)) return 'grade-b';
-		if (['C+','C','C-'].includes(g)) return 'grade-c';
-		if (['D+','D'].includes(g)) return 'grade-d';
+		if (['A+', 'A', 'A-'].includes(g)) return 'grade-a';
+		if (['B+', 'B', 'B-'].includes(g)) return 'grade-b';
+		if (['C+', 'C', 'C-'].includes(g)) return 'grade-c';
+		if (['D+', 'D'].includes(g)) return 'grade-d';
 		return 'grade-f';
 	}
 
@@ -30,12 +30,12 @@
 		<form class="search-box" method="GET">
 			<div class="input-wrapper">
 				<span class="search-icon">🔍</span>
-				<input 
-					type="text" 
-					name="roll_number" 
-					bind:value={rollNumber} 
-					placeholder="Enter Roll Number (e.g. CS-2022-001)" 
-					required 
+				<input
+					type="text"
+					name="roll_number"
+					bind:value={rollNumber}
+					placeholder="Enter Roll Number (e.g. CS-2022-001)"
+					required
 				/>
 			</div>
 			<button type="submit" class="btn-search">Search Results</button>
@@ -49,7 +49,10 @@
 					<span class="icon">⚠️</span>
 					<div>
 						<strong>Student Not Found</strong>
-						<p>No student found with the roll number "{$page.url.searchParams.get('roll_number')}". Please check your roll number and try again.</p>
+						<p>
+							No student found with the roll number "{$page.url.searchParams.get('roll_number')}".
+							Please check your roll number and try again.
+						</p>
 					</div>
 				</div>
 			{:else}
@@ -65,7 +68,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="cgpa-highlight">
 						<div class="cgpa-label">Cumulative GPA</div>
 						<div class="cgpa-value">{data.cgpa.toFixed(2)}</div>
@@ -91,7 +94,7 @@
 									<tr>
 										<th>Course</th>
 										<th class="text-center">Credits</th>
-										<th class="text-center">Marks<br><small>(/100)</small></th>
+										<th class="text-center">Marks<br /><small>(/100)</small></th>
 										<th class="text-center">Grade</th>
 										<th class="text-center">GPA</th>
 									</tr>
@@ -105,21 +108,23 @@
 													<span class="course-title">{result.course_title}</span>
 												</div>
 											</td>
-											<td class="text-center num">{result.credit_hours}</td>
+											<td class="num text-center">{result.credit_hours}</td>
 											<td class="text-center">
 												<strong class="total-val">{result.total}</strong>
 											</td>
 											<td class="text-center">
-												<span class="grade-badge {gradeClass(result.grade)}">{result.grade ?? '—'}</span>
+												<span class="grade-badge {gradeClass(result.grade)}"
+													>{result.grade ?? '—'}</span
+												>
 											</td>
-											<td class="text-center num">{result.gpa_points?.toFixed(1) ?? '—'}</td>
+											<td class="num text-center">{result.gpa_points?.toFixed(1) ?? '—'}</td>
 										</tr>
 									{/each}
 								</tbody>
 							</table>
 						</div>
 					</div>
-					
+
 					<div class="print-actions">
 						<button class="btn-print" onclick={() => window.print()}>🖨️ Print Transcript</button>
 					</div>
@@ -165,7 +170,9 @@
 		background: white;
 		padding: 0.5rem;
 		border-radius: 99px;
-		box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.01);
+		box-shadow:
+			0 10px 25px -5px rgba(0, 0, 0, 0.05),
+			0 8px 10px -6px rgba(0, 0, 0, 0.01);
 		border: 1px solid #e2e8f0;
 	}
 
@@ -205,7 +212,9 @@
 		font-weight: 600;
 		font-size: 1rem;
 		cursor: pointer;
-		transition: transform 0.2s, box-shadow 0.2s;
+		transition:
+			transform 0.2s,
+			box-shadow 0.2s;
 	}
 
 	.btn-search:hover {
@@ -218,8 +227,14 @@
 	}
 
 	@keyframes slideUp {
-		from { opacity: 0; transform: translateY(20px); }
-		to { opacity: 1; transform: translateY(0); }
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.alert-box {
@@ -251,7 +266,7 @@
 		border: 1px solid #fecaca;
 		color: #991b1b;
 	}
-	
+
 	.alert-box.warning {
 		background: #fffbeb;
 		border: 1px solid #fde68a;
@@ -263,7 +278,7 @@
 		border-radius: 16px;
 		padding: 2rem;
 		border: 1px solid #e2e8f0;
-		box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -310,9 +325,22 @@
 		font-weight: 600;
 	}
 
-	.roll-badge { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-family: monospace; }
-	.dept-badge { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-	.sem-badge { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+	.roll-badge {
+		background: #eff6ff;
+		color: #1d4ed8;
+		border: 1px solid #bfdbfe;
+		font-family: monospace;
+	}
+	.dept-badge {
+		background: #f0fdf4;
+		color: #166534;
+		border: 1px solid #bbf7d0;
+	}
+	.sem-badge {
+		background: #f8fafc;
+		color: #475569;
+		border: 1px solid #e2e8f0;
+	}
 
 	.cgpa-highlight {
 		text-align: center;
@@ -342,7 +370,7 @@
 		background: white;
 		border-radius: 16px;
 		border: 1px solid #e2e8f0;
-		box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 		overflow: hidden;
 		margin-bottom: 2rem;
 	}
@@ -387,11 +415,21 @@
 		vertical-align: middle;
 	}
 
-	.table tbody tr:last-child td { border-bottom: none; }
-	.table tbody tr:hover { background: #f8fafc; }
+	.table tbody tr:last-child td {
+		border-bottom: none;
+	}
+	.table tbody tr:hover {
+		background: #f8fafc;
+	}
 
-	.text-center { text-align: center; }
-	.num { font-size: 0.95rem; color: #475569; font-weight: 500; }
+	.text-center {
+		text-align: center;
+	}
+	.num {
+		font-size: 0.95rem;
+		color: #475569;
+		font-weight: 500;
+	}
 
 	.course-cell {
 		display: flex;
@@ -426,12 +464,30 @@
 		min-width: 45px;
 	}
 
-	.grade-a { background: #d1fae5; color: #065f46; }
-	.grade-b { background: #dbeafe; color: #1e40af; }
-	.grade-c { background: #fef3c7; color: #92400e; }
-	.grade-d { background: #fed7aa; color: #9a3412; }
-	.grade-f { background: #fee2e2; color: #991b1b; }
-	.grade-none { background: #f1f5f9; color: #94a3b8; }
+	.grade-a {
+		background: #d1fae5;
+		color: #065f46;
+	}
+	.grade-b {
+		background: #dbeafe;
+		color: #1e40af;
+	}
+	.grade-c {
+		background: #fef3c7;
+		color: #92400e;
+	}
+	.grade-d {
+		background: #fed7aa;
+		color: #9a3412;
+	}
+	.grade-f {
+		background: #fee2e2;
+		color: #991b1b;
+	}
+	.grade-none {
+		background: #f1f5f9;
+		color: #94a3b8;
+	}
 
 	.print-actions {
 		display: flex;
@@ -451,7 +507,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		transition: all 0.2s;
-		box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 	}
 
 	.btn-print:hover {
@@ -461,21 +517,69 @@
 	}
 
 	@media (max-width: 768px) {
-		.search-box { flex-direction: column; padding: 1rem; border-radius: 16px; }
-		.btn-search { border-radius: 8px; width: 100%; }
-		.student-card { flex-direction: column; text-align: center; }
-		.student-header { flex-direction: column; }
-		.badges { justify-content: center; }
+		.search-box {
+			flex-direction: column;
+			padding: 1rem;
+			border-radius: 16px;
+		}
+		.btn-search {
+			border-radius: 8px;
+			width: 100%;
+		}
+		.student-card {
+			flex-direction: column;
+			text-align: center;
+		}
+		.student-header {
+			flex-direction: column;
+		}
+		.badges {
+			justify-content: center;
+		}
 	}
 
 	@media print {
-		.search-section, .print-actions, .topbar, .sidebar, header, footer { display: none !important; }
-		.results-container { padding: 0; max-width: 100%; }
-		.student-card { border: none; box-shadow: none; padding: 0; margin-bottom: 2rem; border-bottom: 2px solid #000; border-radius: 0; }
-		.table-card { border: none; box-shadow: none; }
-		.table th { border-bottom: 2px solid #000; color: #000; }
-		.table td { border-bottom: 1px solid #ccc; color: #000; }
-		.badge, .grade-badge, .cgpa-highlight { background: transparent !important; color: #000 !important; border: 1px solid #000 !important; }
-		body { background: white; }
+		.search-section,
+		.print-actions,
+		.topbar,
+		.sidebar,
+		header,
+		footer {
+			display: none !important;
+		}
+		.results-container {
+			padding: 0;
+			max-width: 100%;
+		}
+		.student-card {
+			border: none;
+			box-shadow: none;
+			padding: 0;
+			margin-bottom: 2rem;
+			border-bottom: 2px solid #000;
+			border-radius: 0;
+		}
+		.table-card {
+			border: none;
+			box-shadow: none;
+		}
+		.table th {
+			border-bottom: 2px solid #000;
+			color: #000;
+		}
+		.table td {
+			border-bottom: 1px solid #ccc;
+			color: #000;
+		}
+		.badge,
+		.grade-badge,
+		.cgpa-highlight {
+			background: transparent !important;
+			color: #000 !important;
+			border: 1px solid #000 !important;
+		}
+		body {
+			background: white;
+		}
 	}
 </style>

@@ -24,29 +24,33 @@
 		<div class="absolute inset-0 bg-primary/62"></div>
 	</div>
 	<!-- Decorative shapes -->
-	<div class="pointer-events-none absolute -right-36 -top-36 h-72 w-72 rounded-full bg-secondary/10"></div>
-	<div class="pointer-events-none absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-white/5"></div>
+	<div
+		class="pointer-events-none absolute -top-36 -right-36 h-72 w-72 rounded-full bg-secondary/10"
+	></div>
+	<div
+		class="pointer-events-none absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-white/5"
+	></div>
 
-	<div class="container relative z-10 mx-auto px-4 lg:px-8">
+	<div class="relative z-10 container mx-auto px-4 lg:px-8">
 		<!-- Breadcrumbs -->
 		<nav aria-label="breadcrumb" class="mb-5">
 			<ol class="flex flex-wrap items-center gap-2 text-xs font-bold text-white/65 lg:text-sm">
 				{#each breadcrumbs as crumb, i}
 					<li class="flex items-center gap-2">
 						{#if i < breadcrumbs.length - 1}
-							<a href={crumb.href} class="hover:text-secondary transition-colors">{crumb.label}</a>
+							<a href={crumb.href} class="transition-colors hover:text-secondary">{crumb.label}</a>
 							<span class="text-white/30">/</span>
 						{:else}
-							<span class="text-secondary font-bold">{crumb.label}</span>
+							<span class="font-bold text-secondary">{crumb.label}</span>
 						{/if}
 					</li>
 				{/each}
 			</ol>
 		</nav>
 
-		<h1 class="max-w-4xl text-3xl font-black leading-tight text-white lg:text-5xl">{title}</h1>
+		<h1 class="max-w-4xl text-3xl leading-tight font-black text-white lg:text-5xl">{title}</h1>
 		{#if subtitle}
-			<p class="mt-3 max-w-2xl text-base font-medium leading-7 text-white/78 lg:text-lg">
+			<p class="mt-3 max-w-2xl text-base leading-7 font-medium text-white/78 lg:text-lg">
 				{subtitle}
 			</p>
 		{/if}

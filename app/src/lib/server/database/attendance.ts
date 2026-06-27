@@ -30,13 +30,15 @@ export interface AttendanceSummary {
 type Row = Record<string, unknown>;
 
 /** Mark or update attendance for a list of students on a specific date */
-export async function markAttendance(records: {
-	student_id: number;
-	course_offering_id: number;
-	date: string;
-	status: string;
-	marked_by: number;
-}[]): Promise<void> {
+export async function markAttendance(
+	records: {
+		student_id: number;
+		course_offering_id: number;
+		date: string;
+		status: string;
+		marked_by: number;
+	}[]
+): Promise<void> {
 	if (!records.length) return;
 	const sql = getSql();
 
@@ -69,9 +71,7 @@ export async function getAttendanceByDate(
 }
 
 /** Get attendance summary per student for an offering */
-export async function getAttendanceSummary(
-	courseOfferingId: number
-): Promise<AttendanceSummary[]> {
+export async function getAttendanceSummary(courseOfferingId: number): Promise<AttendanceSummary[]> {
 	const sql = getSql();
 	const rows = (await sql`
 		SELECT
@@ -107,15 +107,17 @@ export async function getAttendanceSummary(
 }
 
 /** Get attendance for a specific student across all offerings */
-export async function getStudentAttendance(studentId: number): Promise<{
-	course_title: string;
-	course_code: string;
-	total: number;
-	present: number;
-	absent: number;
-	late: number;
-	percentage: number;
-}[]> {
+export async function getStudentAttendance(studentId: number): Promise<
+	{
+		course_title: string;
+		course_code: string;
+		total: number;
+		present: number;
+		absent: number;
+		late: number;
+		percentage: number;
+	}[]
+> {
 	const sql = getSql();
 	const rows = (await sql`
 		SELECT

@@ -49,10 +49,7 @@ export const actions: Actions = {
 					let schema = readFileSync(schemaPath, 'utf8');
 
 					// Remove placeholder inserts
-					schema = schema.replace(
-						/INSERT INTO users[\s\S]*?ON CONFLICT \(email\) DO NOTHING;/,
-						''
-					);
+					schema = schema.replace(/INSERT INTO users[\s\S]*?ON CONFLICT \(email\) DO NOTHING;/, '');
 
 					// Remove comments
 					schema = schema.replace(/--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
@@ -85,12 +82,15 @@ export const actions: Actions = {
 						SET password_hash = ${passwordHash}, is_active = TRUE
 					`;
 					console.log('✅ Database auto-bootstrapped successfully!');
-					
+
 					// Retry login after successful setup
 					result = await login(email, password);
 				} catch (setupErr: any) {
 					console.error('Database auto-bootstrap failed:', setupErr);
-					return fail(500, { error: 'Database needs setup but auto-bootstrap failed: ' + setupErr.message, email });
+					return fail(500, {
+						error: 'Database needs setup but auto-bootstrap failed: ' + setupErr.message,
+						email
+					});
 				}
 			} else {
 				throw err;
@@ -125,10 +125,7 @@ export const actions: Actions = {
 			let schema = readFileSync(schemaPath, 'utf8');
 
 			// Remove placeholder inserts
-			schema = schema.replace(
-				/INSERT INTO users[\s\S]*?ON CONFLICT \(email\) DO NOTHING;/,
-				''
-			);
+			schema = schema.replace(/INSERT INTO users[\s\S]*?ON CONFLICT \(email\) DO NOTHING;/, '');
 
 			// Remove comments
 			schema = schema.replace(/--.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
@@ -148,9 +145,7 @@ export const actions: Actions = {
 			const password = 'Admin@1234';
 			const jwtSecret = env.JWT_SECRET ?? 'fallback-secret';
 			const salt = randomBytes(16).toString('hex');
-			const hash = createHash('sha256')
-				.update(`${salt}:${password}:${jwtSecret}`)
-				.digest('hex');
+			const hash = createHash('sha256').update(`${salt}:${password}:${jwtSecret}`).digest('hex');
 			const passwordHash = `${salt}:${hash}`;
 
 			// 4. Insert Super Admin

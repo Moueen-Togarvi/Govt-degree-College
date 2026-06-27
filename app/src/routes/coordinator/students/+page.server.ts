@@ -1,7 +1,12 @@
 // Coordinator — Student Management
 import { fail } from '@sveltejs/kit';
 import { getDepartmentByCoordinatorId } from '$lib/server/database/departments';
-import { getStudentsByDepartment, createStudentProfile, updateStudentProfile, deleteStudentProfile } from '$lib/server/database/students';
+import {
+	getStudentsByDepartment,
+	createStudentProfile,
+	updateStudentProfile,
+	deleteStudentProfile
+} from '$lib/server/database/students';
 import { hashPassword } from '$lib/server/auth';
 import { getSql } from '$lib/server/db';
 import type { PageServerLoad, Actions } from './$types';
@@ -33,11 +38,11 @@ export const actions: Actions = {
 
 		const sql = getSql();
 		try {
-			const userRows = await sql`
+			const userRows = (await sql`
 				INSERT INTO users (name, email, password_hash, role)
 				VALUES (${name}, ${email}, ${hashPassword(password)}, 'student')
 				RETURNING id
-			` as Record<string, unknown>[];
+			`) as Record<string, unknown>[];
 			const userId = userRows[0].id as number;
 
 			await createStudentProfile({
@@ -77,7 +82,11 @@ export const actions: Actions = {
 		const sql = getSql();
 		try {
 			if (name && userId) await sql`UPDATE users SET name = ${name} WHERE id = ${userId}`;
-			await updateStudentProfile(profileId, { semester, father_name: father_name ?? undefined, phone: phone ?? undefined });
+			await updateStudentProfile(profileId, {
+				semester,
+				father_name: father_name ?? undefined,
+				phone: phone ?? undefined
+			});
 			return { success: true, message: 'Student updated.' };
 		} catch (err: unknown) {
 			return fail(500, { error: 'Server error: ' + (err as Error).message });
@@ -108,13 +117,19 @@ export const actions: Actions = {
 
 		try {
 			const text = await file.text();
-			const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-			if (lines.length < 2) return fail(400, { error: 'File must contain a header row and at least one student.' });
+			const lines = text
+				.split(/\r?\n/)
+				.map((l) => l.trim())
+				.filter((l) => l.length > 0);
+			if (lines.length < 2)
+				return fail(400, { error: 'File must contain a header row and at least one student.' });
 
 			// Simple CSV parser assuming columns: Name, Email, RollNumber, Session, Semester, FatherName, Phone
 			const header = lines[0].toLowerCase();
 			if (!header.includes('name') || !header.includes('email') || !header.includes('roll')) {
-				return fail(400, { error: 'Invalid CSV format. Expected columns: Name, Email, RollNumber, Session, Semester' });
+				return fail(400, {
+					error: 'Invalid CSV format. Expected columns: Name, Email, RollNumber, Session, Semester'
+				});
 			}
 
 			const sql = getSql();
@@ -123,8 +138,11 @@ export const actions: Actions = {
 
 			for (let i = 1; i < lines.length; i++) {
 				// Naive split (assumes no commas inside quotes)
-				const cols = lines[i].split(',').map(c => c.trim());
-				if (cols.length < 5) { errorCount++; continue; }
+				const cols = lines[i].split(',').map((c) => c.trim());
+				if (cols.length < 5) {
+					errorCount++;
+					continue;
+				}
 
 				const name = cols[0];
 				const email = cols[1].toLowerCase();
@@ -135,14 +153,17 @@ export const actions: Actions = {
 				const phone = cols[6] || null;
 
 				try {
-					const userRows = await sql`
+					const userRows = (await sql`
 						INSERT INTO users (name, email, password_hash, role)
 						VALUES (${name}, ${email}, ${hashPassword('Student@1234')}, 'student')
 						ON CONFLICT (email) DO NOTHING
 						RETURNING id
-					` as Record<string, unknown>[];
+					`) as Record<string, unknown>[];
 
-					if (userRows.length === 0) { errorCount++; continue; } // User exists
+					if (userRows.length === 0) {
+						errorCount++;
+						continue;
+					} // User exists
 
 					const userId = userRows[0].id as number;
 
@@ -161,7 +182,10 @@ export const actions: Actions = {
 				}
 			}
 
-			return { success: true, message: `Import complete. ${successCount} imported, ${errorCount} failed.` };
+			return {
+				success: true,
+				message: `Import complete. ${successCount} imported, ${errorCount} failed.`
+			};
 		} catch (err: unknown) {
 			return fail(500, { error: 'Import failed: ' + (err as Error).message });
 		}

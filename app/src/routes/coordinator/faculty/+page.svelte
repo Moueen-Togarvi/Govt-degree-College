@@ -15,23 +15,33 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let showModal = $state(false);
-	let editingMember = $state<typeof data.faculty[0] | null>(null);
+	let editingMember = $state<(typeof data.faculty)[0] | null>(null);
 	let deletingId = $state<number | null>(null);
 	let submitting = $state(false);
 	let search = $state('');
 
 	const filtered = $derived(
 		search.trim()
-			? data.faculty.filter(f =>
-					f.name?.toLowerCase().includes(search.toLowerCase()) ||
-					f.designation?.toLowerCase().includes(search.toLowerCase())
+			? data.faculty.filter(
+					(f) =>
+						f.name?.toLowerCase().includes(search.toLowerCase()) ||
+						f.designation?.toLowerCase().includes(search.toLowerCase())
 				)
 			: data.faculty
 	);
 
-	function openCreate() { editingMember = null; showModal = true; }
-	function openEdit(m: typeof data.faculty[0]) { editingMember = m; showModal = true; }
-	function closeModal() { showModal = false; editingMember = null; }
+	function openCreate() {
+		editingMember = null;
+		showModal = true;
+	}
+	function openEdit(m: (typeof data.faculty)[0]) {
+		editingMember = m;
+		showModal = true;
+	}
+	function closeModal() {
+		showModal = false;
+		editingMember = null;
+	}
 </script>
 
 <svelte:head><title>Faculty — Coordinator | GPGC Portal</title></svelte:head>
@@ -124,15 +134,29 @@
 								</td>
 								<td>
 									<div class="adm-row-actions">
-										<button class="adm-btn adm-btn--ghost adm-btn--sm" onclick={() => openEdit(member)} title="Edit" aria-label="Edit">
+										<button
+											class="adm-btn adm-btn--ghost adm-btn--sm"
+											onclick={() => openEdit(member)}
+											title="Edit"
+											aria-label="Edit"
+										>
 											<Pencil size={15} stroke-width={1.75} />
 										</button>
-										<form method="POST" action="?/delete" use:enhance={() => {
-											if (!confirm(`Remove ${member.name}?`)) return () => {};
-											return async ({ update }) => update();
-										}}>
+										<form
+											method="POST"
+											action="?/delete"
+											use:enhance={() => {
+												if (!confirm(`Remove ${member.name}?`)) return () => {};
+												return async ({ update }) => update();
+											}}
+										>
 											<input type="hidden" name="profile_id" value={member.id} />
-											<button class="adm-btn adm-btn--danger adm-btn--sm" type="submit" title="Delete" aria-label="Delete">
+											<button
+												class="adm-btn adm-btn--danger adm-btn--sm"
+												type="submit"
+												title="Delete"
+												aria-label="Delete"
+											>
 												<Trash2 size={15} stroke-width={1.75} />
 											</button>
 										</form>
@@ -150,7 +174,13 @@
 <!-- Modal -->
 {#if showModal}
 	<div class="adm-overlay" onclick={closeModal} role="presentation" onkeydown={() => {}}>
-		<div class="adm-modal" onclick={e => e.stopPropagation()} role="dialog" aria-modal="true" tabindex="-1">
+		<div
+			class="adm-modal"
+			onclick={(e) => e.stopPropagation()}
+			role="dialog"
+			aria-modal="true"
+			tabindex="-1"
+		>
 			<div class="adm-modal__head">
 				<h2 class="adm-modal__title">
 					{#if editingMember}
@@ -164,10 +194,19 @@
 				</button>
 			</div>
 
-			<form method="POST" action={editingMember ? '?/update' : '?/create'}
-				use:enhance={() => { submitting = true; return async ({ update }) => { submitting = false; await update(); closeModal(); }; }}
-				class="adm-modal__body adm-form">
-
+			<form
+				method="POST"
+				action={editingMember ? '?/update' : '?/create'}
+				use:enhance={() => {
+					submitting = true;
+					return async ({ update }) => {
+						submitting = false;
+						await update();
+						closeModal();
+					};
+				}}
+				class="adm-modal__body adm-form"
+			>
 				{#if editingMember}
 					<input type="hidden" name="profile_id" value={editingMember.id} />
 					<input type="hidden" name="user_id" value={editingMember.user_id} />
@@ -176,12 +215,25 @@
 				<div class="adm-grid-2">
 					<div class="adm-field">
 						<label class="adm-label">Full Name *</label>
-						<input type="text" name="name" required value={editingMember?.name ?? ''} placeholder="Dr. Muhammad Ali" class="adm-input" />
+						<input
+							type="text"
+							name="name"
+							required
+							value={editingMember?.name ?? ''}
+							placeholder="Dr. Muhammad Ali"
+							class="adm-input"
+						/>
 					</div>
 					{#if !editingMember}
 						<div class="adm-field">
 							<label class="adm-label">Email *</label>
-							<input type="email" name="email" required placeholder="ali@gpgc.edu.pk" class="adm-input" />
+							<input
+								type="email"
+								name="email"
+								required
+								placeholder="ali@gpgc.edu.pk"
+								class="adm-input"
+							/>
 						</div>
 					{/if}
 				</div>
@@ -189,24 +241,49 @@
 				{#if !editingMember}
 					<div class="adm-field">
 						<label class="adm-label">Password *</label>
-						<input type="password" name="password" required minlength="6" placeholder="Min. 6 characters" class="adm-input" />
+						<input
+							type="password"
+							name="password"
+							required
+							minlength="6"
+							placeholder="Min. 6 characters"
+							class="adm-input"
+						/>
 					</div>
 				{/if}
 
 				<div class="adm-grid-2">
 					<div class="adm-field">
 						<label class="adm-label">Designation</label>
-						<input type="text" name="designation" value={editingMember?.designation ?? 'Lecturer'} placeholder="Lecturer" class="adm-input" />
+						<input
+							type="text"
+							name="designation"
+							value={editingMember?.designation ?? 'Lecturer'}
+							placeholder="Lecturer"
+							class="adm-input"
+						/>
 					</div>
 					<div class="adm-field">
 						<label class="adm-label">Phone</label>
-						<input type="text" name="phone" value={editingMember?.phone ?? ''} placeholder="03XX-XXXXXXX" class="adm-input" />
+						<input
+							type="text"
+							name="phone"
+							value={editingMember?.phone ?? ''}
+							placeholder="03XX-XXXXXXX"
+							class="adm-input"
+						/>
 					</div>
 				</div>
 
 				<div class="adm-field">
 					<label class="adm-label">Education / Qualification</label>
-					<input type="text" name="education" value={editingMember?.education ?? ''} placeholder="M.Phil Computer Science" class="adm-input" />
+					<input
+						type="text"
+						name="education"
+						value={editingMember?.education ?? ''}
+						placeholder="M.Phil Computer Science"
+						class="adm-input"
+					/>
 				</div>
 
 				<label class="checkbox-label">

@@ -50,9 +50,6 @@
 	}
 </script>
 
-/** * PortalShell.svelte — Shared chrome for the role-based portals * (student, faculty,
-coordinator). Mirrors the super-admin design system: * deep-teal sidebar, lucide icons, motion
-entrance, mobile-responsive drawer, * breadcrumb topbar. Keeps the whole portal visually unified. */
 <svelte:head>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link
@@ -75,15 +72,9 @@ entrance, mobile-responsive drawer, * breadcrumb topbar. Keeps the whole portal 
 	<aside class="sidebar {sidebarOpen ? 'open' : 'collapsed'} mobile-{mobileOpen ? 'show' : 'hide'}">
 		<div class="sidebar-header">
 			<a href={brandHref} class="sidebar-logo" title="GPGC Portal">
-				<img
-					src="/images/logos/degree4k-removebg-preview.png"
-					alt="GPGC logo"
-					class="sidebar-logo-img"
-				/>
 				{#if sidebarOpen}
 					<div class="sidebar-title-group">
 						<span class="sidebar-title">GPGC Portal</span>
-						<span class="sidebar-role">{roleLabel}</span>
 					</div>
 				{/if}
 			</a>

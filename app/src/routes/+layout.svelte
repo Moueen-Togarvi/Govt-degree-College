@@ -53,11 +53,11 @@
 	<title>Govt Post Graduate College Bahawalnagar</title>
 </svelte:head>
 
-<div class="flex flex-col min-h-screen bg-white">
+<div class="flex min-h-screen flex-col bg-white">
 	{#if !isPortalRoute($page.url.pathname)}
 		<Navbar />
 	{/if}
-	
+
 	<main
 		bind:this={mainElement}
 		class="flex-grow overflow-x-clip {isPortalRoute($page.url.pathname) ? '' : 'pt-[105px]'}"

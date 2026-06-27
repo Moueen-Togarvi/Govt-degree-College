@@ -12,7 +12,14 @@ import {
 	fallbackTickerAnnouncements
 } from '$lib/content/fallback';
 import seedContentStore from '../../../data/content-store.json';
-import type { Announcement, CollegeEvent, ExamResult, LatestNewsItem, NoticeBoardItem, QuickLink } from '$lib/types/content';
+import type {
+	Announcement,
+	CollegeEvent,
+	ExamResult,
+	LatestNewsItem,
+	NoticeBoardItem,
+	QuickLink
+} from '$lib/types/content';
 import type { Department, FacultyMember } from '$lib/types/faculty';
 
 export type LocalContentStore = {
@@ -55,9 +62,7 @@ function createFallbackStore(): LocalContentStore {
 		urduName: department.urduName
 	}));
 
-	const departmentLookup = new Map(
-		departments.map((department) => [department.slug, department])
-	);
+	const departmentLookup = new Map(departments.map((department) => [department.slug, department]));
 
 	const facultyMembers: FacultyMember[] = fallbackFacultyDepartments.flatMap((department) =>
 		department.staff.map((member) => {

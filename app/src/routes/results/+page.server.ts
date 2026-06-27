@@ -11,13 +11,13 @@ export const load: PageServerLoad = async ({ url }) => {
 	}
 
 	const student = await getStudentByRollNumber(rollNumber);
-	
+
 	if (!student) {
 		return { searched: true, student: null, results: [], cgpa: 0 };
 	}
 
 	const results = await getStudentResults(student.id);
-	const published = results.filter(r => r.is_published);
+	const published = results.filter((r) => r.is_published);
 
 	// Calculate CGPA
 	let totalCredits = 0;

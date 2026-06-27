@@ -227,8 +227,10 @@ async function ensureContentSchema() {
 export async function listAnnouncements(limit = 12): Promise<Announcement[]> {
 	return withContentFallback(
 		async () => {
-			const rows = await withDatabase('list announcements', async (sql) =>
-				(await sql`
+			const rows = await withDatabase(
+				'list announcements',
+				async (sql) =>
+					(await sql`
 					SELECT
 						id,
 						title,
@@ -256,8 +258,10 @@ export async function listAnnouncements(limit = 12): Promise<Announcement[]> {
 export async function listLatestNewsItems(limit = 8): Promise<LatestNewsItem[]> {
 	return withContentFallback(
 		async () => {
-			const rows = await withDatabase('list latest news items', async (sql) =>
-				(await sql`
+			const rows = await withDatabase(
+				'list latest news items',
+				async (sql) =>
+					(await sql`
 					SELECT id, title, href, sort_order
 					FROM latest_news_items
 					ORDER BY sort_order ASC, id DESC
@@ -344,7 +348,12 @@ export async function listNoticeBoardItems(
 					const expiryTime = new Date(item.expiryIsoDate).getTime();
 					return Number.isNaN(expiryTime) || expiryTime >= now;
 				})
-				.sort((left, right) => left.sortOrder - right.sortOrder || right.isoDate.localeCompare(left.isoDate) || right.id - left.id)
+				.sort(
+					(left, right) =>
+						left.sortOrder - right.sortOrder ||
+						right.isoDate.localeCompare(left.isoDate) ||
+						right.id - left.id
+				)
 				.slice(0, limit);
 		}
 	);
@@ -353,8 +362,10 @@ export async function listNoticeBoardItems(
 export async function listEvents(limit = 12): Promise<CollegeEvent[]> {
 	return withContentFallback(
 		async () => {
-			const rows = await withDatabase('list events', async (sql) =>
-				(await sql`
+			const rows = await withDatabase(
+				'list events',
+				async (sql) =>
+					(await sql`
 					SELECT
 						id,
 						title,
@@ -393,8 +404,10 @@ export async function listExamResults({
 	return withContentFallback(
 		async () => {
 			if (!normalizedSearch) {
-				const rows = await withDatabase('list exam results', async (sql) =>
-					(await sql`
+				const rows = await withDatabase(
+					'list exam results',
+					async (sql) =>
+						(await sql`
 						SELECT
 							id,
 							title,
@@ -411,9 +424,11 @@ export async function listExamResults({
 				return rows.map(mapResult);
 			}
 
-			const rows = await withDatabase('search exam results', async (sql) =>
-				(await sql.query(
-					`
+			const rows = await withDatabase(
+				'search exam results',
+				async (sql) =>
+					(await sql.query(
+						`
 						SELECT
 							id,
 							title,
@@ -426,8 +441,8 @@ export async function listExamResults({
 						ORDER BY publish_date DESC, id DESC
 						LIMIT $2
 					`,
-					[`%${search.trim()}%`, limit]
-				)) as ResultRow[]
+						[`%${search.trim()}%`, limit]
+					)) as ResultRow[]
 			);
 
 			return rows.map(mapResult);
@@ -450,8 +465,10 @@ export async function listExamResults({
 export async function listQuickLinks(limit = 8): Promise<QuickLink[]> {
 	return withContentFallback(
 		async () => {
-			const rows = await withDatabase('list quick links', async (sql) =>
-				(await sql`
+			const rows = await withDatabase(
+				'list quick links',
+				async (sql) =>
+					(await sql`
 					SELECT id, title, description, href, icon_name
 					FROM quick_links
 					ORDER BY id ASC
@@ -732,7 +749,14 @@ export async function createEvent(input: {
 						INSERT INTO events (title, date, time, location, image_url, status)
 						VALUES ($1, $2::date, $3, $4, $5, $6)
 					`,
-					[input.title, input.date, input.time, input.location, input.imageUrl || null, input.status]
+					[
+						input.title,
+						input.date,
+						input.time,
+						input.location,
+						input.imageUrl || null,
+						input.status
+					]
 				)
 			),
 		async () =>
@@ -770,7 +794,15 @@ export async function updateEvent(input: {
 						SET title = $1, date = $2::date, time = $3, location = $4, image_url = $5, status = $6
 						WHERE id = $7
 					`,
-					[input.title, input.date, input.time, input.location, input.imageUrl || null, input.status, input.id]
+					[
+						input.title,
+						input.date,
+						input.time,
+						input.location,
+						input.imageUrl || null,
+						input.status,
+						input.id
+					]
 				)
 			),
 		async () =>

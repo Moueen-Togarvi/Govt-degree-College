@@ -84,7 +84,13 @@ export async function createDepartment(data: {
 
 export async function updateDepartment(
 	id: number,
-	data: Partial<{ name: string; slug: string; urdu_name: string; description: string; coordinator_id: number }>
+	data: Partial<{
+		name: string;
+		slug: string;
+		urdu_name: string;
+		description: string;
+		coordinator_id: number;
+	}>
 ): Promise<Department | null> {
 	const sql = getSql();
 	const rows = (await sql`

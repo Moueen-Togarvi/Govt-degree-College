@@ -1,7 +1,15 @@
 // Coordinator — Course Management
 import { fail } from '@sveltejs/kit';
 import { getDepartmentByCoordinatorId } from '$lib/server/database/departments';
-import { getCoursesByDepartment, createCourse, updateCourse, deleteCourse, getOfferingsByDepartment, createOffering, deleteOffering } from '$lib/server/database/courses';
+import {
+	getCoursesByDepartment,
+	createCourse,
+	updateCourse,
+	deleteCourse,
+	getOfferingsByDepartment,
+	createOffering,
+	deleteOffering
+} from '$lib/server/database/courses';
 import { getFacultyByDepartment } from '$lib/server/database/faculty';
 import type { PageServerLoad, Actions } from './$types';
 

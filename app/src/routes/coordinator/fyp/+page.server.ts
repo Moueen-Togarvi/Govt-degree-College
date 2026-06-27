@@ -2,7 +2,12 @@
 import { fail } from '@sveltejs/kit';
 import { getDepartmentByCoordinatorId } from '$lib/server/database/departments';
 import { getFacultyByDepartment } from '$lib/server/database/faculty';
-import { getProjectsByDepartment, createProject, deleteProject, updateProjectStatus } from '$lib/server/database/fyp';
+import {
+	getProjectsByDepartment,
+	createProject,
+	deleteProject,
+	updateProjectStatus
+} from '$lib/server/database/fyp';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -43,7 +48,7 @@ export const actions: Actions = {
 			return fail(500, { error: 'Failed to create project. ' + (err as Error).message });
 		}
 	},
-	
+
 	updateStatus: async ({ request }) => {
 		const fd = await request.formData();
 		const id = parseInt(fd.get('id')?.toString() ?? '0');
@@ -63,7 +68,7 @@ export const actions: Actions = {
 		const fd = await request.formData();
 		const id = parseInt(fd.get('id')?.toString() ?? '0');
 		if (!id) return fail(400, { error: 'Invalid ID' });
-		
+
 		try {
 			await deleteProject(id);
 			return { success: true, message: 'Project deleted.' };

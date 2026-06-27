@@ -5,7 +5,8 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const profile = await getFacultyByUserId(locals.user!.id);
-	if (!profile) return { profile: null, offerings: [], stats: { students: 0, courses: 0, markedToday: 0 } };
+	if (!profile)
+		return { profile: null, offerings: [], stats: { students: 0, courses: 0, markedToday: 0 } };
 
 	const sql = getSql();
 	// Get assigned course offerings
@@ -22,24 +23,29 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	// Count today's attendance marked by this faculty
 	const today = new Date().toISOString().split('T')[0];
-	const markedRows = await sql`
+	const markedRows = (await sql`
 		SELECT COUNT(DISTINCT a.course_offering_id)::int AS count
 		FROM attendance a
 		WHERE a.marked_by = ${profile.id} AND a.date = ${today}
-	` as Record<string, unknown>[];
+	`) as Record<string, unknown>[];
 
-	const students = await sql`
+	const students = (await sql`
 		SELECT COUNT(DISTINCT e.student_id)::int AS count
 		FROM enrollments e
 		JOIN course_offerings co ON co.id = e.course_offering_id
 		WHERE co.teacher_id = ${profile.id}
-	` as Record<string, unknown>[];
+	`) as Record<string, unknown>[];
 
 	return {
 		profile,
 		offerings: offerings as unknown as {
-			id: number; course_id: number; course_title: string; course_code: string;
-			semester: number; session: string; student_count: number;
+			id: number;
+			course_id: number;
+			course_title: string;
+			course_code: string;
+			semester: number;
+			session: string;
+			student_count: number;
 		}[],
 		stats: {
 			courses: (offerings as unknown[]).length,

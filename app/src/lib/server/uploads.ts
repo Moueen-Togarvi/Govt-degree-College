@@ -72,7 +72,10 @@ export async function saveUploadedFile(file: File) {
 
 	await ensureUploadDirectory();
 
-	const safeBaseName = basename(file.name, extension).replace(/[^a-zA-Z0-9-_]/g, '-').slice(0, 40) || 'file';
+	const safeBaseName =
+		basename(file.name, extension)
+			.replace(/[^a-zA-Z0-9-_]/g, '-')
+			.slice(0, 40) || 'file';
 	const fileName = `${safeBaseName}-${randomUUID()}${extension}`;
 	const filePath = resolve(uploadDirectory, fileName);
 	const arrayBuffer = await file.arrayBuffer();

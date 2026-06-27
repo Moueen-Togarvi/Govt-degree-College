@@ -2,7 +2,11 @@
 import { fail } from '@sveltejs/kit';
 import { getDepartmentByCoordinatorId } from '$lib/server/database/departments';
 import { getOfferingsByDepartment } from '$lib/server/database/courses';
-import { getTimetableByDepartment, createTimetableEntry, deleteTimetableEntry } from '$lib/server/database/timetable';
+import {
+	getTimetableByDepartment,
+	createTimetableEntry,
+	deleteTimetableEntry
+} from '$lib/server/database/timetable';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {

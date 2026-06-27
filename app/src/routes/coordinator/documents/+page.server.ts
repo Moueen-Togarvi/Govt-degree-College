@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!dept) return { department: null, documents: [], offerings: [] };
 
 	const offerings = await getOfferingsByDepartment(dept.id);
-	
+
 	const sql = getSql();
 	const documents = await sql`
 		SELECT d.*, u.name AS uploaded_by_name,
@@ -64,7 +64,7 @@ export const actions: Actions = {
 		const fd = await request.formData();
 		const id = parseInt(fd.get('id')?.toString() ?? '0');
 		if (!id) return fail(400, { error: 'Invalid ID' });
-		
+
 		try {
 			const sql = getSql();
 			await sql`DELETE FROM documents WHERE id = ${id}`;
