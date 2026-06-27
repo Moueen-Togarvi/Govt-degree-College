@@ -1,6 +1,20 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { fade } from 'svelte/transition';
 	import type { PageData, ActionData } from './$types';
+	import { reveal } from '$lib/admin/motion';
+
+	import Settings from 'lucide-svelte/icons/settings';
+	import UserCog from 'lucide-svelte/icons/user-cog';
+	import Activity from 'lucide-svelte/icons/activity';
+	import Wrench from 'lucide-svelte/icons/wrench';
+	import Building2 from 'lucide-svelte/icons/building-2';
+	import Users from 'lucide-svelte/icons/users';
+	import BookOpen from 'lucide-svelte/icons/book-open';
+	import GraduationCap from 'lucide-svelte/icons/graduation-cap';
+	import RefreshCw from 'lucide-svelte/icons/refresh-cw';
+	import CircleCheck from 'lucide-svelte/icons/circle-check';
+	import CircleAlert from 'lucide-svelte/icons/circle-alert';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 	let seeding = $state(false);
@@ -18,22 +32,28 @@
 <div class="adm-page">
 	<div class="adm-head">
 		<div>
-			<h1 class="adm-title">⚙️ Settings</h1>
+			<h1 class="adm-title"><Settings size={22} stroke-width={1.75} /> Settings</h1>
 			<p class="adm-sub">Account, system status and maintenance tools.</p>
 		</div>
 	</div>
 
 	{#if form?.error}
-		<div class="adm-alert adm-alert--error">⚠️ {form.error}</div>
+		<div class="adm-alert adm-alert--error" transition:fade>
+			<CircleAlert size={16} stroke-width={2} /> {form.error}
+		</div>
 	{/if}
 	{#if form?.success}
-		<div class="adm-alert adm-alert--success">✅ {form.message}</div>
+		<div class="adm-alert adm-alert--success" transition:fade>
+			<CircleCheck size={16} stroke-width={2} /> {form.message}
+		</div>
 	{/if}
 
-	<div class="adm-grid-2" style="align-items:start">
+	<div class="adm-grid-2" style="align-items: start">
 		<!-- Account -->
-		<div class="adm-card">
-			<div class="adm-card__head"><h2 class="adm-card__title">👤 Admin Account</h2></div>
+		<div class="adm-card" use:reveal={{ y: 16 }}>
+			<div class="adm-card__head">
+				<h2 class="adm-card__title"><UserCog size={18} stroke-width={1.75} /> Admin Account</h2>
+			</div>
 			<div class="adm-card__body">
 				<div class="kv">
 					<span class="kv-k">Name</span><span class="kv-v is-strong">{data.user.name}</span>
@@ -43,7 +63,7 @@
 				</div>
 				<div class="kv">
 					<span class="kv-k">Role</span>
-					<span class="kv-v"><span class="adm-badge adm-badge--purple">Super Admin</span></span>
+					<span class="kv-v"><span class="adm-badge adm-badge--teal">Super Admin</span></span>
 				</div>
 				<div class="kv">
 					<span class="kv-k">Status</span>
@@ -60,8 +80,10 @@
 		</div>
 
 		<!-- System status -->
-		<div class="adm-card">
-			<div class="adm-card__head"><h2 class="adm-card__title">🩺 System Status</h2></div>
+		<div class="adm-card" use:reveal={{ y: 16, delay: 80 }}>
+			<div class="adm-card__head">
+				<h2 class="adm-card__title"><Activity size={18} stroke-width={1.75} /> System Status</h2>
+			</div>
 			<div class="adm-card__body">
 				<div class="status-line">
 					<span
@@ -85,20 +107,24 @@
 				</div>
 				<hr class="sep" />
 				<div class="status-line">
-					<span>🏛️ Departments</span>
-					<span class="is-strong" style="margin-left:auto">{data.deptCount}</span>
+					<span class="status-line-icon"><Building2 size={15} stroke-width={1.75} /></span>
+					<span>Departments</span>
+					<span class="is-strong" style="margin-left: auto">{data.deptCount}</span>
 				</div>
 				<div class="status-line">
-					<span>👥 Coordinators</span>
-					<span class="is-strong" style="margin-left:auto">{data.counts?.coordinator ?? 0}</span>
+					<span class="status-line-icon"><Users size={15} stroke-width={1.75} /></span>
+					<span>Coordinators</span>
+					<span class="is-strong" style="margin-left: auto">{data.counts?.coordinator ?? 0}</span>
 				</div>
 				<div class="status-line">
-					<span>👨‍🏫 Faculty</span>
-					<span class="is-strong" style="margin-left:auto">{data.counts?.faculty ?? 0}</span>
+					<span class="status-line-icon"><BookOpen size={15} stroke-width={1.75} /></span>
+					<span>Faculty</span>
+					<span class="is-strong" style="margin-left: auto">{data.counts?.faculty ?? 0}</span>
 				</div>
 				<div class="status-line">
-					<span>🎓 Students</span>
-					<span class="is-strong" style="margin-left:auto">{data.counts?.student ?? 0}</span>
+					<span class="status-line-icon"><GraduationCap size={15} stroke-width={1.75} /></span>
+					<span>Students</span>
+					<span class="is-strong" style="margin-left: auto">{data.counts?.student ?? 0}</span>
 				</div>
 				<hr class="sep" />
 				<div class="status-line">
@@ -110,8 +136,10 @@
 	</div>
 
 	<!-- Maintenance -->
-	<div class="adm-card">
-		<div class="adm-card__head"><h2 class="adm-card__title">🛠️ Maintenance</h2></div>
+	<div class="adm-card" use:reveal={{ y: 16, delay: 140 }}>
+		<div class="adm-card__head">
+			<h2 class="adm-card__title"><Wrench size={18} stroke-width={1.75} /> Maintenance</h2>
+		</div>
 		<div class="adm-card__body">
 			<div class="maint">
 				<div>
@@ -141,7 +169,7 @@
 							if (!confirm('Re-seed empty content tables now?')) e.preventDefault();
 						}}
 					>
-						{#if seeding}<span class="adm-spin"></span>{/if}
+						{#if seeding}<span class="adm-spin"></span>{:else}<RefreshCw size={15} stroke-width={2} />{/if}
 						Re-seed Content
 					</button>
 				</form>
@@ -174,6 +202,16 @@
 		gap: 0.6rem;
 		padding: 0.45rem 0;
 		font-size: 0.88rem;
+	}
+	.status-line-icon {
+		display: grid;
+		place-items: center;
+		width: 26px;
+		height: 26px;
+		border-radius: 7px;
+		background: #e6f2f0;
+		color: #0d5d56;
+		flex-shrink: 0;
 	}
 	.sep {
 		border: none;

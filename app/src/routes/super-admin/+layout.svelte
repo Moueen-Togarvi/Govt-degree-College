@@ -2,36 +2,62 @@
 	import { page } from '$app/stores';
 	import './admin.css';
 	import type { LayoutData } from './$types';
+	import type { Icon } from 'lucide-svelte';
+	import { reveal } from '$lib/admin/motion';
+
+	// Real icons (lucide-svelte) — no emojis.
+	import LayoutDashboard from 'lucide-svelte/icons/layout-dashboard';
+	import Building2 from 'lucide-svelte/icons/building-2';
+	import Users from 'lucide-svelte/icons/users';
+	import Megaphone from 'lucide-svelte/icons/megaphone';
+	import CalendarDays from 'lucide-svelte/icons/calendar-days';
+	import ClipboardList from 'lucide-svelte/icons/clipboard-list';
+	import Newspaper from 'lucide-svelte/icons/newspaper';
+	import Trophy from 'lucide-svelte/icons/trophy';
+	import Settings from 'lucide-svelte/icons/settings';
+	import PanelLeftClose from 'lucide-svelte/icons/panel-left-close';
+	import PanelLeftOpen from 'lucide-svelte/icons/panel-left-open';
+	import Menu from 'lucide-svelte/icons/menu';
+	import LogOut from 'lucide-svelte/icons/log-out';
+	import ExternalLink from 'lucide-svelte/icons/external-link';
+	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+
+	type NavItem = {
+		href: string;
+		icon: typeof Icon;
+		label: string;
+	};
 
 	let { data, children }: { data: LayoutData; children: import('svelte').Snippet } = $props();
 
 	let sidebarOpen = $state(true);
+	let mobileOpen = $state(false);
 
-	const navGroups = [
+	const navGroups: { label: string; items: NavItem[] }[] = [
 		{
 			label: 'Overview',
-			items: [{ href: '/super-admin/dashboard', icon: '🏠', label: 'Dashboard' }]
+			items: [{ href: '/super-admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' }]
 		},
 		{
 			label: 'Structure',
 			items: [
-				{ href: '/super-admin/departments', icon: '🏛️', label: 'Departments' },
-				{ href: '/super-admin/users', icon: '👥', label: 'Users' }
+				{ href: '/super-admin/departments', icon: Building2, label: 'Departments' },
+				{ href: '/super-admin/users', icon: Users, label: 'Users' }
 			]
 		},
 		{
 			label: 'Content',
 			items: [
-				{ href: '/super-admin/announcements', icon: '📢', label: 'Announcements' },
-				{ href: '/super-admin/events', icon: '📅', label: 'Events' },
-				{ href: '/super-admin/notices', icon: '📋', label: 'Notice Board' },
-				{ href: '/super-admin/news', icon: '📰', label: 'News Ticker' },
-				{ href: '/super-admin/results', icon: '🏆', label: 'Results' }
+				{ href: '/super-admin/announcements', icon: Megaphone, label: 'Announcements' },
+				{ href: '/super-admin/events', icon: CalendarDays, label: 'Events' },
+				{ href: '/super-admin/notices', icon: ClipboardList, label: 'Notice Board' },
+				{ href: '/super-admin/news', icon: Newspaper, label: 'News Ticker' },
+				{ href: '/super-admin/results', icon: Trophy, label: 'Results' }
 			]
 		},
 		{
 			label: 'System',
-			items: [{ href: '/super-admin/settings', icon: '⚙️', label: 'Settings' }]
+			items: [{ href: '/super-admin/settings', icon: Settings, label: 'Settings' }]
 		}
 	];
 
@@ -42,6 +68,9 @@
 	}
 	function activeLabel() {
 		return flatItems.find((n) => isActive(n.href))?.label ?? 'Dashboard';
+	}
+	function initials(name: string) {
+		return name.charAt(0).toUpperCase();
 	}
 </script>
 
@@ -55,17 +84,22 @@
 
 <div class="portal-root adm">
 	<!-- Mobile backdrop -->
-	{#if sidebarOpen}
-		<div class="backdrop" onclick={() => (sidebarOpen = false)} role="presentation"></div>
+	{#if mobileOpen}
+		<button
+			class="backdrop"
+			onclick={() => (mobileOpen = false)}
+			aria-label="Close menu"
+			tabindex="-1"
+		></button>
 	{/if}
 
 	<!-- Sidebar -->
-	<aside class="sidebar {sidebarOpen ? 'open' : 'collapsed'}">
+	<aside class="sidebar {sidebarOpen ? 'open' : 'collapsed'} mobile-{mobileOpen ? 'show' : 'hide'}">
 		<div class="sidebar-header">
-			<div class="sidebar-logo">
+			<a href="/super-admin/dashboard" class="sidebar-logo" title="GPGC Portal">
 				<img
 					src="/images/logos/degree4k-removebg-preview.png"
-					alt="Logo"
+					alt="GPGC logo"
 					class="sidebar-logo-img"
 				/>
 				{#if sidebarOpen}
@@ -74,30 +108,42 @@
 						<span class="sidebar-role">Super Admin</span>
 					</div>
 				{/if}
-			</div>
+			</a>
 			<button
 				class="sidebar-toggle"
 				onclick={() => (sidebarOpen = !sidebarOpen)}
 				aria-label="Toggle sidebar"
 				title="Toggle sidebar"
 			>
-				{sidebarOpen ? '◀' : '▶'}
+				{#if sidebarOpen}
+					<PanelLeftClose size={16} stroke-width={1.75} />
+				{:else}
+					<PanelLeftOpen size={16} stroke-width={1.75} />
+				{/if}
 			</button>
 		</div>
 
 		<nav class="sidebar-nav">
-			{#each navGroups as group}
+			{#each navGroups as group, gi}
 				{#if sidebarOpen}
 					<div class="nav-group-label">{group.label}</div>
 				{/if}
-				{#each group.items as item}
+				{#each group.items as item, ii}
+					{@const Icon = item.icon}
+					{@const active = isActive(item.href)}
 					<a
 						href={item.href}
-						class="nav-item {isActive(item.href) ? 'active' : ''}"
+						class="nav-item {active ? 'active' : ''}"
 						title={!sidebarOpen ? item.label : ''}
+						aria-current={active ? 'page' : undefined}
+						onclick={() => (mobileOpen = false)}
+						use:reveal={{ delay: 60 * (gi + ii), y: 10, duration: 420 }}
 					>
-						<span class="nav-icon">{item.icon}</span>
+						<span class="nav-icon {active ? 'is-active' : ''}">
+							<Icon size={19} stroke-width={active ? 2.1 : 1.75} />
+						</span>
 						{#if sidebarOpen}<span class="nav-label">{item.label}</span>{/if}
+						{#if active && sidebarOpen}<span class="nav-active-bar"></span>{/if}
 					</a>
 				{/each}
 			{/each}
@@ -105,7 +151,7 @@
 
 		<div class="sidebar-footer">
 			<div class="user-info {sidebarOpen ? '' : 'compact'}">
-				<div class="user-avatar">{data.user.name.charAt(0).toUpperCase()}</div>
+				<div class="user-avatar">{initials(data.user.name)}</div>
 				{#if sidebarOpen}
 					<div class="user-details">
 						<span class="user-name">{data.user.name}</span>
@@ -114,8 +160,12 @@
 				{/if}
 			</div>
 			<form method="POST" action="/logout">
-				<button type="submit" class="logout-btn {sidebarOpen ? '' : 'compact'}" title="Sign out">
-					<span>🚪</span>
+				<button
+					type="submit"
+					class="logout-btn {sidebarOpen ? '' : 'compact'}"
+					title="Sign out"
+				>
+					<LogOut size={17} stroke-width={1.75} />
 					{#if sidebarOpen}<span>Sign Out</span>{/if}
 				</button>
 			</form>
@@ -127,22 +177,39 @@
 		<header class="topbar">
 			<div class="topbar-left">
 				<button
-					class="mobile-menu-btn"
-					onclick={() => (sidebarOpen = !sidebarOpen)}
-					aria-label="Menu">☰</button
+					class="icon-btn mobile-menu-btn"
+					onclick={() => (mobileOpen = !mobileOpen)}
+					aria-label="Open menu"
 				>
-				<nav class="breadcrumb">
+					<Menu size={20} stroke-width={1.75} />
+				</button>
+				<button
+					class="icon-btn collapse-btn"
+					onclick={() => (sidebarOpen = !sidebarOpen)}
+					aria-label="Collapse sidebar"
+					title="Toggle sidebar"
+				>
+					<PanelLeftClose size={18} stroke-width={1.75} />
+				</button>
+				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<span class="breadcrumb-home">Super Admin</span>
-					<span class="breadcrumb-sep">›</span>
+					<ChevronRight size={14} stroke-width={2} class="breadcrumb-sep" />
 					<span class="breadcrumb-current">{activeLabel()}</span>
 				</nav>
 			</div>
 			<div class="topbar-right">
-				<a href="/" class="topbar-link" target="_blank" rel="noopener" title="Open public site"
-					>↗ View site</a
+				<a
+					href="/"
+					class="topbar-link"
+					target="_blank"
+					rel="noopener"
+					title="Open public site"
 				>
+					<ExternalLink size={14} stroke-width={2} />
+					<span>View site</span>
+				</a>
 				<div class="topbar-user">
-					<div class="topbar-avatar">{data.user.name.charAt(0).toUpperCase()}</div>
+					<div class="topbar-avatar">{initials(data.user.name)}</div>
 					<span class="topbar-name">{data.user.name}</span>
 				</div>
 			</div>
@@ -173,7 +240,7 @@
 	/* ─── Sidebar ─── */
 	.sidebar {
 		width: 260px;
-		background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+		background: linear-gradient(180deg, #0d4a44 0%, #08332e 100%);
 		display: flex;
 		flex-direction: column;
 		position: fixed;
@@ -181,12 +248,13 @@
 		left: 0;
 		height: 100vh;
 		z-index: 100;
-		transition: width 0.25s ease;
+		transition: width 0.26s cubic-bezier(0.22, 1, 0.36, 1);
 		overflow: hidden;
+		border-right: 1px solid rgba(255, 255, 255, 0.05);
 	}
 
 	.sidebar.collapsed {
-		width: 76px;
+		width: 78px;
 	}
 
 	.sidebar-header {
@@ -196,14 +264,15 @@
 		justify-content: space-between;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 		gap: 0.5rem;
-		min-height: 68px;
+		min-height: 70px;
 	}
 
 	.sidebar-logo {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.7rem;
 		overflow: hidden;
+		text-decoration: none;
 	}
 
 	.sidebar-logo-img {
@@ -221,39 +290,43 @@
 	}
 
 	.sidebar-title {
-		font-size: 0.9rem;
+		font-size: 0.92rem;
 		font-weight: 700;
-		color: white;
+		color: #fff;
 		white-space: nowrap;
+		letter-spacing: -0.01em;
 	}
 
 	.sidebar-role {
 		font-size: 0.62rem;
-		color: #c4b5fd;
-		background: rgba(124, 58, 237, 0.22);
-		padding: 0.12rem 0.45rem;
-		border-radius: 4px;
+		color: #fcd9b6;
+		background: rgba(247, 148, 29, 0.18);
+		padding: 0.14rem 0.5rem;
+		border-radius: 5px;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		width: fit-content;
-		margin-top: 2px;
+		margin-top: 3px;
 	}
 
 	.sidebar-toggle {
 		background: rgba(255, 255, 255, 0.06);
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		border-radius: 8px;
-		color: #94a3b8;
+		color: #b8c6c4;
 		cursor: pointer;
-		font-size: 0.68rem;
-		padding: 0.35rem 0.5rem;
+		display: grid;
+		place-items: center;
+		width: 32px;
+		height: 32px;
 		flex-shrink: 0;
-		transition: background 0.2s;
+		transition: background 0.2s, color 0.2s;
 	}
 
 	.sidebar-toggle:hover {
 		background: rgba(255, 255, 255, 0.12);
+		color: #fff;
 	}
 
 	/* ─── Nav ─── */
@@ -264,14 +337,15 @@
 		flex-direction: column;
 		gap: 0.15rem;
 		overflow-y: auto;
+		overflow-x: hidden;
 	}
 
 	.nav-group-label {
 		font-size: 0.62rem;
 		font-weight: 700;
-		color: #64748b;
+		color: #6b8a86;
 		text-transform: uppercase;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.09em;
 		padding: 0.85rem 0.9rem 0.35rem;
 	}
 
@@ -282,31 +356,50 @@
 		padding: 0.6rem 0.9rem;
 		border-radius: 10px;
 		text-decoration: none;
-		color: #94a3b8;
+		color: #a9bfbb;
 		font-size: 0.875rem;
 		font-weight: 500;
-		transition: all 0.18s;
+		transition: background 0.18s, color 0.18s;
 		white-space: nowrap;
 		overflow: hidden;
 		border: 1px solid transparent;
+		position: relative;
 	}
 
 	.nav-item:hover {
-		background: rgba(255, 255, 255, 0.07);
-		color: white;
+		background: rgba(255, 255, 255, 0.06);
+		color: #fff;
 	}
 
 	.nav-item.active {
-		background: linear-gradient(135deg, rgba(124, 58, 237, 0.32), rgba(139, 92, 246, 0.18));
-		color: white;
-		border-color: rgba(124, 58, 237, 0.35);
+		background: linear-gradient(135deg, rgba(17, 125, 116, 0.55), rgba(17, 125, 116, 0.2));
+		color: #fff;
+		border-color: rgba(17, 125, 116, 0.5);
+	}
+
+	.nav-item.active::before {
+		content: '';
+		position: absolute;
+		left: -0.75rem;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 3px;
+		height: 22px;
+		border-radius: 0 3px 3px 0;
+		background: #f7941d;
 	}
 
 	.nav-icon {
-		font-size: 1.05rem;
 		flex-shrink: 0;
+		display: grid;
+		place-items: center;
 		width: 22px;
-		text-align: center;
+		height: 22px;
+		transition: color 0.18s;
+	}
+
+	.nav-item.active .nav-icon {
+		color: #fff;
 	}
 
 	.nav-label {
@@ -326,7 +419,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.6rem;
-		padding: 0.6rem 0.75rem;
+		padding: 0.6rem 0.7rem;
 		background: rgba(255, 255, 255, 0.04);
 		border-radius: 10px;
 	}
@@ -339,14 +432,15 @@
 		width: 34px;
 		height: 34px;
 		border-radius: 50%;
-		background: linear-gradient(135deg, #7c3aed, #a855f7);
-		color: white;
+		background: linear-gradient(135deg, #117d74, #0d5d56);
+		color: #fff;
 		font-weight: 700;
 		font-size: 0.85rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-shrink: 0;
+		border: 1px solid rgba(255, 255, 255, 0.12);
 	}
 
 	.user-details {
@@ -358,7 +452,7 @@
 	.user-name {
 		font-size: 0.82rem;
 		font-weight: 600;
-		color: white;
+		color: #fff;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -366,7 +460,7 @@
 
 	.user-email {
 		font-size: 0.68rem;
-		color: #64748b;
+		color: #7a9591;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -378,20 +472,21 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.5rem;
-		padding: 0.55rem;
+		padding: 0.6rem;
 		background: rgba(239, 68, 68, 0.1);
 		border: 1px solid rgba(239, 68, 68, 0.2);
 		border-radius: 10px;
-		color: #f87171;
+		color: #fca5a5;
 		cursor: pointer;
 		font-size: 0.82rem;
 		font-weight: 500;
 		font-family: inherit;
-		transition: background 0.2s;
+		transition: background 0.2s, color 0.2s;
 	}
 
 	.logout-btn:hover {
 		background: rgba(239, 68, 68, 0.2);
+		color: #fff;
 	}
 
 	/* ─── Main Content ─── */
@@ -401,13 +496,17 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
-		transition: margin-left 0.25s ease;
+		transition: margin-left 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.sidebar.collapsed ~ .main-content {
+		margin-left: 78px;
 	}
 
 	/* ─── Topbar ─── */
 	.topbar {
-		height: 62px;
-		background: white;
+		height: 64px;
+		background: #fff;
 		border-bottom: 1px solid #e2e8f0;
 		display: flex;
 		align-items: center;
@@ -422,29 +521,44 @@
 	.topbar-left {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		gap: 0.65rem;
+	}
+
+	.icon-btn {
+		display: grid;
+		place-items: center;
+		width: 38px;
+		height: 38px;
+		border-radius: 9px;
+		border: 1px solid transparent;
+		background: transparent;
+		color: #475569;
+		cursor: pointer;
+		transition: background 0.15s, color 0.15s, border-color 0.15s;
+	}
+
+	.icon-btn:hover {
+		background: #f1f5f9;
+		color: #0d5d56;
 	}
 
 	.mobile-menu-btn {
 		display: none;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 1.2rem;
 	}
 
 	.breadcrumb {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.85rem;
+		gap: 0.4rem;
+		font-size: 0.875rem;
+		margin-left: 0.25rem;
 	}
 
 	.breadcrumb-home {
 		color: #64748b;
 	}
 
-	.breadcrumb-sep {
+	.breadcrumb :global(.breadcrumb-sep) {
 		color: #cbd5e1;
 	}
 
@@ -460,18 +574,22 @@
 	}
 
 	.topbar-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
 		font-size: 0.8rem;
 		font-weight: 600;
-		color: #6d28d9;
+		color: #0d5d56;
 		text-decoration: none;
-		padding: 0.4rem 0.75rem;
+		padding: 0.45rem 0.8rem;
 		border-radius: 8px;
-		background: #ede9fe;
+		background: #e6f2f0;
+		border: 1px solid #cdeae6;
 		transition: background 0.15s;
 	}
 
 	.topbar-link:hover {
-		background: #ddd6fe;
+		background: #d7ebe8;
 	}
 
 	.topbar-user {
@@ -481,20 +599,20 @@
 	}
 
 	.topbar-avatar {
-		width: 32px;
-		height: 32px;
+		width: 34px;
+		height: 34px;
 		border-radius: 50%;
-		background: linear-gradient(135deg, #7c3aed, #a855f7);
-		color: white;
+		background: linear-gradient(135deg, #117d74, #0d5d56);
+		color: #fff;
 		font-weight: 700;
-		font-size: 0.8rem;
+		font-size: 0.82rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 
 	.topbar-name {
-		font-size: 0.85rem;
+		font-size: 0.875rem;
 		font-weight: 600;
 		color: #0f172a;
 	}
@@ -503,37 +621,43 @@
 	.page-content {
 		flex: 1;
 		padding: 1.75rem;
-		max-width: 1400px;
+		max-width: 1440px;
 		width: 100%;
 		box-sizing: border-box;
 	}
 
 	/* ─── Responsive ─── */
-	@media (max-width: 900px) {
+	@media (max-width: 980px) {
 		.sidebar {
 			transform: translateX(-100%);
 			box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
 		}
 
-		.sidebar.open {
+		.sidebar.mobile-show {
 			transform: translateX(0);
 			width: 260px;
 		}
 
 		.main-content {
-			margin-left: 0;
+			margin-left: 0 !important;
 		}
 
 		.mobile-menu-btn {
-			display: block;
+			display: grid;
+		}
+
+		.collapse-btn {
+			display: none;
 		}
 
 		.backdrop {
 			display: block;
 			position: fixed;
 			inset: 0;
-			background: rgba(15, 23, 42, 0.45);
+			background: rgba(8, 51, 46, 0.5);
+			backdrop-filter: blur(2px);
 			z-index: 90;
+			border: none;
 		}
 
 		.topbar-name {
@@ -544,6 +668,14 @@
 	@media (max-width: 560px) {
 		.page-content {
 			padding: 1rem;
+		}
+
+		.topbar {
+			padding: 0 1rem;
+		}
+
+		.topbar-link span {
+			display: none;
 		}
 	}
 </style>

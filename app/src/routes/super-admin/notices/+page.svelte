@@ -1,6 +1,16 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { fly, fade } from 'svelte/transition';
 	import type { PageData, ActionData } from './$types';
+	import { reveal } from '$lib/admin/motion';
+
+	import ClipboardList from 'lucide-svelte/icons/clipboard-list';
+	import Plus from 'lucide-svelte/icons/plus';
+	import Pencil from 'lucide-svelte/icons/pencil';
+	import Trash2 from 'lucide-svelte/icons/trash-2';
+	import X from 'lucide-svelte/icons/x';
+	import CircleCheck from 'lucide-svelte/icons/circle-check';
+	import CircleAlert from 'lucide-svelte/icons/circle-alert';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -48,20 +58,25 @@
 <div class="adm-page">
 	<div class="adm-head">
 		<div>
-			<h1 class="adm-title">📋 Notice Board</h1>
+			<h1 class="adm-title"><ClipboardList size={22} stroke-width={1.75} /> Notice Board</h1>
 			<p class="adm-sub">
 				Pin notices to the home page notice board. Expired notices are hidden publicly.
 			</p>
 		</div>
-		<button class="adm-btn adm-btn--primary" onclick={openCreate}>+ New Notice</button>
+		<button class="adm-btn adm-btn--primary" onclick={openCreate}>
+			<Plus size={16} stroke-width={2} /> New Notice
+		</button>
 	</div>
 
 	{#if form?.error}
-		<div class="adm-alert adm-alert--error">⚠️ {form.error}</div>
+		<div class="adm-alert adm-alert--error" transition:fade>
+			<CircleAlert size={16} stroke-width={2} /> {form.error}
+		</div>
 	{/if}
 	{#if form?.success}
-		<div class="adm-alert adm-alert--success">
-			✅ Notice {form.action === 'create'
+		<div class="adm-alert adm-alert--success" transition:fade>
+			<CircleCheck size={16} stroke-width={2} />
+			Notice {form.action === 'create'
 				? 'created'
 				: form.action === 'update'
 					? 'updated'
@@ -69,7 +84,7 @@
 		</div>
 	{/if}
 
-	<div class="adm-card">
+	<div class="adm-card" use:reveal={{ y: 18 }}>
 		<div class="adm-table-wrap">
 			{#if data.notices.length > 0}
 				<table class="adm-table">
@@ -98,8 +113,10 @@
 									<div class="adm-row-actions" style="justify-content:flex-end">
 										<button
 											class="adm-btn adm-btn--ghost adm-btn--sm"
-											onclick={() => openEdit(item)}>✏️ Edit</button
+											onclick={() => openEdit(item)}
 										>
+											<Pencil size={14} stroke-width={1.75} /> Edit
+										</button>
 										<form
 											method="POST"
 											action="?/delete"
@@ -116,8 +133,10 @@
 												class="adm-btn adm-btn--danger adm-btn--sm"
 												onclick={(e) => {
 													if (!confirm('Delete this notice?')) e.preventDefault();
-												}}>🗑️ Delete</button
+												}}
 											>
+												<Trash2 size={14} stroke-width={1.75} /> Delete
+											</button>
 										</form>
 									</div>
 								</td>
@@ -127,10 +146,12 @@
 				</table>
 			{:else}
 				<div class="adm-empty">
-					<span class="adm-empty__icon">📋</span>
+					<div class="adm-empty__icon"><ClipboardList size={26} stroke-width={1.5} /></div>
 					<h3>No notices yet</h3>
 					<p>Add the first notice board item.</p>
-					<button class="adm-btn adm-btn--primary" onclick={openCreate}>+ New Notice</button>
+					<button class="adm-btn adm-btn--primary" onclick={openCreate}>
+						<Plus size={16} stroke-width={2} /> New Notice
+					</button>
 				</div>
 			{/if}
 		</div>
@@ -139,17 +160,26 @@
 
 {#if showModal}
 	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-	<div class="adm-overlay" onclick={closeModal} role="presentation">
+	<div class="adm-overlay" onclick={closeModal} role="presentation" transition:fade={{ duration: 150 }}>
 		<div
 			class="adm-modal"
 			onclick={(e) => e.stopPropagation()}
 			role="dialog"
 			aria-modal="true"
 			tabindex="-1"
+			in:fly={{ y: -16, duration: 220, opacity: 0 }}
 		>
 			<div class="adm-modal__head">
-				<h2 class="adm-modal__title">{editing ? '✏️ Edit Notice' : '📋 New Notice'}</h2>
-				<button class="adm-modal__close" onclick={closeModal} aria-label="Close">✕</button>
+				<h2 class="adm-modal__title">
+					{#if editing}
+						<Pencil size={18} stroke-width={1.75} /> Edit Notice
+					{:else}
+						<ClipboardList size={18} stroke-width={1.75} /> New Notice
+					{/if}
+				</h2>
+				<button class="adm-modal__close" onclick={closeModal} aria-label="Close">
+					<X size={18} stroke-width={1.75} />
+				</button>
 			</div>
 			<form
 				class="adm-modal__body adm-form"
