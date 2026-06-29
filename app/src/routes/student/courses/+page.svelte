@@ -1,43 +1,59 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { reveal, lift } from '$lib/admin/motion';
+	import BookOpen from 'lucide-svelte/icons/book-open';
+	import User from 'lucide-svelte/icons/user';
+
 	let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head><title>My Courses — Student Portal | GPGC</title></svelte:head>
 
-<div class="page">
-	<div class="page-header">
+<div class="adm-page" use:reveal={{ y: 12 }}>
+	<div class="adm-head">
 		<div>
-			<h1 class="page-title">📚 My Courses</h1>
-			<p class="page-subtitle">Currently enrolled courses for Semester {data.profile?.semester}</p>
+			<h1 class="adm-title">
+				<BookOpen size={22} stroke-width={2} /> Enrolled Courses
+			</h1>
+			<p class="adm-sub">Academic curriculum courses assigned for Semester {data.profile?.semester}</p>
 		</div>
 	</div>
 
 	{#if data.courses.length === 0}
-		<div class="empty-state">
-			<span>📚</span>
-			<h3>No Courses Found</h3>
-			<p>You are not enrolled in any courses for the current semester.</p>
+		<div class="adm-card" use:reveal={{ delay: 120, y: 12 }}>
+			<div class="adm-empty">
+				<div class="adm-empty__icon"><BookOpen size={24} /></div>
+				<h3>No Enrolled Courses Found</h3>
+				<p>You have not been assigned to any courses for the current academic semester yet.</p>
+			</div>
 		</div>
 	{:else}
 		<div class="courses-grid">
-			{#each data.courses as course}
-				<div class="course-card">
-					<div class="course-header">
-						<span class="course-code">{course.code}</span>
-						<span class="credit-badge">{course.credit_hours} Cr</span>
-					</div>
-					<h2 class="course-title">{course.title}</h2>
-					<p class="course-desc">
-						{course.description || 'No description available for this course.'}
-					</p>
+			{#each data.courses as course, i}
+				<div class="adm-card course-card" use:reveal={{ delay: 50 * i, y: 12 }} use:lift>
+					<div class="adm-card__body flex-col">
+						<div class="card-top">
+							<span class="adm-code">{course.code}</span>
+							<span class="adm-badge adm-badge--gray">{course.credit_hours} Credit Hours</span>
+						</div>
 
-					<div class="course-footer">
-						<div class="teacher-info">
-							<div class="teacher-avatar">{course.teacher_name.charAt(0)}</div>
-							<div>
-								<div class="teacher-name">{course.teacher_name}</div>
-								<div class="teacher-role">{course.designation}</div>
+						<h3 class="course-title">{course.title}</h3>
+
+						<p class="course-desc">
+							{course.description || 'No detailed course description has been uploaded for this curriculum syllabus.'}
+						</p>
+
+						<div class="teacher-box">
+							<div class="avatar">
+								{#if course.teacher_name}
+									{course.teacher_name.charAt(0).toUpperCase()}
+								{:else}
+									<User size={14} />
+								{/if}
+							</div>
+							<div class="teacher-details">
+								<div class="name">{course.teacher_name || 'No Faculty Assigned'}</div>
+								<div class="role">{course.designation || 'Lecturer'}</div>
 							</div>
 						</div>
 					</div>
@@ -48,146 +64,82 @@
 </div>
 
 <style>
-	.page {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-	.page-header {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-	.page-title {
-		font-size: 1.5rem;
-		font-weight: 700;
-		color: #0f172a;
-		margin: 0 0 0.25rem;
-	}
-	.page-subtitle {
-		font-size: 0.85rem;
-		color: #64748b;
-		margin: 0;
-	}
-
-	.empty-state {
-		text-align: center;
-		padding: 4rem 2rem;
-		background: white;
-		border-radius: 14px;
-		border: 1px solid #e2e8f0;
-	}
-	.empty-state span {
-		font-size: 3rem;
-		display: block;
-		margin-bottom: 1rem;
-	}
-	.empty-state h3 {
-		font-size: 1.1rem;
-		color: #0f172a;
-		margin: 0 0 0.5rem;
-	}
-	.empty-state p {
-		font-size: 0.9rem;
-		color: #64748b;
-		margin: 0;
-	}
-
 	.courses-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 		gap: 1.25rem;
 	}
+
 	.course-card {
-		background: white;
-		border-radius: 14px;
-		padding: 1.5rem;
-		border: 1px solid #e2e8f0;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-		display: flex;
-		flex-direction: column;
-		transition:
-			transform 0.2s,
-			box-shadow 0.2s;
-	}
-	.course-card:hover {
-		transform: translateY(-2px);
-		box-shadow:
-			0 10px 25px -5px rgba(0, 0, 0, 0.1),
-			0 8px 10px -6px rgba(0, 0, 0, 0.1);
+		height: 100%;
 	}
 
-	.course-header {
+	.flex-col {
 		display: flex;
-		justify-content: space-between;
+		flex-direction: column;
+		gap: 0.85rem;
+		height: 100%;
+		box-sizing: border-box;
+	}
+
+	.card-top {
+		display: flex;
 		align-items: center;
-		margin-bottom: 0.75rem;
-	}
-	.course-code {
-		font-size: 0.75rem;
-		font-weight: 700;
-		background: #eff6ff;
-		color: #1d4ed8;
-		padding: 0.2rem 0.5rem;
-		border-radius: 6px;
-		font-family: monospace;
-	}
-	.credit-badge {
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: #64748b;
-		background: #f8fafc;
-		padding: 0.2rem 0.5rem;
-		border-radius: 6px;
-		border: 1px solid #e2e8f0;
+		justify-content: space-between;
 	}
 
 	.course-title {
-		font-size: 1.1rem;
+		font-size: 1.05rem;
 		font-weight: 700;
-		color: #0f172a;
-		margin: 0 0 0.5rem;
-		line-height: 1.3;
+		color: var(--adm-ink);
+		margin: 0;
+		line-height: 1.35;
 	}
+
 	.course-desc {
-		font-size: 0.85rem;
-		color: #64748b;
-		margin: 0 0 1.5rem;
+		font-size: 0.84rem;
+		color: var(--adm-ink-2);
 		line-height: 1.5;
+		margin: 0;
 		flex: 1;
 	}
 
-	.course-footer {
-		border-top: 1px solid #f1f5f9;
-		padding-top: 1rem;
-		margin-top: auto;
-	}
-	.teacher-info {
+	.teacher-box {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.65rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--adm-line-soft);
 	}
-	.teacher-avatar {
+
+	.avatar {
 		width: 32px;
 		height: 32px;
 		border-radius: 50%;
-		background: linear-gradient(135deg, #1e1b4b, #4c1d95);
+		background: linear-gradient(135deg, var(--adm-accent), var(--adm-accent-2));
 		color: white;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 0.8rem;
+		font-size: 0.78rem;
 		font-weight: 700;
+		flex-shrink: 0;
 	}
-	.teacher-name {
-		font-size: 0.85rem;
+
+	.teacher-details {
+		min-width: 0;
+	}
+	.teacher-details .name {
+		font-size: 0.82rem;
 		font-weight: 600;
-		color: #0f172a;
+		color: var(--adm-ink);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
-	.teacher-role {
-		font-size: 0.7rem;
-		color: #64748b;
-		margin-top: 0.1rem;
+	.teacher-details .role {
+		font-size: 0.68rem;
+		color: var(--adm-muted);
+		margin-top: 1px;
 	}
 </style>

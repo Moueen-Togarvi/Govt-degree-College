@@ -1,79 +1,96 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { reveal, lift } from '$lib/admin/motion';
+	import Wallet from 'lucide-svelte/icons/wallet';
+	import Printer from 'lucide-svelte/icons/printer';
+	import CreditCard from 'lucide-svelte/icons/credit-card';
+
 	let { data }: { data: PageData } = $props();
 
 	function statusClass(status: string) {
 		switch (status) {
 			case 'paid':
-				return 'status-paid';
+				return 'adm-badge--green';
 			case 'overdue':
-				return 'status-overdue';
+				return 'adm-badge--red';
 			case 'pending':
 			default:
-				return 'status-pending';
+				return 'adm-badge--amber';
 		}
 	}
 </script>
 
 <svelte:head><title>Fee Status — Student Portal | GPGC</title></svelte:head>
 
-<div class="page">
-	<div class="page-header">
+<div class="adm-page" use:reveal={{ y: 12 }}>
+	<div class="adm-head">
 		<div>
-			<h1 class="page-title">💳 Fee Status</h1>
-			<p class="page-subtitle">View your semester fee records and challans</p>
+			<h1 class="adm-title">
+				<Wallet size={22} stroke-width={2} /> Student Fee Status
+			</h1>
+			<p class="adm-sub">View semester-wise tuition fee details, print bank challan vouchers, or pay online</p>
 		</div>
 	</div>
 
 	{#if data.fee_records.length === 0}
-		<div class="empty-state">
-			<span>💳</span>
-			<h3>No Fee Records Found</h3>
-			<p>Your fee records have not been uploaded yet.</p>
+		<div class="adm-card" use:reveal={{ delay: 120, y: 12 }}>
+			<div class="adm-empty">
+				<div class="adm-empty__icon"><Wallet size={24} /></div>
+				<h3>No Fee Records Available</h3>
+				<p>Your semester fee statements and bank challans have not been uploaded by the accounts office yet.</p>
+			</div>
 		</div>
 	{:else}
 		<div class="fee-grid">
-			{#each data.fee_records as fee}
-				<div class="fee-card">
-					<div class="fee-header">
-						<span class="semester-badge">Semester {fee.semester}</span>
-						<span class="status-badge {statusClass(fee.status)}">{fee.status.toUpperCase()}</span>
-					</div>
-
-					<div class="fee-amount">
-						<span class="currency">Rs.</span>
-						<span class="amount">{parseFloat(fee.amount).toLocaleString()}</span>
-					</div>
-
-					<div class="fee-details">
-						{#if fee.challan_no}
-							<div class="detail-row">
-								<span class="label">Challan No:</span>
-								<span class="value font-mono">{fee.challan_no}</span>
-							</div>
-						{/if}
-						{#if fee.due_date}
-							<div class="detail-row">
-								<span class="label">Due Date:</span>
-								<span class="value">{new Date(fee.due_date).toLocaleDateString()}</span>
-							</div>
-						{/if}
-						{#if fee.paid_date}
-							<div class="detail-row">
-								<span class="label">Paid Date:</span>
-								<span class="value font-semibold text-green-600"
-									>{new Date(fee.paid_date).toLocaleDateString()}</span
-								>
-							</div>
-						{/if}
-					</div>
-
-					{#if fee.status === 'pending' || fee.status === 'overdue'}
-						<div class="fee-actions">
-							<button class="btn-print">🖨️ Print Challan</button>
-							<button class="btn-pay">💳 Pay Online</button>
+			{#each data.fee_records as fee, i}
+				<div class="adm-card fee-card" use:reveal={{ delay: 50 * i, y: 12 }} use:lift>
+					<div class="adm-card__body flex-col">
+						<div class="card-top">
+							<span class="semester-tag">Semester {fee.semester}</span>
+							<span class="adm-badge {statusClass(fee.status)}">
+								{fee.status.toUpperCase()}
+							</span>
 						</div>
-					{/if}
+
+						<div class="fee-amount">
+							<span class="currency font-sans">PKR</span>
+							<span class="val font-sans">{parseFloat(fee.amount).toLocaleString()}</span>
+						</div>
+
+						<div class="fee-details">
+							{#if fee.challan_no}
+								<div class="detail-row">
+									<span class="lbl">Challan No:</span>
+									<span class="adm-code">{fee.challan_no}</span>
+								</div>
+							{/if}
+							{#if fee.due_date}
+								<div class="detail-row">
+									<span class="lbl">Due Date:</span>
+									<span class="value font-semibold">{new Date(fee.due_date).toLocaleDateString()}</span>
+								</div>
+							{/if}
+							{#if fee.paid_date}
+								<div class="detail-row">
+									<span class="lbl">Paid Date:</span>
+									<span class="value text-emerald font-semibold">
+										{new Date(fee.paid_date).toLocaleDateString()}
+									</span>
+								</div>
+							{/if}
+						</div>
+
+						{#if fee.status === 'pending' || fee.status === 'overdue'}
+							<div class="fee-actions">
+								<button class="adm-btn adm-btn--ghost flex-1">
+									<Printer size={13} /> Print Challan
+								</button>
+								<button class="adm-btn adm-btn--primary flex-1">
+									<CreditCard size={13} /> Pay Online
+								</button>
+							</div>
+						{/if}
+					</div>
 				</div>
 			{/each}
 		</div>
@@ -81,199 +98,92 @@
 </div>
 
 <style>
-	.page {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
-	.page-header {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-	.page-title {
-		font-size: 1.5rem;
-		font-weight: 700;
-		color: #0f172a;
-		margin: 0 0 0.25rem;
-	}
-	.page-subtitle {
-		font-size: 0.85rem;
-		color: #64748b;
-		margin: 0;
-	}
-
-	.empty-state {
-		text-align: center;
-		padding: 4rem 2rem;
-		background: white;
-		border-radius: 14px;
-		border: 1px solid #e2e8f0;
-	}
-	.empty-state span {
-		font-size: 3rem;
-		display: block;
-		margin-bottom: 1rem;
-	}
-	.empty-state h3 {
-		font-size: 1.1rem;
-		color: #0f172a;
-		margin: 0 0 0.5rem;
-	}
-	.empty-state p {
-		font-size: 0.9rem;
-		color: #64748b;
-		margin: 0;
-	}
-
 	.fee-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-		gap: 1.5rem;
+		gap: 1.25rem;
 	}
+
 	.fee-card {
-		background: white;
-		border-radius: 16px;
-		padding: 1.5rem;
-		border: 1px solid #e2e8f0;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+		height: 100%;
+	}
+
+	.flex-col {
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
-		transition: transform 0.2s;
-	}
-	.fee-card:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+		gap: 1rem;
+		height: 100%;
+		box-sizing: border-box;
 	}
 
-	.fee-header {
+	.card-top {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
+		justify-content: space-between;
 	}
-	.semester-badge {
+
+	.semester-tag {
 		font-size: 0.8rem;
 		font-weight: 700;
-		color: #475569;
-		background: #f1f5f9;
-		padding: 0.25rem 0.75rem;
-		border-radius: 999px;
-	}
-
-	.status-badge {
-		font-size: 0.7rem;
-		font-weight: 800;
-		padding: 0.25rem 0.75rem;
-		border-radius: 999px;
-		letter-spacing: 0.05em;
-	}
-	.status-paid {
-		background: #dcfce3;
-		color: #166534;
-		border: 1px solid #bbf7d0;
-	}
-	.status-pending {
-		background: #fef3c7;
-		color: #92400e;
-		border: 1px solid #fde68a;
-	}
-	.status-overdue {
-		background: #fee2e2;
-		color: #991b1b;
-		border: 1px solid #fecaca;
+		color: var(--adm-ink-2);
+		background: var(--adm-line-soft);
+		border: 1px solid var(--adm-line);
+		padding: 0.2rem 0.6rem;
+		border-radius: 6px;
 	}
 
 	.fee-amount {
 		display: flex;
 		align-items: baseline;
-		gap: 0.25rem;
-		padding-bottom: 1rem;
-		border-bottom: 1px dashed #e2e8f0;
+		gap: 0.3rem;
+		padding-bottom: 0.85rem;
+		border-bottom: 1.5px dashed var(--adm-line);
 	}
 	.currency {
-		font-size: 1rem;
+		font-size: 0.95rem;
 		font-weight: 600;
-		color: #64748b;
+		color: var(--adm-muted);
 	}
-	.amount {
-		font-size: 2.25rem;
+	.val {
+		font-size: 2.1rem;
 		font-weight: 800;
-		color: #0f172a;
+		color: var(--adm-ink);
 		line-height: 1;
 	}
 
 	.fee-details {
 		display: flex;
 		flex-direction: column;
-		gap: 0.6rem;
+		gap: 0.55rem;
+		flex: 1;
 	}
 	.detail-row {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		font-size: 0.85rem;
+		font-size: 0.82rem;
 	}
-	.label {
-		color: #64748b;
-	}
-	.value {
-		color: #0f172a;
+	.lbl {
+		color: var(--adm-muted);
 		font-weight: 500;
 	}
+	.value {
+		color: var(--adm-ink-2);
+	}
 
-	.font-mono {
-		font-family: monospace;
-		background: #f8fafc;
-		padding: 0.1rem 0.4rem;
-		border-radius: 4px;
-		border: 1px solid #e2e8f0;
-		font-weight: 600;
-	}
-	.text-green-600 {
-		color: #16a34a;
-	}
 	.font-semibold {
 		font-weight: 600;
+	}
+	.text-emerald {
+		color: #059669;
 	}
 
 	.fee-actions {
 		display: flex;
-		gap: 0.75rem;
+		gap: 0.65rem;
 		margin-top: auto;
-		padding-top: 0.5rem;
 	}
-	.btn-print {
+	.flex-1 {
 		flex: 1;
-		background: white;
-		color: #475569;
-		border: 1px solid #cbd5e1;
-		border-radius: 8px;
-		padding: 0.6rem;
-		font-size: 0.85rem;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
-	.btn-print:hover {
-		background: #f8fafc;
-		border-color: #94a3b8;
-	}
-	.btn-pay {
-		flex: 1;
-		background: linear-gradient(135deg, #0284c7, #0369a1);
-		color: white;
-		border: none;
-		border-radius: 8px;
-		padding: 0.6rem;
-		font-size: 0.85rem;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.2s;
-	}
-	.btn-pay:hover {
-		filter: brightness(1.1);
-		transform: translateY(-1px);
 	}
 </style>

@@ -1,45 +1,71 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { reveal, lift } from '$lib/admin/motion';
+	import Bell from 'lucide-svelte/icons/bell';
+	import Pin from 'lucide-svelte/icons/pin';
+	import Megaphone from 'lucide-svelte/icons/megaphone';
+	import Globe from 'lucide-svelte/icons/globe';
+	import Building from 'lucide-svelte/icons/building';
+	import CalendarDays from 'lucide-svelte/icons/calendar-days';
+	import Clock from 'lucide-svelte/icons/clock';
+
 	let { data }: { data: PageData } = $props();
 
 	function getBadgeClass(category: string) {
 		const cat = category.toLowerCase();
-		if (cat.includes('exam') || cat.includes('result')) return 'badge-red';
-		if (cat.includes('fee') || cat.includes('finance')) return 'badge-yellow';
-		if (cat.includes('event') || cat.includes('holiday')) return 'badge-green';
-		return 'badge-blue';
+		if (cat.includes('exam') || cat.includes('result')) return 'adm-badge--red';
+		if (cat.includes('fee') || cat.includes('finance')) return 'adm-badge--amber';
+		if (cat.includes('event') || cat.includes('holiday')) return 'adm-badge--green';
+		return 'adm-badge--blue';
 	}
 </script>
 
 <svelte:head><title>Notifications — Student Portal | GPGC</title></svelte:head>
 
-<div class="page">
-	<div class="page-header">
+<div class="adm-page" use:reveal={{ y: 12 }}>
+	<div class="adm-head">
 		<div>
-			<h1 class="page-title">🔔 Notifications</h1>
-			<p class="page-subtitle">Stay updated with department announcements and notices</p>
+			<h1 class="adm-title">
+				<Bell size={22} stroke-width={2} /> Notifications
+			</h1>
+			<p class="adm-sub">Stay updated with department announcements and notices</p>
 		</div>
 	</div>
 
 	<div class="layout-grid">
 		<!-- Left Col: Notice Board -->
 		<div class="notices-section">
-			<h2 class="section-title">📌 Notice Board</h2>
+			<h2 class="section-title">
+				<Pin size={16} class="mr-1 text-teal" /> Notice Board
+			</h2>
 			{#if data.notices.length === 0}
-				<div class="empty-card">
-					<p>No active notices right now.</p>
+				<div class="adm-card" use:reveal={{ delay: 100, y: 12 }}>
+					<div class="adm-empty">
+						<div class="adm-empty__icon"><Pin size={24} /></div>
+						<h3>No Active Notices</h3>
+						<p>There are no active notices right now.</p>
+					</div>
 				</div>
 			{:else}
 				<div class="notice-list">
-					{#each data.notices as notice}
-						<div class="notice-card">
-							<div class="notice-header">
-								<span class="notice-tag">{notice.tag}</span>
-								<span class="notice-date">{new Date(notice.notice_date).toLocaleDateString()}</span>
+					{#each data.notices as notice, ni}
+						<div class="adm-card notice-card" use:reveal={{ delay: 50 * ni, y: 12 }} use:lift>
+							<div class="adm-card__body p-4 flex-col">
+								<div class="notice-header">
+									<span class="adm-badge adm-badge--blue">{notice.tag}</span>
+									<span class="notice-date">
+										<CalendarDays size={12} class="mr-1" />
+										{new Date(notice.notice_date).toLocaleDateString('en-PK', {
+											day: 'numeric',
+											month: 'short',
+											year: 'numeric'
+										})}
+									</span>
+								</div>
+								<h3 class="notice-title">{notice.title}</h3>
+								<p class="notice-message">{notice.message}</p>
+								<div class="notice-author">By {notice.author_name}</div>
 							</div>
-							<h3 class="notice-title">{notice.title}</h3>
-							<p class="notice-message">{notice.message}</p>
-							<div class="notice-author">By {notice.author_name}</div>
 						</div>
 					{/each}
 				</div>
@@ -48,25 +74,44 @@
 
 		<!-- Right Col: Announcements -->
 		<div class="announcements-section">
-			<h2 class="section-title">📢 General Announcements</h2>
+			<h2 class="section-title">
+				<Megaphone size={16} class="mr-1 text-teal" /> General Announcements
+			</h2>
 			{#if data.announcements.length === 0}
-				<div class="empty-card">
-					<p>No announcements found.</p>
+				<div class="adm-card" use:reveal={{ delay: 100, y: 12 }}>
+					<div class="adm-empty">
+						<div class="adm-empty__icon"><Megaphone size={24} /></div>
+						<h3>No Announcements</h3>
+						<p>No general announcements found.</p>
+					</div>
 				</div>
 			{:else}
 				<div class="announcement-list">
-					{#each data.announcements as ann}
-						<div class="announcement-card">
-							<div class="ann-icon">
-								{#if ann.department_id === null}🌐{:else}🏛️{/if}
-							</div>
-							<div class="ann-content">
-								<div class="ann-meta">
-									<span class="ann-badge {getBadgeClass(ann.category)}">{ann.category}</span>
-									<span class="ann-date">{new Date(ann.created_at).toLocaleDateString()}</span>
+					{#each data.announcements as ann, ai}
+						<div class="adm-card announcement-card" use:reveal={{ delay: 50 * ai, y: 12 }} use:lift>
+							<div class="adm-card__body p-4 flex gap-4 items-start">
+								<div class="ann-icon {ann.department_id === null ? 'global-icon' : 'dept-icon'}">
+									{#if ann.department_id === null}
+										<Globe size={18} />
+									{:else}
+										<Building size={18} />
+									{/if}
 								</div>
-								<h3 class="ann-title">{ann.title}</h3>
-								<p class="ann-desc">{ann.description}</p>
+								<div class="ann-content">
+									<div class="ann-meta">
+										<span class="adm-badge {getBadgeClass(ann.category)}">{ann.category}</span>
+										<span class="ann-date">
+											<Clock size={12} class="mr-1" />
+											{new Date(ann.created_at).toLocaleDateString('en-PK', {
+												day: 'numeric',
+												month: 'short',
+												year: 'numeric'
+											})}
+										</span>
+									</div>
+									<h3 class="ann-title">{ann.title}</h3>
+									<p class="ann-desc">{ann.description}</p>
+								</div>
 							</div>
 						</div>
 					{/each}
@@ -77,42 +122,47 @@
 </div>
 
 <style>
-	.page {
+	.mr-1 {
+		margin-right: 0.25rem;
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.p-4 {
+		padding: 1.1rem !important;
+	}
+	.flex {
+		display: flex;
+	}
+	.flex-col {
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: 0.5rem;
 	}
-	.page-header {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
+	.gap-4 {
 		gap: 1rem;
 	}
-	.page-title {
-		font-size: 1.5rem;
-		font-weight: 700;
-		color: #0f172a;
-		margin: 0 0 0.25rem;
+	.items-start {
+		align-items: flex-start;
 	}
-	.page-subtitle {
-		font-size: 0.85rem;
-		color: #64748b;
-		margin: 0;
+	.text-teal {
+		color: var(--adm-accent) !important;
 	}
 
 	.section-title {
 		font-size: 1.1rem;
 		font-weight: 700;
-		color: #1e293b;
+		color: var(--adm-ink);
 		margin: 0 0 1rem;
 		padding-bottom: 0.5rem;
-		border-bottom: 2px solid #e2e8f0;
+		border-bottom: 2px solid var(--adm-line);
+		display: flex;
+		align-items: center;
 	}
 
 	.layout-grid {
 		display: grid;
-		grid-template-columns: 1fr 1.5fr;
-		gap: 2rem;
+		grid-template-columns: 1fr 1.3fr;
+		gap: 1.5rem;
 		align-items: start;
 	}
 	@media (max-width: 900px) {
@@ -121,103 +171,79 @@
 		}
 	}
 
-	.empty-card {
-		background: white;
-		border: 1px dashed #cbd5e1;
-		border-radius: 12px;
-		padding: 2rem;
-		text-align: center;
-		color: #64748b;
-		font-size: 0.9rem;
-	}
-
 	/* Notice Board Styles */
 	.notice-list {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 0.85rem;
 	}
 	.notice-card {
-		background: linear-gradient(to bottom right, #fff, #f8fafc);
-		border: 1px solid #e2e8f0;
-		border-left: 4px solid #0284c7;
-		border-radius: 12px;
-		padding: 1.25rem;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-		transition: transform 0.2s;
-	}
-	.notice-card:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+		border-left: 4px solid var(--adm-accent);
+		transition: border-color 0.2s;
 	}
 	.notice-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 0.75rem;
-	}
-	.notice-tag {
-		background: #e0f2fe;
-		color: #0369a1;
-		padding: 0.15rem 0.5rem;
-		border-radius: 4px;
-		font-size: 0.7rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		margin-bottom: 0.65rem;
 	}
 	.notice-date {
 		font-size: 0.75rem;
-		color: #64748b;
-		font-weight: 500;
+		color: var(--adm-muted);
+		font-weight: 600;
 	}
 	.notice-title {
-		font-size: 1rem;
+		font-size: 0.95rem;
 		font-weight: 700;
-		color: #0f172a;
-		margin: 0 0 0.5rem;
+		color: var(--adm-ink);
+		margin: 0 0 0.4rem;
 	}
 	.notice-message {
-		font-size: 0.85rem;
-		color: #475569;
-		margin: 0 0 1rem;
+		font-size: 0.84rem;
+		color: var(--adm-ink-2);
+		margin: 0 0 0.85rem;
 		line-height: 1.5;
 	}
 	.notice-author {
-		font-size: 0.75rem;
-		color: #94a3b8;
+		font-size: 0.74rem;
+		color: var(--adm-muted);
 		text-align: right;
 		font-style: italic;
+		font-weight: 600;
 	}
 
 	/* Announcement Styles */
 	.announcement-list {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 0.85rem;
 	}
 	.announcement-card {
-		background: white;
-		border: 1px solid #e2e8f0;
-		border-radius: 12px;
-		padding: 1.25rem;
-		display: flex;
-		gap: 1.25rem;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+		transition: border-color 0.2s;
+	}
+	.announcement-card:hover {
+		border-color: #cdeae6;
 	}
 	.ann-icon {
-		width: 40px;
-		height: 40px;
+		width: 38px;
+		height: 38px;
 		border-radius: 10px;
-		background: #f1f5f9;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 1.2rem;
 		flex-shrink: 0;
+	}
+	.ann-icon.global-icon {
+		background: #e0f2fe;
+		color: #0369a1;
+	}
+	.ann-icon.dept-icon {
+		background: #e6f2f0;
+		color: var(--adm-accent);
 	}
 	.ann-content {
 		flex: 1;
+		min-width: 0;
 	}
 	.ann-meta {
 		display: flex;
@@ -226,49 +252,20 @@
 		margin-bottom: 0.4rem;
 	}
 	.ann-date {
-		font-size: 0.75rem;
-		color: #94a3b8;
-		font-weight: 500;
+		font-size: 0.74rem;
+		color: var(--adm-muted);
+		font-weight: 600;
 	}
 	.ann-title {
-		font-size: 1.05rem;
+		font-size: 0.95rem;
 		font-weight: 700;
-		color: #0f172a;
-		margin: 0 0 0.4rem;
+		color: var(--adm-ink);
+		margin: 0 0 0.35rem;
 	}
 	.ann-desc {
-		font-size: 0.9rem;
-		color: #475569;
+		font-size: 0.84rem;
+		color: var(--adm-ink-2);
 		margin: 0;
 		line-height: 1.5;
-	}
-
-	.ann-badge {
-		padding: 0.15rem 0.5rem;
-		border-radius: 4px;
-		font-size: 0.7rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-	.badge-red {
-		background: #fee2e2;
-		color: #991b1b;
-		border: 1px solid #fecaca;
-	}
-	.badge-yellow {
-		background: #fef3c7;
-		color: #92400e;
-		border: 1px solid #fde68a;
-	}
-	.badge-green {
-		background: #dcfce3;
-		color: #166534;
-		border: 1px solid #bbf7d0;
-	}
-	.badge-blue {
-		background: #eff6ff;
-		color: #1d4ed8;
-		border: 1px solid #bfdbfe;
 	}
 </style>
