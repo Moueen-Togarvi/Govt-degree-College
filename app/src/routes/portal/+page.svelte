@@ -25,6 +25,9 @@
 	let setupLoading = $state(false);
 	let showPassword = $state(false);
 
+	let email = $state(form?.email ?? '');
+	let password = $state('');
+
 	const features = [
 		{ icon: GraduationCap, label: 'Student Management System' },
 		{ icon: Users, label: 'Faculty & Department Portal' },
@@ -32,12 +35,41 @@
 		{ icon: BookOpen, label: 'Attendance & GPA Tracking' }
 	];
 
-	const roleChips: { label: string; cls: string }[] = [
-		{ label: 'Super Admin', cls: 'chip-teal' },
-		{ label: 'Coordinator', cls: 'chip-blue' },
-		{ label: 'Faculty', cls: 'chip-green' },
-		{ label: 'Student', cls: 'chip-orange' }
+	const demoCredentials = [
+		{
+			role: 'Super Admin',
+			email: 'admin@gpgc.edu.pk',
+			password: 'Admin@1234',
+			icon: ShieldCheck,
+			color: 'teal'
+		},
+		{
+			role: 'Coordinator',
+			email: 'coordinator@gpgc.edu.pk',
+			password: 'Coordinator@1234',
+			icon: Wrench,
+			color: 'blue'
+		},
+		{
+			role: 'Faculty',
+			email: 'faculty@gpgc.edu.pk',
+			password: 'Faculty@1234',
+			icon: Users,
+			color: 'green'
+		},
+		{
+			role: 'Student',
+			email: 'student@gpgc.edu.pk',
+			password: 'Student@1234',
+			icon: GraduationCap,
+			color: 'orange'
+		}
 	];
+
+	function fillDemoCredentials(cred: typeof demoCredentials[0]) {
+		email = cred.email;
+		password = cred.password;
+	}
 </script>
 
 <svelte:head>
@@ -111,6 +143,25 @@
 				</div>
 			{/if}
 
+			<!-- Quick Demo Selector -->
+			<div class="demo-selector-container" use:reveal={{ delay: 60, y: 12, duration: 480 }}>
+				<p class="demo-selector-title">Quick Demo Login (Click to fill)</p>
+				<div class="demo-grid">
+					{#each demoCredentials as cred}
+						{@const Icon = cred.icon}
+						<button
+							type="button"
+							class="demo-card demo-card--{cred.color}"
+							onclick={() => fillDemoCredentials(cred)}
+							title="Click to fill credentials"
+						>
+							<span class="demo-card-icon"><Icon size={14} stroke-width={2} /></span>
+							<span class="demo-card-role">{cred.role}</span>
+						</button>
+					{/each}
+				</div>
+			</div>
+
 			<form
 				method="POST"
 				action="?/login"
@@ -125,7 +176,7 @@
 			>
 				<input type="hidden" name="next" value={data.next} />
 
-				<div class="form-group" use:reveal={{ delay: 80, y: 12, duration: 480 }}>
+				<div class="form-group" use:reveal={{ delay: 100, y: 12, duration: 480 }}>
 					<label for="email" class="form-label">Email Address</label>
 					<div class="input-wrapper">
 						<span class="input-icon"><Mail size={17} stroke-width={1.75} /></span>
@@ -133,7 +184,7 @@
 							id="email"
 							type="email"
 							name="email"
-							value={form?.email ?? ''}
+							bind:value={email}
 							placeholder="you@gpgc.edu.pk"
 							required
 							autocomplete="email"
@@ -150,6 +201,7 @@
 							id="password"
 							type={showPassword ? 'text' : 'password'}
 							name="password"
+							bind:value={password}
 							placeholder="Enter your password"
 							required
 							autocomplete="current-password"
@@ -174,7 +226,7 @@
 					type="submit"
 					class="btn-login"
 					disabled={loading}
-					use:reveal={{ delay: 200, y: 12, duration: 480 }}
+					use:reveal={{ delay: 180, y: 12, duration: 480 }}
 				>
 					{#if loading}
 						<span class="spinner"></span>
@@ -184,15 +236,6 @@
 					{/if}
 				</button>
 			</form>
-
-			<div class="role-hints" use:reveal={{ delay: 260, y: 12, duration: 480 }}>
-				<p class="role-hints-title">Portal Access for</p>
-				<div class="role-chips">
-					{#each roleChips as chip (chip.label)}
-						<span class="role-chip {chip.cls}">{chip.label}</span>
-					{/each}
-				</div>
-			</div>
 
 			{#if form?.success}
 				<div class="alert alert-success" use:reveal={{ y: 8 }}>
@@ -565,50 +608,107 @@
 		}
 	}
 
-	/* ─── Role Hints ─── */
-	.role-hints {
-		margin-top: 1.75rem;
+	/* ─── Demo Credentials Selector ─── */
+	.demo-selector-container {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 12px;
+		padding: 0.85rem;
+		margin-bottom: 1.5rem;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+	}
+
+	.demo-selector-title {
+		font-size: 0.72rem;
+		color: #64748b;
+		margin: 0 0 0.6rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 		text-align: center;
 	}
 
-	.role-hints-title {
-		font-size: 0.72rem;
-		color: #94a3b8;
-		margin: 0 0 0.6rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.07em;
-	}
-
-	.role-chips {
-		display: flex;
+	.demo-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
 		gap: 0.5rem;
+	}
+
+	.demo-card {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		background: #f8fafc;
+		border: 1px solid #e2e8f0;
+		border-radius: 8px;
+		padding: 0.45rem 0.6rem;
+		cursor: pointer;
+		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+		text-align: left;
+		font-family: inherit;
+		outline: none;
+	}
+
+	.demo-card:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	}
+
+	.demo-card:active {
+		transform: translateY(0);
+	}
+
+	.demo-card-icon {
+		display: flex;
+		align-items: center;
 		justify-content: center;
-		flex-wrap: wrap;
+		width: 22px;
+		height: 22px;
+		border-radius: 5px;
+		flex-shrink: 0;
 	}
 
-	.role-chip {
-		padding: 0.3rem 0.75rem;
-		border-radius: 999px;
-		font-size: 0.74rem;
+	.demo-card-role {
+		font-size: 0.78rem;
 		font-weight: 600;
+		color: #334155;
 	}
 
-	.chip-teal {
+	/* Color variants for demo cards */
+	.demo-card--teal .demo-card-icon {
 		background: #e6f2f0;
-		color: #0a4a44;
+		color: #0d5d56;
 	}
-	.chip-blue {
+	.demo-card--teal:hover {
+		border-color: #0d5d56;
+		background: #fdfdfd;
+	}
+	
+	.demo-card--blue .demo-card-icon {
 		background: #dbeafe;
 		color: #1d4ed8;
 	}
-	.chip-green {
+	.demo-card--blue:hover {
+		border-color: #1d4ed8;
+		background: #fdfdfd;
+	}
+
+	.demo-card--green .demo-card-icon {
 		background: #d1fae5;
 		color: #065f46;
 	}
-	.chip-orange {
+	.demo-card--green:hover {
+		border-color: #065f46;
+		background: #fdfdfd;
+	}
+
+	.demo-card--orange .demo-card-icon {
 		background: #fef0dd;
 		color: #b45f00;
+	}
+	.demo-card--orange:hover {
+		border-color: #b45f00;
+		background: #fdfdfd;
 	}
 
 	/* ─── Setup / Footer ─── */
